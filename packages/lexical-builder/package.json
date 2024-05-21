@@ -13,7 +13,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "pretest": "npm run build"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "version": "0.15.0",
   "license": "MIT",
