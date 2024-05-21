@@ -4,9 +4,10 @@
   "version": "0.15.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:local": "cross-env NODE_ENV=development concurrently \"npm:server:ws\" \"npm:server:webrtc\" \"vite\"",
-    "build": "tsc && vite build",
+    "server:dev": "vite",
+    "dev": "cross-env NODE_ENV=development concurrently \"npm:server:ws\" \"npm:server:webrtc\" \"npm:server:dev\"",
+    "prebuild": "tsc",
+    "build": "vite build",
     "preview": "vite preview",
     "server:ws": "cross-env HOST=localhost PORT=1234 YPERSISTENCE=./yjs-wss-db npx y-websocket",
     "server:webrtc": "cross-env HOST=localhost PORT=1235 npx y-webrtc"

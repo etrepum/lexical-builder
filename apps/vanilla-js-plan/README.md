@@ -4,4 +4,4 @@ Plugin that replaces smiles (`:)`, `:P`, etc...) with actual emojis (using [Node
 
 **Run it locally:** `npm i && npm run dev`
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/facebook/lexical/tree/main/examples/vanilla-js-plugin?file=src/emoji-plugin/EmojiPlugin.ts)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/etrepum/lexical-builder/tree/main/apps/vanilla-js-plugin-plan?file=src/emoji-plugin/EmojiPlugin.ts)
