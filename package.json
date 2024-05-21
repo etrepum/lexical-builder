@@ -1,6 +1,6 @@
 {
-  "name": "lexical-builder",
-  "private": true,
+  "name": "@etrepum/lexical-builder",
+  "private": false,
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
