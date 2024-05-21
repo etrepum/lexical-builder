@@ -6,13 +6,13 @@
  *
  */
 
-import type {LexicalEditor, NodeKey} from 'lexical';
+import type { LexicalEditor, NodeKey } from "lexical";
 
-import {Suspense, useEffect, useMemo, useState} from 'react';
-import * as React from 'react';
-import {createPortal, flushSync} from 'react-dom';
-import useLayoutEffect from './shared/useLayoutEffect';
-import invariant from './shared/invariant';
+import { Suspense, useEffect, useMemo, useState } from "react";
+import * as React from "react";
+import { createPortal, flushSync } from "react-dom";
+import useLayoutEffect from "./shared/useLayoutEffect";
+import invariant from "./shared/invariant";
 
 type ErrorBoundaryProps = {
   children: JSX.Element;
@@ -54,7 +54,11 @@ export function useReactDecorators(
 
     for (let i = 0; i < decoratorKeys.length; i++) {
       const nodeKey = decoratorKeys[i];
-      invariant(nodeKey !== undefined, 'useReactDecorators: decoratorKeys[%s] must be defined', String(i));
+      invariant(
+        nodeKey !== undefined,
+        "useReactDecorators: decoratorKeys[%s] must be defined",
+        String(i),
+      );
       const element = editor.getElementByKey(nodeKey);
 
       if (element !== null) {

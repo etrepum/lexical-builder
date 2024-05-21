@@ -11,7 +11,7 @@ import type {
   LexicalPlan,
   LexicalPlanConfig,
   PlanConfigBase,
-} from './types';
+} from "./types";
 
 export function definePlan<Config extends PlanConfigBase, Name extends string>(
   plan: LexicalPlan<Config, Name>,

@@ -6,15 +6,15 @@
  *
  */
 
-import type {LexicalEditor} from 'lexical';
+import type { LexicalEditor } from "lexical";
 
-import {$canShowPlaceholderCurry} from '@lexical/text';
-import {mergeRegister} from '@lexical/utils';
+import { $canShowPlaceholderCurry } from "@lexical/text";
+import { mergeRegister } from "@lexical/utils";
 
 import {
   RegisterLexicalSubscription,
   registerLexicalSubscription,
-} from './registerSubscription';
+} from "./registerSubscription";
 
 function canShowPlaceholderFromCurrentEditorState(
   editor: LexicalEditor,

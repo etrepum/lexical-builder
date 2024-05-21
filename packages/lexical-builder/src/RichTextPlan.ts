@@ -6,14 +6,14 @@
  *
  */
 
-import {HeadingNode, QuoteNode, registerRichText} from '@lexical/rich-text';
+import { HeadingNode, QuoteNode, registerRichText } from "@lexical/rich-text";
 
-import {definePlan} from './definePlan';
+import { definePlan } from "./definePlan";
 
 export const RichTextPlan = definePlan({
   config: {},
-  conflictsWith: ['@lexical/plain-text'],
-  name: '@lexical/rich-text',
+  conflictsWith: ["@lexical/plain-text"],
+  name: "@lexical/rich-text",
   nodes: [HeadingNode, QuoteNode],
   register: registerRichText,
 });

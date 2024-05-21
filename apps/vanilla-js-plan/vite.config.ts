@@ -16,7 +16,7 @@ export default defineConfig({
     alias: {
       "@emoji-datasource-facebook": path.resolve(
         require.resolve("emoji-datasource-facebook"),
-        "../img/facebook/64/"
+        "../img/facebook/64/",
       ),
     },
   },

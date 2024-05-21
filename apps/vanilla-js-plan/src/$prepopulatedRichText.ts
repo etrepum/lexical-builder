@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import {$createParagraphNode, $createTextNode, $getRoot} from 'lexical';
+import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
 
 export function $prepopulatedRichText() {
   const root = $getRoot();
@@ -15,13 +15,13 @@ export function $prepopulatedRichText() {
 
   const paragraph = $createParagraphNode();
   paragraph.append(
-    $createTextNode(' Try typing in '),
-    $createTextNode('some smiles. ').toggleFormat('bold'),
-    $createTextNode('For example: '),
-    $createTextNode(':)').toggleFormat('code'),
-    $createTextNode(', '),
-    $createTextNode(':smiley:').toggleFormat('code'),
-    $createTextNode('.'),
+    $createTextNode(" Try typing in "),
+    $createTextNode("some smiles. ").toggleFormat("bold"),
+    $createTextNode("For example: "),
+    $createTextNode(":)").toggleFormat("code"),
+    $createTextNode(", "),
+    $createTextNode(":smiley:").toggleFormat("code"),
+    $createTextNode("."),
   );
   root.append(paragraph);
 }

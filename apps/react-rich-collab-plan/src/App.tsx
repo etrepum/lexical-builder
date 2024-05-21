@@ -5,17 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type {Provider} from '@lexical/yjs';
+import type { Provider } from "@lexical/yjs";
 
-import {definePlan, LexicalPlanComposer} from '@etrepum/lexical-builder';
-import {CollaborationPlugin} from '@lexical/react/LexicalCollaborationPlugin';
-import {Fragment, useCallback, useEffect, useRef, useState} from 'react';
-import * as Y from 'yjs';
+import { definePlan, LexicalPlanComposer } from "@etrepum/lexical-builder";
+import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import * as Y from "yjs";
 
-import {EditorPlan} from './Editor';
-import ExampleTheme from './ExampleTheme';
-import {getRandomUserProfile, UserProfile} from './getRandomUserProfile';
-import {createWebRTCProvider, createWebsocketProvider} from './providers';
+import { EditorPlan } from "./Editor";
+import ExampleTheme from "./ExampleTheme";
+import { getRandomUserProfile, UserProfile } from "./getRandomUserProfile";
+import { createWebRTCProvider, createWebsocketProvider } from "./providers";
 
 interface ActiveUserProfile extends UserProfile {
   userId: number;
@@ -28,8 +28,8 @@ const plan = definePlan({
   $initialEditorState: null,
   config: {},
   dependencies: [EditorPlan],
-  name: '@lexical/examples/react-rich-collab-plan',
-  namespace: 'React.js Collab Demo',
+  name: "@lexical/examples/react-rich-collab-plan",
+  namespace: "React.js Collab Demo",
   // Handling of errors during update
   onError(error: Error) {
     throw error;
@@ -40,7 +40,7 @@ const plan = definePlan({
 
 export default function App() {
   const providerName =
-    new URLSearchParams(window.location.search).get('provider') ?? 'webrtc';
+    new URLSearchParams(window.location.search).get("provider") ?? "webrtc";
   const [userProfile, setUserProfile] = useState(() => getRandomUserProfile());
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [yjsProvider, setYjsProvider] = useState<null | Provider>(null);
@@ -51,7 +51,7 @@ export default function App() {
     const awareness = yjsProvider!.awareness!;
     setActiveUsers(
       Array.from(awareness.getStates().entries()).map(
-        ([userId, {color, name}]) => ({
+        ([userId, { color, name }]) => ({
           color,
           name,
           userId,
@@ -76,23 +76,23 @@ export default function App() {
       return;
     }
 
-    yjsProvider.awareness.on('update', handleAwarenessUpdate);
+    yjsProvider.awareness.on("update", handleAwarenessUpdate);
 
-    return () => yjsProvider.awareness.off('update', handleAwarenessUpdate);
+    return () => yjsProvider.awareness.off("update", handleAwarenessUpdate);
   }, [yjsProvider, handleAwarenessUpdate]);
 
   const providerFactory = useCallback(
     (id: string, yjsDocMap: Map<string, Y.Doc>) => {
       const provider =
-        providerName === 'webrtc'
+        providerName === "webrtc"
           ? createWebRTCProvider(id, yjsDocMap)
           : createWebsocketProvider(id, yjsDocMap);
-      provider.on('status', (event) => {
+      provider.on("status", (event) => {
         setConnected(
           // Websocket provider
-          event.status === 'connected' ||
+          event.status === "connected" ||
             // WebRTC provider has different approact to status reporting
-            ('connected' in event && event.connected === true),
+            ("connected" in event && event.connected === true),
         );
       });
 
@@ -108,48 +108,48 @@ export default function App() {
   return (
     <div ref={containerRef}>
       <p>
-        <b>Used provider:</b>{' '}
-        {providerName === 'webrtc'
-          ? 'WebRTC (within browser communication via BroadcastChannel fallback, unless run locally)'
-          : 'Websockets (cross-browser communication)'}
+        <b>Used provider:</b>{" "}
+        {providerName === "webrtc"
+          ? "WebRTC (within browser communication via BroadcastChannel fallback, unless run locally)"
+          : "Websockets (cross-browser communication)"}
         <br />
-        {window.location.hostname === 'localhost' ? (
-          providerName === 'webrtc' ? (
+        {window.location.hostname === "localhost" ? (
+          providerName === "webrtc" ? (
             <a href="/app?provider=wss">Enable WSS</a>
           ) : (
             <a href="/app">Enable WebRTC</a>
           )
-        ) : null}{' '}
+        ) : null}{" "}
         {/* WebRTC provider doesn't implement disconnect correctly */}
-        {providerName !== 'webrtc' ? (
+        {providerName !== "webrtc" ? (
           <button onClick={handleConnectionToggle}>
-            {connected ? 'Disconnect' : 'Connect'}
+            {connected ? "Disconnect" : "Connect"}
           </button>
         ) : null}
       </p>
       <p>
-        <b>My Name:</b>{' '}
+        <b>My Name:</b>{" "}
         <input
           type="text"
           value={userProfile.name}
           onChange={(e) =>
-            setUserProfile((profile) => ({...profile, name: e.target.value}))
+            setUserProfile((profile) => ({ ...profile, name: e.target.value }))
           }
-        />{' '}
+        />{" "}
         <input
           type="color"
           value={userProfile.color}
           onChange={(e) =>
-            setUserProfile((profile) => ({...profile, color: e.target.value}))
+            setUserProfile((profile) => ({ ...profile, color: e.target.value }))
           }
         />
       </p>
       <p>
-        <b>Active users:</b>{' '}
-        {activeUsers.map(({name, color, userId}, idx) => (
+        <b>Active users:</b>{" "}
+        {activeUsers.map(({ name, color, userId }, idx) => (
           <Fragment key={userId}>
-            <span style={{color}}>{name}</span>
-            {idx === activeUsers.length - 1 ? '' : ', '}
+            <span style={{ color }}>{name}</span>
+            {idx === activeUsers.length - 1 ? "" : ", "}
           </Fragment>
         ))}
       </p>

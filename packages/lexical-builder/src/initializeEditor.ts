@@ -6,11 +6,11 @@
  *
  */
 
-import type {InitialEditorStateType} from './types';
+import type { InitialEditorStateType } from "./types";
 
-import {$createParagraphNode, $getRoot, type LexicalEditor} from 'lexical';
+import { $createParagraphNode, $getRoot, type LexicalEditor } from "lexical";
 
-const HISTORY_MERGE_OPTIONS = {tag: 'history-merge'};
+const HISTORY_MERGE_OPTIONS = { tag: "history-merge" };
 
 function $defaultInitializer() {
   const root = $getRoot();
@@ -24,16 +24,16 @@ export function initializeEditor(
   $initialEditorState: InitialEditorStateType = $defaultInitializer,
 ): void {
   switch (typeof $initialEditorState) {
-    case 'function': {
+    case "function": {
       editor.update(() => $initialEditorState(editor), HISTORY_MERGE_OPTIONS);
       break;
     }
-    case 'string': {
+    case "string": {
       const parsedEditorState = editor.parseEditorState($initialEditorState);
       editor.setEditorState(parsedEditorState, HISTORY_MERGE_OPTIONS);
       break;
     }
-    case 'object': {
+    case "object": {
       if ($initialEditorState) {
         editor.setEditorState($initialEditorState, HISTORY_MERGE_OPTIONS);
       }

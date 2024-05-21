@@ -12,11 +12,11 @@ import {
   type EditorChildrenComponentProps,
   ReactPlan,
   RichTextPlan,
-} from '@etrepum/lexical-builder';
-import {ContentEditable} from '@lexical/react/LexicalContentEditable';
+} from "@etrepum/lexical-builder";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 
-import ToolbarPlugin from './plugins/ToolbarPlugin';
-import TreeViewPlugin from './plugins/TreeViewPlugin';
+import ToolbarPlugin from "./plugins/ToolbarPlugin";
+import TreeViewPlugin from "./plugins/TreeViewPlugin";
 
 function Placeholder() {
   return <div className="editor-placeholder">Enter some rich text...</div>;
@@ -51,5 +51,5 @@ export const EditorPlan = definePlan({
     }),
     AutoFocusPlan,
   ],
-  name: '@lexical/examples/react-rich-collab-plan/Editor',
+  name: "@lexical/examples/react-rich-collab-plan/Editor",
 });

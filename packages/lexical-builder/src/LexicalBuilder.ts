@@ -9,7 +9,7 @@ import type {
   AnyLexicalPlan,
   AnyLexicalPlanArgument,
   EditorHandle,
-} from './types';
+} from "./types";
 
 import {
   createEditor,
@@ -19,12 +19,12 @@ import {
   type KlassConstructor,
   type LexicalEditor,
   type LexicalNode,
-} from 'lexical';
-import invariant from './shared/invariant';
+} from "lexical";
+import invariant from "./shared/invariant";
 
-import {deepThemeMergeInPlace} from './deepThemeMergeInPlace';
-import {initializeEditor} from './initializeEditor';
-import {PlanRep} from './PlanRep';
+import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
+import { initializeEditor } from "./initializeEditor";
+import { PlanRep } from "./PlanRep";
 
 /** @experimental */
 export class LexicalBuilder {
@@ -50,15 +50,15 @@ export class LexicalBuilder {
   }
 
   buildEditor(): EditorHandle {
-    const {$initialEditorState, onError, ...editorConfig} =
+    const { $initialEditorState, onError, ...editorConfig } =
       this.buildCreateEditorArgs();
     const editor = createEditor({
       ...editorConfig,
-      ...(onError ? {onError: (err) => onError(err, editor)} : {}),
+      ...(onError ? { onError: (err) => onError(err, editor) } : {}),
     });
     initializeEditor(editor, $initialEditorState);
     const dispose = this.registerEditor(editor);
-    return {dispose, editor};
+    return { dispose, editor };
   }
 
   addPlan(arg: AnyLexicalPlanArgument): number {
@@ -73,10 +73,10 @@ export class LexicalBuilder {
     let [phase, planRep] = this.planMap.get(plan) || [0, undefined];
     if (!planRep) {
       const hasConflict = this.conflicts.get(plan.name);
-      if (typeof hasConflict === 'string') {
+      if (typeof hasConflict === "string") {
         invariant(
           false,
-          'LexicalBuilder: plan %s conflicts with %s',
+          "LexicalBuilder: plan %s conflicts with %s",
           plan.name,
           hasConflict,
         );
@@ -84,7 +84,7 @@ export class LexicalBuilder {
       for (const name of plan.conflictsWith || []) {
         invariant(
           !this.planNameMap.has(name),
-          'LexicalBuilder: plan %s conflicts with %s',
+          "LexicalBuilder: plan %s conflicts with %s",
           plan.name,
           name,
         );
@@ -104,7 +104,7 @@ export class LexicalBuilder {
       }
       invariant(
         this.phases.length >= phase,
-        'LexicalBuilder: Expected phase to be no greater than phases.length',
+        "LexicalBuilder: Expected phase to be no greater than phases.length",
       );
       if (this.phases.length === phase) {
         this.phases.push(new Map());
@@ -112,13 +112,17 @@ export class LexicalBuilder {
       planRep = new PlanRep(this, plan);
       invariant(
         !this.planNameMap.has(plan.name),
-        'LexicalBuilder: Multiple plans registered with name %s, names must be unique',
+        "LexicalBuilder: Multiple plans registered with name %s, names must be unique",
         plan.name,
       );
       this.planMap.set(plan, [phase, planRep]);
       this.planNameMap.set(plan.name, planRep);
       const currentPhaseMap = this.phases[phase];
-      invariant(currentPhaseMap !== undefined, 'LexicalBuilder: Expecting phase map for phase %s', String(phase));
+      invariant(
+        currentPhaseMap !== undefined,
+        "LexicalBuilder: Expecting phase map for phase %s",
+        String(phase),
+      );
       currentPhaseMap.set(plan, planRep);
     }
     for (const config of configs) {
@@ -150,7 +154,11 @@ export class LexicalBuilder {
     return () => {
       for (let i = cleanups.length - 1; i >= 0; i--) {
         const cleanupFun = cleanups[i];
-        invariant(cleanupFun !== undefined, 'LexicalBuilder: Expecting cleanups[%s] to be defined', String(i));
+        invariant(
+          cleanupFun !== undefined,
+          "LexicalBuilder: Expecting cleanups[%s] to be defined",
+          String(i),
+        );
         cleanupFun();
       }
       cleanups.length = 0;
@@ -161,19 +169,19 @@ export class LexicalBuilder {
   buildCreateEditorArgs() {
     const config: Pick<
       CreateEditorArgs,
-      'nodes' | 'html' | 'theme' | 'disableEvents' | 'editable' | 'namespace'
+      "nodes" | "html" | "theme" | "disableEvents" | "editable" | "namespace"
     > &
-      Pick<AnyLexicalPlan, '$initialEditorState' | 'onError'> = {};
-    const nodes = new Set<NonNullable<CreateEditorArgs['nodes']>[number]>();
+      Pick<AnyLexicalPlan, "$initialEditorState" | "onError"> = {};
+    const nodes = new Set<NonNullable<CreateEditorArgs["nodes"]>[number]>();
     const replacedNodes = new Map<
       KlassConstructor<typeof LexicalNode>,
       PlanRep<AnyLexicalPlan>
     >();
-    const htmlExport: NonNullable<HTMLConfig['export']> = new Map();
-    const htmlImport: NonNullable<HTMLConfig['import']> = {};
+    const htmlExport: NonNullable<HTMLConfig["export"]> = new Map();
+    const htmlImport: NonNullable<HTMLConfig["import"]> = {};
     const theme: EditorThemeClasses = {};
     for (const planRep of this.sortedPlanReps()) {
-      const {plan} = planRep;
+      const { plan } = planRep;
       if (plan.onError !== undefined) {
         config.onError = plan.onError;
       }
@@ -191,12 +199,12 @@ export class LexicalBuilder {
       }
       if (plan.nodes) {
         for (const node of plan.nodes) {
-          if (typeof node !== 'function') {
+          if (typeof node !== "function") {
             const conflictPlan = replacedNodes.get(node.replace);
             if (conflictPlan) {
               invariant(
                 false,
-                'LexicalBuilder: Plan %s can not register replacement for node %s because %s already did',
+                "LexicalBuilder: Plan %s can not register replacement for node %s because %s already did",
                 plan.name,
                 node.replace.name,
                 conflictPlan.plan.name,

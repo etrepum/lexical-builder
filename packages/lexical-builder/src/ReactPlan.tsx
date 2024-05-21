@@ -6,25 +6,28 @@
  *
  */
 
-import type {AnyLexicalPlanArgument} from './types';
+import type { AnyLexicalPlanArgument } from "./types";
 
 import {
   LexicalComposerContext,
   type LexicalComposerContextWithEditor,
-} from '@lexical/react/LexicalComposerContext';
-import {ContentEditable} from '@lexical/react/LexicalContentEditable';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import useLexicalEditable from '@lexical/react/useLexicalEditable';
-import * as React from 'react';
-import {Suspense, useEffect, useMemo, useRef} from 'react';
+} from "@lexical/react/LexicalComposerContext";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
+import useLexicalEditable from "@lexical/react/useLexicalEditable";
+import * as React from "react";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 
-import {definePlan} from './definePlan';
-import {LexicalBuilder} from './LexicalBuilder';
-import {canShowPlaceholder} from './registerShowPlaceholder';
-import {safeCast} from './safeCast';
-import {shallowMergeConfig} from './shallowMergeConfig';
-import {type ErrorBoundaryType, useReactDecorators} from './useReactDecorators';
-import {useRegisterSubscription} from './useRegisterSubscription';
+import { definePlan } from "./definePlan";
+import { LexicalBuilder } from "./LexicalBuilder";
+import { canShowPlaceholder } from "./registerShowPlaceholder";
+import { safeCast } from "./safeCast";
+import { shallowMergeConfig } from "./shallowMergeConfig";
+import {
+  type ErrorBoundaryType,
+  useReactDecorators,
+} from "./useReactDecorators";
+import { useRegisterSubscription } from "./useRegisterSubscription";
 
 export interface EditorChildrenComponentProps {
   context: LexicalComposerContextWithEditor;
@@ -82,7 +85,7 @@ export interface LexicalPlanComposerProps {
 }
 
 const scheduleMicrotask =
-  'queueMicrotask' in globalThis
+  "queueMicrotask" in globalThis
     ? queueMicrotask
     : (fn: () => void) => Promise.resolve().then(fn);
 
@@ -140,7 +143,7 @@ function buildEditorComponent(
 ) {
   const [editor] = context;
   const rawConfigDecorators = config.decorators.map((El) =>
-    typeof El === 'function' ? <El context={context} /> : El,
+    typeof El === "function" ? <El context={context} /> : El,
   );
   return function EditorComponent(props: Partial<EditorComponentProps>) {
     const {
@@ -165,7 +168,8 @@ function buildEditorComponent(
         <EditorChildrenComponent
           context={context}
           contentEditable={contentEditable}
-          placeholder={placeholder && <Placeholder content={placeholder} />}>
+          placeholder={placeholder && <Placeholder content={placeholder} />}
+        >
           {children}
           {configDecorators}
           {decorators}
@@ -191,7 +195,7 @@ function Placeholder({
   const showPlaceholder = useRegisterSubscription(canShowPlaceholder);
   if (!showPlaceholder) {
     return null;
-  } else if (typeof content === 'function') {
+  } else if (typeof content === "function") {
     return <WithEditable content={content} />;
   } else {
     return content;
@@ -214,11 +218,11 @@ export const ReactPlan = definePlan({
     }
     return config;
   },
-  name: '@etrepum/lexical-builder/ReactPlan',
+  name: "@etrepum/lexical-builder/ReactPlan",
   register(editor, config) {
     const context: LexicalComposerContextWithEditor = [
       editor,
-      {getTheme: () => editor._config.theme},
+      { getTheme: () => editor._config.theme },
     ];
     config.setComponent(buildEditorComponent(context, config), context);
     return () => {

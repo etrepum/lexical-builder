@@ -19,6 +19,6 @@ export default function invariant(
   }
 
   throw new Error(
-    args.reduce((msg, arg) => msg.replace("%s", String(arg)), message || "")
+    args.reduce((msg, arg) => msg.replace("%s", String(arg)), message || ""),
   );
 }

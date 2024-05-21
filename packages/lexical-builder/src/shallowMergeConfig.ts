@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type {PlanConfigBase} from './types';
+import type { PlanConfigBase } from "./types";
 
 export function shallowMergeConfig<T extends PlanConfigBase>(
   a: T,
@@ -16,7 +16,7 @@ export function shallowMergeConfig<T extends PlanConfigBase>(
   }
   for (const k in b) {
     if (b[k] !== a[k]) {
-      return {...a, ...b};
+      return { ...a, ...b };
     }
   }
   return a;

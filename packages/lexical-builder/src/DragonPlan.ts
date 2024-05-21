@@ -6,12 +6,12 @@
  *
  */
 
-import {registerDragonSupport} from '@lexical/dragon';
+import { registerDragonSupport } from "@lexical/dragon";
 
-import {definePlan} from './definePlan';
+import { definePlan } from "./definePlan";
 
 export const DragonPlan = definePlan({
   config: {},
-  name: '@lexical/dragon',
+  name: "@lexical/dragon",
   register: registerDragonSupport,
 });

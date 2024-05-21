@@ -6,14 +6,14 @@
  *
  */
 
-import {definePlan} from '@etrepum/lexical-builder';
-import {LexicalEditor, TextNode} from 'lexical';
+import { definePlan } from "@etrepum/lexical-builder";
+import { LexicalEditor, TextNode } from "lexical";
 
-import {$createEmojiNode, EmojiNode} from './EmojiNode';
-import findEmoji from './findEmoji';
+import { $createEmojiNode, EmojiNode } from "./EmojiNode";
+import findEmoji from "./findEmoji";
 
 function $textNodeTransform(node: TextNode): void {
-  if (!node.isSimpleText() || node.hasFormat('code')) {
+  if (!node.isSimpleText() || node.hasFormat("code")) {
     return;
   }
 
@@ -46,7 +46,7 @@ function $textNodeTransform(node: TextNode): void {
 
 export const EmojiPlan = definePlan({
   config: {},
-  name: '@lexical/examples/vanilla-js/emoji-plan',
+  name: "@lexical/examples/vanilla-js/emoji-plan",
   nodes: [EmojiNode],
   register(editor: LexicalEditor) {
     return editor.registerNodeTransform(TextNode, $textNodeTransform);

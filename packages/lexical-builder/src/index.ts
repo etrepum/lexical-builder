@@ -6,12 +6,12 @@
  *
  */
 
-export {type AutoFocusConfig, AutoFocusPlan} from './AutoFocusPlan';
-export {configPlan, definePlan} from './definePlan';
-export {DragonPlan} from './DragonPlan';
-export {type HistoryConfig, HistoryPlan} from './HistoryPlan';
-export {LexicalBuilder} from './LexicalBuilder';
-export {PlainTextPlan} from './PlainTextPlan';
+export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
+export { configPlan, definePlan } from "./definePlan";
+export { DragonPlan } from "./DragonPlan";
+export { type HistoryConfig, HistoryPlan } from "./HistoryPlan";
+export { LexicalBuilder } from "./LexicalBuilder";
+export { PlainTextPlan } from "./PlainTextPlan";
 export {
   type DecoratorComponentProps,
   type DecoratorComponentType,
@@ -23,7 +23,7 @@ export {
   type LexicalPlanComposerProps,
   type ReactConfig,
   ReactPlan,
-} from './ReactPlan';
+} from "./ReactPlan";
 export {
   type HostMountCommandArg,
   type MountPluginCommandArg,
@@ -33,8 +33,8 @@ export {
   REACT_MOUNT_PLUGIN_COMMAND,
   REACT_PLUGIN_HOST_MOUNT_COMMAND,
   ReactPluginHostPlan,
-} from './ReactPluginHostPlan';
-export {RichTextPlan} from './RichTextPlan';
+} from "./ReactPluginHostPlan";
+export { RichTextPlan } from "./RichTextPlan";
 export {
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
@@ -49,5 +49,5 @@ export {
   type NormalizedLexicalPlanArgument,
   type PlanConfigBase,
   type RegisterState,
-} from './types';
-export {type ErrorBoundaryType} from './useReactDecorators';
+} from "./types";
+export { type ErrorBoundaryType } from "./useReactDecorators";

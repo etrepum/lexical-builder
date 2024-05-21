@@ -6,17 +6,17 @@
  *
  */
 
-import {definePlan} from './definePlan';
-import {safeCast} from './safeCast';
+import { definePlan } from "./definePlan";
+import { safeCast } from "./safeCast";
 
 export interface AutoFocusConfig {
-  defaultSelection?: 'rootStart' | 'rootEnd';
+  defaultSelection?: "rootStart" | "rootEnd";
 }
 
 export const AutoFocusPlan = definePlan({
   config: safeCast<AutoFocusConfig>({}),
-  name: '@etrepum/lexical-builder/AutoFocusPlan',
-  register(editor, {defaultSelection}) {
+  name: "@etrepum/lexical-builder/AutoFocusPlan",
+  register(editor, { defaultSelection }) {
     return editor.registerRootListener((rootElement) => {
       editor.focus(
         () => {
@@ -30,10 +30,10 @@ export const AutoFocusPlan = definePlan({
             (activeElement === null || !rootElement.contains(activeElement))
           ) {
             // Note: preventScroll won't work in Webkit.
-            rootElement.focus({preventScroll: true});
+            rootElement.focus({ preventScroll: true });
           }
         },
-        {defaultSelection},
+        { defaultSelection },
       );
     });
   },

@@ -6,11 +6,11 @@
  *
  */
 
-import type {RegisterLexicalSubscription} from './registerSubscription';
+import type { RegisterLexicalSubscription } from "./registerSubscription";
 
-import useLexicalSubscription from '@lexical/react/useLexicalSubscription';
-import {LexicalEditor} from 'lexical';
-import {useCallback} from 'react';
+import useLexicalSubscription from "@lexical/react/useLexicalSubscription";
+import { LexicalEditor } from "lexical";
+import { useCallback } from "react";
 
 export function useRegisterSubscription<T>(
   subscription: RegisterLexicalSubscription<T>,

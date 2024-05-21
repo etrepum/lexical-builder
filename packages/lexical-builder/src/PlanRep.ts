@@ -6,16 +6,16 @@
  *
  */
 
-import type {LexicalBuilder} from './LexicalBuilder';
+import type { LexicalBuilder } from "./LexicalBuilder";
 import type {
   AnyLexicalPlan,
   LexicalPlanConfig,
   LexicalPlanRegistry,
-} from './types';
+} from "./types";
 
-import invariant from './shared/invariant';
+import invariant from "./shared/invariant";
 
-import {shallowMergeConfig} from './shallowMergeConfig';
+import { shallowMergeConfig } from "./shallowMergeConfig";
 
 export class PlanRep<Plan extends AnyLexicalPlan> {
   builder: LexicalBuilder;
@@ -39,7 +39,7 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
     const pair = this.builder.planMap.get(dep);
     invariant(
       pair !== undefined,
-      'LexicalPlanBuilder: Plan %s missing dependency plan %s to be in registry',
+      "LexicalPlanBuilder: Plan %s missing dependency plan %s to be in registry",
       this.plan.name,
       dep.name,
     );

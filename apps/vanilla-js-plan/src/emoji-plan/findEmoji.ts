@@ -6,7 +6,7 @@
  *
  */
 
-import emojis from 'emoji-datasource-facebook/emoji.json';
+import emojis from "emoji-datasource-facebook/emoji.json";
 
 export type EmojiMatch = Readonly<{
   position: number;
@@ -40,18 +40,18 @@ const emojiReplacementMap = emojis.reduce<Map<string, string>>((acc, row) => {
 export default function findEmoji(text: string): EmojiMatch | null {
   const skippedText: string[] = [];
 
-  for (const word of text.split(' ')) {
+  for (const word of text.split(" ")) {
     if (!emojiReplacementMap.has(word)) {
       skippedText.push(word);
       continue;
     }
     if (skippedText.length > 0) {
       // Compensate for space between skippedText and word
-      skippedText.push('');
+      skippedText.push("");
     }
 
     return {
-      position: skippedText.join(' ').length,
+      position: skippedText.join(" ").length,
       shortcode: word,
       unifiedID: emojiReplacementMap.get(word)!,
     };

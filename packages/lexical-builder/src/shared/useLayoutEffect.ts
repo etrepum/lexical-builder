@@ -6,8 +6,8 @@
  *
  */
 
-import {useEffect, useLayoutEffect} from 'react';
-import {CAN_USE_DOM} from '@lexical/utils';
+import { useEffect, useLayoutEffect } from "react";
+import { CAN_USE_DOM } from "@lexical/utils";
 
 const useLayoutEffectImpl: typeof useLayoutEffect = CAN_USE_DOM
   ? useLayoutEffect

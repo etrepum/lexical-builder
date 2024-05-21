@@ -7,22 +7,22 @@
  */
 
 const entries: [string, string][] = [
-  ['Arabian', '#7d0000'],
-  ['Appaloosa', '#640000'],
-  ['Friesian', '#990000'],
-  ['Thoroughbred', '#bf0000'],
-  ['Warmblood', '#bf4000'],
-  ['Saddlebred', '#004000'],
-  ['Mustang', '#007f00'],
-  ['Trakehner', '#407f00'],
-  ['Quarter Horse', '#7f7f00'],
-  ['Clydesdale', '#000099'],
-  ['Paint', '#0000bf'],
-  ['Icelandic', '#0000ff'],
-  ['Andalusian', '#004040'],
-  ['Tennessee Walker', '#404040'],
-  ['Ukrainian Riding Horse', '#7f0040'],
-  ['Percheron', '#bf0040'],
+  ["Arabian", "#7d0000"],
+  ["Appaloosa", "#640000"],
+  ["Friesian", "#990000"],
+  ["Thoroughbred", "#bf0000"],
+  ["Warmblood", "#bf4000"],
+  ["Saddlebred", "#004000"],
+  ["Mustang", "#007f00"],
+  ["Trakehner", "#407f00"],
+  ["Quarter Horse", "#7f7f00"],
+  ["Clydesdale", "#000099"],
+  ["Paint", "#0000bf"],
+  ["Icelandic", "#0000ff"],
+  ["Andalusian", "#004040"],
+  ["Tennessee Walker", "#404040"],
+  ["Ukrainian Riding Horse", "#7f0040"],
+  ["Percheron", "#bf0040"],
 ];
 
 export interface UserProfile {

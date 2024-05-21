@@ -6,7 +6,7 @@
  *
  */
 
-import type {CreateEditorArgs, EditorState, LexicalEditor} from 'lexical';
+import type { CreateEditorArgs, EditorState, LexicalEditor } from "lexical";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyLexicalPlan = LexicalPlan<any, string>;
@@ -43,15 +43,17 @@ export interface LexicalPlan<
   name: Name;
   conflictsWith?: string[];
   dependencies?: AnyLexicalPlanArgument[];
-  peerDependencies?: {[k in keyof LexicalPlanRegistry]?: LexicalPeerConfig<k>};
+  peerDependencies?: {
+    [k in keyof LexicalPlanRegistry]?: LexicalPeerConfig<k>;
+  };
 
-  disableEvents?: CreateEditorArgs['disableEvents'];
-  parentEditor?: CreateEditorArgs['parentEditor'];
-  namespace?: CreateEditorArgs['namespace'];
-  nodes?: CreateEditorArgs['nodes'];
-  theme?: CreateEditorArgs['theme'];
-  html?: CreateEditorArgs['html'];
-  editable?: CreateEditorArgs['editable'];
+  disableEvents?: CreateEditorArgs["disableEvents"];
+  parentEditor?: CreateEditorArgs["parentEditor"];
+  namespace?: CreateEditorArgs["namespace"];
+  nodes?: CreateEditorArgs["nodes"];
+  theme?: CreateEditorArgs["theme"];
+  html?: CreateEditorArgs["html"];
+  editable?: CreateEditorArgs["editable"];
 
   onError?: (error: Error, editor: LexicalEditor) => void;
   $initialEditorState?: InitialEditorStateType;
@@ -69,9 +71,9 @@ export type LexicalPeerConfig<Name extends keyof LexicalPlanRegistry | string> =
     ? LexicalPlanRegistry[Name]
     : PlanConfigBase;
 
-export type LexicalPlanConfig<Plan extends AnyLexicalPlan> = Plan['config'];
+export type LexicalPlanConfig<Plan extends AnyLexicalPlan> = Plan["config"];
 
-export type LexicalPlanName<Plan extends AnyLexicalPlan> = Plan['name'];
+export type LexicalPlanName<Plan extends AnyLexicalPlan> = Plan["name"];
 
 export interface EditorHandle {
   editor: LexicalEditor;

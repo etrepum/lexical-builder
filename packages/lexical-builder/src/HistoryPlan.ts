@@ -9,10 +9,10 @@ import {
   createEmptyHistoryState,
   type HistoryState,
   registerHistory,
-} from '@lexical/history';
+} from "@lexical/history";
 
-import {definePlan} from './definePlan';
-import {safeCast} from './safeCast';
+import { definePlan } from "./definePlan";
+import { safeCast } from "./safeCast";
 
 export interface HistoryConfig {
   delay: number;
@@ -24,8 +24,8 @@ export const HistoryPlan = definePlan({
     createInitialHistoryState: createEmptyHistoryState,
     delay: 300,
   }),
-  name: '@etrepum/lexical-builder/HistoryPlan',
-  register(editor, {delay, createInitialHistoryState}) {
+  name: "@etrepum/lexical-builder/HistoryPlan",
+  register(editor, { delay, createInitialHistoryState }) {
     return registerHistory(editor, createInitialHistoryState(), delay);
   },
 });

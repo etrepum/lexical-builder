@@ -6,10 +6,10 @@
  *
  */
 
-import {Provider} from '@lexical/yjs';
-import {WebrtcProvider} from 'y-webrtc';
-import {WebsocketProvider} from 'y-websocket';
-import * as Y from 'yjs';
+import { Provider } from "@lexical/yjs";
+import { WebrtcProvider } from "y-webrtc";
+import { WebsocketProvider } from "y-websocket";
+import * as Y from "yjs";
 
 let idSuffix = 0; // In React Strict mode "new WebrtcProvider" may be called twice
 
@@ -29,7 +29,7 @@ export function createWebRTCProvider(
       reconnectTimer: 100,
     },
     signaling:
-      window.location.hostname === 'localhost' ? ['ws://localhost:1235'] : [],
+      window.location.hostname === "localhost" ? ["ws://localhost:1235"] : [],
   });
 
   // @ts-expect-error TODO: FIXME
@@ -43,7 +43,7 @@ export function createWebsocketProvider(
   const doc = getDocFromMap(id, yjsDocMap);
 
   // @ts-expect-error TODO: FIXME
-  return new WebsocketProvider('ws://localhost:1234', id, doc, {
+  return new WebsocketProvider("ws://localhost:1234", id, doc, {
     connect: false,
   });
 }

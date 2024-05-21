@@ -6,11 +6,11 @@
  *
  */
 
-import {LexicalBuilder} from '@etrepum/lexical-builder';
-import { describe, it, expect } from 'vitest';
+import { LexicalBuilder } from "@etrepum/lexical-builder";
+import { describe, it, expect } from "vitest";
 
-describe('LexicalBuilder', () => {
-  it('can be constructed', () => {
+describe("LexicalBuilder", () => {
+  it("can be constructed", () => {
     expect(() => new LexicalBuilder()).not.toThrow();
   });
 });

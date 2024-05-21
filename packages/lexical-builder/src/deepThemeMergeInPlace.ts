@@ -11,8 +11,8 @@ export function deepThemeMergeInPlace(a: unknown, b: unknown) {
     a &&
     b &&
     !Array.isArray(b) &&
-    typeof a === 'object' &&
-    typeof b === 'object'
+    typeof a === "object" &&
+    typeof b === "object"
   ) {
     const aObj = a as Record<string, unknown>;
     const bObj = b as Record<string, unknown>;

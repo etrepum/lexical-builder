@@ -5,13 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import {registerPlainText} from '@lexical/plain-text';
+import { registerPlainText } from "@lexical/plain-text";
 
-import {definePlan} from './definePlan';
+import { definePlan } from "./definePlan";
 
 export const PlainTextPlan = definePlan({
   config: {},
-  conflictsWith: ['@lexical/rich-text'],
-  name: '@lexical/plain-text',
+  conflictsWith: ["@lexical/rich-text"],
+  name: "@lexical/plain-text",
   register: registerPlainText,
 });

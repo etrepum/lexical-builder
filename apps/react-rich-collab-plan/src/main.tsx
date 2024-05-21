@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import './styles.css';
+import "./styles.css";
 
-import React, {useState} from 'react';
-import ReactDOM from 'react-dom/client';
+import React, { useState } from "react";
+import ReactDOM from "react-dom/client";
 
-import App from './App.tsx';
+import App from "./App.tsx";
 
 function Wrapper() {
   const [show, setShow] = useState(true);
@@ -18,7 +18,7 @@ function Wrapper() {
     <React.StrictMode>
       <div className="App">
         <button onClick={() => setShow((v) => !v)}>
-          {show ? 'hide' : 'show'}
+          {show ? "hide" : "show"}
         </button>
         {show && <App />}
       </div>
@@ -26,4 +26,4 @@ function Wrapper() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<Wrapper />);
+ReactDOM.createRoot(document.getElementById("root")!).render(<Wrapper />);

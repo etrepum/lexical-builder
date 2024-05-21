@@ -6,9 +6,14 @@
  *
  */
 
-import type {EditorConfig, NodeKey, SerializedTextNode, Spread} from 'lexical';
+import type {
+  EditorConfig,
+  NodeKey,
+  SerializedTextNode,
+  Spread,
+} from "lexical";
 
-import {TextNode} from 'lexical';
+import { TextNode } from "lexical";
 
 export type SerializedEmojiNode = Spread<
   {
@@ -26,7 +31,7 @@ function cacheEmoji(id: string): Promise<string> | string {
   }
   // @emoji-datasource-facebook is defined in vite.config.ts
   const promise = import(`@emoji-datasource-facebook/${id}.png`).then(
-    ({default: url}) => {
+    ({ default: url }) => {
       EMOJI_CACHE.set(id, url);
       return url;
     },
@@ -39,7 +44,7 @@ export class EmojiNode extends TextNode {
   __unifiedID: string;
 
   static getType(): string {
-    return 'emoji';
+    return "emoji";
   }
 
   static clone(node: EmojiNode): EmojiNode {
@@ -48,7 +53,7 @@ export class EmojiNode extends TextNode {
 
   constructor(unifiedID: string, key?: NodeKey) {
     const unicodeEmoji = String.fromCodePoint(
-      ...unifiedID.split('-').map((v) => parseInt(v, 16)),
+      ...unifiedID.split("-").map((v) => parseInt(v, 16)),
     );
     super(unicodeEmoji, key);
 
@@ -61,13 +66,13 @@ export class EmojiNode extends TextNode {
    * This is what Lexical renders
    */
   createDOM(_config: EditorConfig): HTMLElement {
-    const dom = document.createElement('span');
-    dom.className = 'emoji-node';
+    const dom = document.createElement("span");
+    dom.className = "emoji-node";
     const cached = cacheEmoji(this.__unifiedID);
     const setImage = (url: string) => {
       dom.style.backgroundImage = `url(${url})`;
     };
-    if (typeof cached === 'string') {
+    if (typeof cached === "string") {
       setImage(cached);
     } else {
       cached.then(setImage);
@@ -83,7 +88,7 @@ export class EmojiNode extends TextNode {
   exportJSON(): SerializedEmojiNode {
     return {
       ...super.exportJSON(),
-      type: 'emoji',
+      type: "emoji",
       unifiedID: this.__unifiedID,
     };
   }
@@ -95,7 +100,7 @@ export function $createEmojiNode(unifiedID: string): EmojiNode {
     // but are deleted as a single entity (not invdividually by character).
     // This also forces Lexical to create adjacent TextNode on user input instead of
     // modifying Emoji node as it now acts as immutable node.
-    .setMode('token');
+    .setMode("token");
 
   return node;
 }

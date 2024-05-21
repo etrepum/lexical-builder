@@ -6,7 +6,7 @@
  *
  */
 
-import type {LexicalEditor} from 'lexical';
+import type { LexicalEditor } from "lexical";
 
 export interface RegisterLexicalSubscription<T> {
   initialValueFn: (editor: LexicalEditor) => T;
