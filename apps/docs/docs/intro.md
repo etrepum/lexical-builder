@@ -9,7 +9,7 @@ sidebar_position: 1
 The intent of this package is to become or inspire a de jure standard in Lexical for a
 next generation of plug-ins.
 
-[[RFC] Lexical Builder API](https://docs.google.com/document/d/1wQYb9Y-zVb_jGyQSHYQuPuGs5xGPHBST_3OOaLXG0s0/edit#heading=h.5q7rkaxsr2ec)
+[[RFC] Lexical Builder API](https://docs.google.com/document/d/1wQYb9Y-zVb_jGyQSHYQuPuGs5xGPHBST_3OOaLXG0s0/edit)
 
 # Why?
 
