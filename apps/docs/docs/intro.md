@@ -2,46 +2,33 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# @etrepum/lexical-builder intro
 
-Let's discover **Docusaurus in less than 5 minutes**.
+**EXPERIMENTAL** A high-level way to manage Lexical config and plug-ins for any framework
 
-## Getting Started
+The intent of this package is to become or inspire a de jure standard in Lexical for a
+next generation of plug-ins.
 
-Get started by **creating a new site**.
+[[RFC] Lexical Builder API](https://docs.google.com/document/d/1wQYb9Y-zVb_jGyQSHYQuPuGs5xGPHBST_3OOaLXG0s0/edit#heading=h.5q7rkaxsr2ec)
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+# Why?
 
-### What you'll need
+Lexical Builder attempts to solve several problems with code re-use
+and scaffolding in Lexical:
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
-
-## Generate a new site
-
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+* Plug-ins can only support code that can be asynchronously added to a
+  LexicalEditor after construction, but most use cases also require
+  configuration that must be specified synchronously during construction
+  (such as any new nodes that are being registered)
+* Plug-ins are all React dependent. There is no standard to package code
+  that can support both React and non-React use cases from the same
+  package, whether or not the package has React dependencies
+* Configuration is verbose, several properties of the editor or
+  LexicalComposer have "obvious" defaults that must be specified
+* Configuration is not composable, it is not easy to copy and paste
+  an editor together because at minimum you must edit two places
+  (config and plug-ins) and the config section requires manual merging of
+  the nodes and theme properties.
+* The nature of using a context and hooks to set up the editor can be
+  cumbersome, having to author a top-level component for each piece
+  of code that has to interact with the editor
