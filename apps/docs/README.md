@@ -4,6 +4,8 @@ This website is built using [Docusaurus](https://docusaurus.io/), a modern stati
 
 All instructions are designed to be run from the root of the monorepo.
 
+https://lexical-builder.pages.dev/
+
 ### Installation
 
 ```
