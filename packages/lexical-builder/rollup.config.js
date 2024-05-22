@@ -12,6 +12,6 @@ export default [
   {
     input: "src/index.ts",
     output: [{ file: pkg.module, format: "es" }],
-    plugins: [nodeExternals(), nodeResolve(), ts({ transpiler: "swc" }), commonjs()],
+    plugins: [nodeExternals(), nodeResolve(), ts(), commonjs()],
   },
 ];

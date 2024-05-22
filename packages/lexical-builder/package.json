@@ -42,7 +42,6 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@swc/helpers": "^0.5.11",
     "rollup": "^4.17.2",
     "rollup-plugin-node-externals": "^7.1.2",
     "rollup-plugin-ts": "^3.4.5",
