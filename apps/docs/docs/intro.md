@@ -53,7 +53,7 @@ more props configuration than most beacuse of the classes
 
 ## React Rich Collab Plan
 
-- [GitHub](https://github.com/etrepum/lexical-builder/blob/main/apps/react-rich-collab-plan/src/main.ts)
+- [GitHub](https://github.com/etrepum/lexical-builder/blob/main/apps/react-rich-collab-plan/src/App.tsx)
 - [Stackblitz](https://stackblitz.com/github/etrepum/lexical-builder/tree/main/apps/react-rich-collab-plan?file=src%2FApp.tsx)
 
 This one demonstrates full compatibility with the existing React plug-in

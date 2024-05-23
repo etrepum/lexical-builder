@@ -9,7 +9,7 @@
     "prebuild": "tsc",
     "build": "vite build",
     "preview": "vite preview",
-    "server:ws": "cross-env HOST=localhost PORT=1234 YPERSISTENCE=./yjs-wss-db npx y-websocket",
+    "server:ws": "cross-env HOST=localhost PORT=1234 npx y-websocket",
     "server:webrtc": "cross-env HOST=localhost PORT=1235 npx y-webrtc"
   },
   "dependencies": {
