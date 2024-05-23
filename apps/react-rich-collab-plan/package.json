@@ -6,6 +6,7 @@
   "scripts": {
     "server:dev": "vite",
     "dev": "cross-env NODE_ENV=development concurrently \"npm:server:ws\" \"npm:server:webrtc\" \"npm:server:dev\"",
+    "stackblitz": "npm run server:dev",
     "prebuild": "tsc",
     "build": "vite build",
     "preview": "vite preview",
