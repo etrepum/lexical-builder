@@ -12,6 +12,7 @@ import {
   type EditorChildrenComponentProps,
   ReactPlan,
   RichTextPlan,
+  DragonPlan,
 } from "@etrepum/lexical-builder";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 
@@ -43,6 +44,7 @@ function EditorChildrenComponent({
 export const EditorPlan = definePlan({
   config: {},
   dependencies: [
+    DragonPlan,
     RichTextPlan,
     configPlan(ReactPlan, {
       EditorChildrenComponent,
