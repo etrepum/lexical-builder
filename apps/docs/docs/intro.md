@@ -60,3 +60,4 @@ This one demonstrates full compatibility with the existing React plug-in
 convention. The transition from using LexicalComposer to LexicalPlanCompser is
 very smooth and straightforward. When using the stackblitz go to the ports tab
 and choose 5173 if you see a page that says "okay".
+
