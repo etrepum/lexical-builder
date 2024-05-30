@@ -11,7 +11,7 @@
     "increment-version": "node ./scripts/npm/increment-version",
     "postversion": "node ./scripts/npm/postversion",
     "update-changelog": "node ./scripts/npm/update-changelog",
-    "update-version": "node ./scripts/npm/updateVersion",
+    "update-version": "node ./scripts/updateVersion",
     "update-packages": "echo update-packages && npm run update-version",
     "extract-codes": "echo extract-codes",
     "prepare-release": "npm run build"
