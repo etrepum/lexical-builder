@@ -3,6 +3,7 @@ on:
   # Run daily at 2:30am UTC
   schedule:
     - cron: '30 2 * * 1-5'
+  workflow_dispatch:
 jobs:
   increment-version:
     # prevents this action from running on forks
