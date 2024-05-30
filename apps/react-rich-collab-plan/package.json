@@ -6,12 +6,14 @@
   "scripts": {
     "server:dev": "vite",
     "dev": "cross-env NODE_ENV=development concurrently \"npm:server:ws\" \"npm:server:webrtc\" \"npm:server:dev\"",
-    "stackblitz": "npm run server:dev",
     "prebuild": "tsc",
     "build": "vite build",
     "preview": "vite preview",
     "server:ws": "cross-env HOST=localhost PORT=1234 npx y-websocket",
     "server:webrtc": "cross-env HOST=localhost PORT=1235 npx y-webrtc"
+  },
+  "stackblitz": {
+    "startCommand": "npm run server:dev"
   },
   "dependencies": {
     "@etrepum/lexical-builder": "*",
