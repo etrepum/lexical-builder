@@ -1,0 +1,12 @@
+name: Publish to NPM
+on: workflow_dispatch
+
+jobs:
+  release:
+    uses: ./.github/workflows/call-npm-publish.yml
+    with:
+      ref: main
+      dry-run: false
+      channel: latest
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
