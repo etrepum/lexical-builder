@@ -7,11 +7,21 @@
     "lint": "turbo lint",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "increment-version": "node ./scripts/npm/increment-version",
+    "postversion": "node ./scripts/npm/postversion",
+    "update-changelog": "node ./scripts/npm/update-changelog",
+    "update-version": "node ./scripts/npm/updateVersion",
+    "update-packages": "echo update-packages && npm run update-version",
+    "extract-codes": "echo extract-codes",
+    "prepare-release": "npm run build"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "child-process-promise": "^2.2.1",
+    "glob": "^10.4.1",
+    "minimist": "^1.2.8",
     "prettier": "^3.2.5",
     "turbo": "latest"
   },
@@ -26,5 +36,5 @@
     "apps/*",
     "packages/*"
   ],
-  "version": "0.0.1-nightly.0"
+  "version": "0.0.1"
 }
