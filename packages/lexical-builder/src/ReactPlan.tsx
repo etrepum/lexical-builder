@@ -21,13 +21,13 @@ import { Suspense, useEffect, useMemo, useRef } from "react";
 import { definePlan } from "./definePlan";
 import { LexicalBuilder } from "./LexicalBuilder";
 import { canShowPlaceholder } from "./registerShowPlaceholder";
-import { safeCast } from "./safeCast";
 import { shallowMergeConfig } from "./shallowMergeConfig";
 import {
   type ErrorBoundaryType,
   useReactDecorators,
 } from "./useReactDecorators";
 import { useRegisterSubscription } from "./useRegisterSubscription";
+import invariant from "./shared/invariant";
 
 export interface EditorChildrenComponentProps {
   context: LexicalComposerContextWithEditor;
@@ -37,7 +37,7 @@ export interface EditorChildrenComponentProps {
 }
 
 export type EditorChildrenComponentType = (
-  props: EditorChildrenComponentProps,
+  props: EditorChildrenComponentProps
 ) => JSX.Element | null;
 
 export interface DecoratorComponentProps {
@@ -59,7 +59,7 @@ export interface EditorComponentProps {
 }
 
 export type EditorComponentType = (
-  props: Partial<EditorComponentProps>,
+  props: Partial<EditorComponentProps>
 ) => JSX.Element;
 
 export interface ReactConfig {
@@ -70,14 +70,10 @@ export interface ReactConfig {
     | JSX.Element;
   ErrorBoundary: ErrorBoundaryType;
   EditorChildrenComponent: EditorChildrenComponentType;
-  setComponent: (
-    component: undefined | EditorComponentType,
-    context: LexicalComposerContextWithEditor,
-  ) => void;
+  Component: EditorComponentType;
+  getContext: () => LexicalComposerContextWithEditor;
   decorators: readonly DecoratorComponentType[];
 }
-
-function notImplemented() {}
 
 export interface LexicalPlanComposerProps {
   plan: AnyLexicalPlanArgument;
@@ -96,15 +92,18 @@ export function LexicalPlanComposer({
   const componentRef = useRef<EditorComponentType | undefined>(undefined);
   const handle = useMemo(() => {
     return LexicalBuilder.fromPlans(
-      [
-        ReactPlan,
-        safeCast<Partial<ReactConfig>>({
-          setComponent: (component) => {
-            componentRef.current = component;
-          },
-        }),
-      ],
-      plan,
+      {
+        name: "@lexical/builder/LexicalPlanComposer",
+        config: {},
+        dependencies: [ReactPlan],
+        register(_editor, _config, state) {
+          componentRef.current = state.getDependencyConfig(ReactPlan).Component;
+          return () => {
+            componentRef.current = undefined;
+          };
+        },
+      },
+      plan
     ).buildEditor();
   }, [plan]);
   useEffect(() => {
@@ -137,13 +136,11 @@ function DefaultEditorChildrenComponent({
   );
 }
 
-function buildEditorComponent(
-  context: LexicalComposerContextWithEditor,
-  config: ReactConfig,
-) {
+function buildEditorComponent(config: ReactConfig) {
+  const context = config.getContext();
   const [editor] = context;
   const rawConfigDecorators = config.decorators.map((El) =>
-    typeof El === "function" ? <El context={context} /> : El,
+    typeof El === "function" ? <El context={context} /> : El
   );
   return function EditorComponent(props: Partial<EditorComponentProps>) {
     const {
@@ -161,7 +158,7 @@ function buildEditorComponent(
             <Suspense fallback={null}>{decorator}</Suspense>
           </ErrorBoundary>
         )),
-      [ErrorBoundary],
+      [ErrorBoundary]
     );
     return (
       <LexicalComposerContext.Provider value={context}>
@@ -202,15 +199,24 @@ function Placeholder({
   }
 }
 
+const initialConfig: ReactConfig = {
+  EditorChildrenComponent: DefaultEditorChildrenComponent,
+  ErrorBoundary: LexicalErrorBoundary,
+  contentEditable: <ContentEditable />,
+  decorators: [],
+  placeholder: null,
+  // Initialized on registration
+  Component(): JSX.Element {
+    invariant(false, "ReactPlan used before register");
+  },
+  // Initialized on registration
+  getContext() {
+    invariant(false, "ReactPlan used before register");
+  },
+};
+
 export const ReactPlan = definePlan({
-  config: safeCast<ReactConfig>({
-    EditorChildrenComponent: DefaultEditorChildrenComponent,
-    ErrorBoundary: LexicalErrorBoundary,
-    contentEditable: <ContentEditable />,
-    decorators: [],
-    placeholder: null,
-    setComponent: notImplemented,
-  }),
+  config: initialConfig,
   mergeConfig(a, b) {
     const config = shallowMergeConfig(a, b);
     if (b && b.decorators && b.decorators.length > 0) {
@@ -224,9 +230,11 @@ export const ReactPlan = definePlan({
       editor,
       { getTheme: () => editor._config.theme },
     ];
-    config.setComponent(buildEditorComponent(context, config), context);
+    config.getContext = () => context;
+    config.Component = buildEditorComponent(config);
     return () => {
-      config.setComponent(undefined, context);
+      config.getContext = initialConfig.getContext;
+      config.Component = initialConfig.Component;
     };
   },
 });

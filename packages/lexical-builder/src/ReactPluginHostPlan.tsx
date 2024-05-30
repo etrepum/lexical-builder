@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { LexicalComposerContextWithEditor } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from "@lexical/utils";
 import {
   COMMAND_PRIORITY_CRITICAL,
@@ -17,10 +16,9 @@ import { Suspense, useEffect, useState } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { createRoot, Root } from "react-dom/client";
-import invariant from "./shared/invariant";
 
 import { configPlan, definePlan } from "./definePlan";
-import { EditorComponentType, ReactPlan } from "./ReactPlan";
+import { ReactPlan } from "./ReactPlan";
 
 export interface HostMountCommandArg {
   root: Root;
@@ -41,7 +39,7 @@ export function mountReactPluginComponent<
   opts: {
     Component: null | React.ComponentType<P>;
     props: (P & React.Attributes) | null;
-  } & Omit<MountPluginCommandArg, "element">,
+  } & Omit<MountPluginCommandArg, "element">
 ) {
   const { Component, props, ...rest } = opts;
   return mountReactPluginElement(editor, {
@@ -52,29 +50,24 @@ export function mountReactPluginComponent<
 
 export function mountReactPluginElement(
   editor: LexicalEditor,
-  opts: MountPluginCommandArg,
+  opts: MountPluginCommandArg
 ) {
   editor.dispatchCommand(REACT_MOUNT_PLUGIN_COMMAND, opts);
 }
 
 export function mountReactPluginHost(
   editor: LexicalEditor,
-  container: Container,
+  container: Container
 ) {
   editor.dispatchCommand(REACT_PLUGIN_HOST_MOUNT_COMMAND, {
     root: createRoot(container),
   });
 }
 
-const componentMap = new WeakMap<
-  LexicalEditor,
-  [EditorComponentType, LexicalComposerContextWithEditor]
->();
-
 export const REACT_PLUGIN_HOST_MOUNT_COMMAND =
   createCommand<HostMountCommandArg>("REACT_PLUGIN_HOST_MOUNT_COMMAND");
 export const REACT_MOUNT_PLUGIN_COMMAND = createCommand<MountPluginCommandArg>(
-  "REACT_MOUNT_PLUGIN_COMMAND",
+  "REACT_MOUNT_PLUGIN_COMMAND"
 );
 
 export const ReactPluginHostPlan = definePlan({
@@ -82,14 +75,6 @@ export const ReactPluginHostPlan = definePlan({
   dependencies: [
     configPlan(ReactPlan, {
       contentEditable: null,
-      setComponent(Component, context) {
-        const [editor] = context;
-        if (Component) {
-          componentMap.set(editor, [Component, context]);
-        } else {
-          componentMap.delete(editor);
-        }
-      },
     }),
   ],
   name: "@etrepum/lexical-builder/ReactPluginHostPlan",
@@ -99,7 +84,7 @@ export const ReactPluginHostPlan = definePlan({
       MountPluginCommandArg["key"],
       MountPluginCommandArg
     >();
-    const { ErrorBoundary } = state.getDependencyConfig(ReactPlan);
+    const { ErrorBoundary, Component } = state.getDependencyConfig(ReactPlan);
     function renderMountedPlugins() {
       const children: JSX.Element[] = [];
       for (const { key, element, domNode } of mountedPlugins.values()) {
@@ -124,7 +109,7 @@ export const ReactPluginHostPlan = definePlan({
             setChildren(renderMountedPlugins);
             return true;
           },
-          COMMAND_PRIORITY_EDITOR,
+          COMMAND_PRIORITY_EDITOR
         );
       }, []);
       return children;
@@ -141,27 +126,21 @@ export const ReactPluginHostPlan = definePlan({
           mountedPlugins.set(arg.key, arg);
           return false;
         },
-        COMMAND_PRIORITY_CRITICAL,
+        COMMAND_PRIORITY_CRITICAL
       ),
       editor.registerCommand(
         REACT_PLUGIN_HOST_MOUNT_COMMAND,
         (arg) => {
           root = arg.root;
-          const pair = componentMap.get(editor);
-          invariant(
-            pair !== undefined,
-            "ReactPluginHostPlan: Expecting ReactPlan to have called setComponent",
-          );
-          const [Component] = pair;
           root.render(
             <Component>
               <PluginHost />
-            </Component>,
+            </Component>
           );
           return true;
         },
-        COMMAND_PRIORITY_EDITOR,
-      ),
+        COMMAND_PRIORITY_EDITOR
+      )
     );
   },
 });
