@@ -20,9 +20,12 @@
   height: 300px;
 }
 
+.emoji-node-loaded {
+  color: transparent;
+}
+
 .emoji-node {
   caret-color: #050505;
-  color: transparent;
   background-size: 1em 1em;
   display: inline-block;
   vertical-align: top;

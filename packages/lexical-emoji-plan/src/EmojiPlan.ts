@@ -6,18 +6,32 @@
  *
  */
 
-import { definePlan } from "@etrepum/lexical-builder";
+import { definePlan, safeCast } from "@etrepum/lexical-builder";
 import { mergeRegister } from "@lexical/utils";
 import { LexicalEditor, TextNode } from "lexical";
 import { EmojiNode } from "./EmojiNode";
 import { unifiedIDFromText } from "./unifiedID";
 
+const NAME = "@etrepum/lexical-builder/emoji-plan";
+export interface EmojiPlanConfig {
+  emojiBaseUrl: string;
+  emojiClass: string;
+  emojiLoadedClass: string;
+}
+
+declare module '@etrepum/lexical-builder' {
+  interface LexicalPlanRegistry {
+    [NAME]: EmojiPlanConfig;
+  }
+}
+
 export const EmojiPlan = definePlan({
-  config: {
+  config: safeCast<EmojiPlanConfig>({
     emojiBaseUrl: `https://cdn.jsdelivr.net/npm/@etrepum/lexical-emoji-plan@${import.meta.env.PACKAGE_VERSION}/dist/emoji`,
     emojiClass: "emoji-node",
-  },
-  name: "@lexical/examples/vanilla-js/emoji-plan",
+    emojiLoadedClass: "emoji-node-loaded",
+  }),
+  name: NAME,
   nodes: [EmojiNode],
   register(editor: LexicalEditor, config, state) {
     let cleanup = editor.registerMutationListener(EmojiNode, (nodes) => {
@@ -32,8 +46,16 @@ export const EmojiPlan = definePlan({
             // emojis and plain text emojis that we do not have images for,
             // in which case we would want to have a separate class and not
             // use a background image if we don't have one.
+            const imageUrl = `${config.emojiBaseUrl}/${unifiedIDFromText(dom.innerText)}.png`;
             dom.classList.add(config.emojiClass);
-            dom.style.backgroundImage = `url(${config.emojiBaseUrl}/${unifiedIDFromText(dom.innerText)}.png)`;
+            dom.style.backgroundImage = `url(${imageUrl})`;
+            const img = new Image();
+            img.addEventListener(
+              "load",
+              () => dom.classList.add(config.emojiLoadedClass),
+              { signal: state.signal, once: true }
+            );
+            img.src = imageUrl;
           }
         }
       }
@@ -43,7 +65,7 @@ export const EmojiPlan = definePlan({
       if (!state.signal.aborted) {
         cleanup = mergeRegister(
           cleanup,
-          editor.registerNodeTransform(TextNode, $textNodeTransform),
+          editor.registerNodeTransform(TextNode, $textNodeTransform)
         );
       }
     });

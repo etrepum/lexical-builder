@@ -6,6 +6,10 @@
  *
  */
 
+/** An open interface for Name -> Config mappings */
+export interface LexicalPlanRegistry {}
+export const PACKAGE_VERSION = import.meta.env.PACKAGE_VERSION;
+
 export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
 export { configPlan, definePlan, defineRootPlan } from "./definePlan";
 export { DragonPlan } from "./DragonPlan";
@@ -46,7 +50,6 @@ export {
   type LexicalPlanArgument,
   type LexicalPlanConfig,
   type LexicalPlanName,
-  type LexicalPlanRegistry,
   type NormalizedLexicalPlanArgument,
   type PlanConfigBase,
   type RegisterState,
@@ -55,3 +58,4 @@ export {
   type ErrorBoundaryType,
   type ErrorBoundaryProps,
 } from "./useReactDecorators";
+export { safeCast } from "./safeCast";

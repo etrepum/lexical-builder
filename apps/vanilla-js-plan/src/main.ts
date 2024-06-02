@@ -31,7 +31,11 @@ const editorHandle = buildEditorFromPlans(
       DragonPlan,
       RichTextPlan,
       HistoryPlan,
-      configPlan(EmojiPlan, { emojiBaseUrl: "/assets/emoji" }),
+      configPlan(EmojiPlan, {
+        emojiClass: "emoji-node",
+        emojiLoadedClass: "emoji-node-loaded",
+        /*emojiBaseUrl: "/assets/emoji"*/
+      }),
       ReactPluginHostPlan,
     ],
     namespace: "Vanilla JS Plan Demo",
@@ -60,6 +64,6 @@ const editorHandle = buildEditorFromPlans(
         el.remove();
       };
     },
-  }),
+  })
 );
 editorHandle.editor.setRootElement(document.getElementById("lexical-editor"));

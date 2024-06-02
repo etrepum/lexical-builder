@@ -7,6 +7,7 @@
  */
 
 import type { CreateEditorArgs, EditorState, LexicalEditor } from "lexical";
+import type { LexicalPlanRegistry } from "@etrepum/lexical-builder";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyLexicalPlan = LexicalPlan<any, string>;
@@ -18,8 +19,6 @@ export type NormalizedLexicalPlanArgument<
   Config extends PlanConfigBase,
   Name extends string,
 > = [LexicalPlan<Config, Name>, Config, ...Config[]];
-
-export interface LexicalPlanRegistry {}
 
 export interface RegisterState {
   signal: AbortSignal;

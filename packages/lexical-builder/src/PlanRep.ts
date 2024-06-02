@@ -10,8 +10,8 @@ import type { LexicalBuilder } from "./LexicalBuilder";
 import type {
   AnyLexicalPlan,
   LexicalPlanConfig,
-  LexicalPlanRegistry,
 } from "./types";
+import type { LexicalPlanRegistry } from "@etrepum/lexical-builder";
 
 import invariant from "./shared/invariant";
 
