@@ -9,7 +9,6 @@ import type {
   AnyLexicalPlan,
   AnyLexicalPlanArgument,
   EditorHandle,
-  LexicalRootPlan,
 } from "./types";
 
 import {
@@ -46,13 +45,10 @@ export class LexicalBuilder {
   }
 
   static fromPlans(
-    rootPlan: LexicalRootPlan | AnyLexicalPlanArgument,
+    rootPlan: AnyLexicalPlanArgument,
     ...args: AnyLexicalPlanArgument[]
   ): LexicalBuilder {
     const builder = new LexicalBuilder();
-    if (!("name" in rootPlan || "config" in rootPlan)) {
-      Object.assign(rootPlan, { name: "[LexicalRootPlan]", config: {} });
-    }
     builder.addPlan(rootPlan);
     for (const plan of args) {
       builder.addPlan(plan);
