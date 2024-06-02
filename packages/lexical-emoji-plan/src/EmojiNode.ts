@@ -20,11 +20,11 @@ export type SerializedEmojiNode = Spread<
 /**
  * EmojiNode doesn't really need to override any of TextNode's functionality,
  * other than these serialization and type related static methods.
- * 
+ *
  * The behavior is augmented in $createEmojiNode where we set mode to token
  * so it is treated as an "atomic" unit and not considered for further text
  * transforms.
- * 
+ *
  * The display behavior is all implemented in the mutation listener set up
  * by EmojiPlan.
  */
@@ -49,15 +49,16 @@ export class EmojiNode extends TextNode {
   }
 }
 
+/**
+ * @param text The emoji string (a decoded unified id)
+ * @returns the EmojiNode
+ */
 export function $createEmojiNode(text: string): EmojiNode {
-  const node = new EmojiNode(text)
-    // In token mode node can be navigated through character-by-character,
-    // but are deleted as a single entity (not invdividually by character).
-    // This also forces Lexical to create adjacent TextNode on user input instead of
-    // modifying Emoji node as it now acts as immutable node.
-    .setMode("token");
-
-  return node;
+  // In token mode node can be navigated through character-by-character,
+  // but are deleted as a single entity (not invdividually by character).
+  // This also forces Lexical to create adjacent TextNode on user input instead of
+  // modifying Emoji node as it now acts as immutable node.
+  return new EmojiNode(text).setMode("token");
 }
 
 export function $isEmojiNode(

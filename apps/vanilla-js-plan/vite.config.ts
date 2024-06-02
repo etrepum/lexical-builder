@@ -5,28 +5,26 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import path from "path";
-import { defineConfig } from "vite";
-import dataPlugin from "vite-plugin-data";
+import { fileURLToPath } from "node:url";
+import { defineConfig, normalizePath } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-import { normalizePath } from "vite";
-import { createRequire } from "node:module";
-const require = createRequire(import.meta.url);
+import { resolve } from "import-meta-resolve";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    dataPlugin(),
     viteStaticCopy({
       targets: [
         {
           src: normalizePath(
-            path.resolve(
-              require.resolve("emoji-datasource-facebook"),
-              "../img/facebook/64/*.png"
+            fileURLToPath(
+              resolve(
+                "@etrepum/lexical-emoji-plan/dist/emoji/*.png",
+                import.meta.url
+              )
             )
           ),
-          dest: "../public/emoji",
+          dest: "./assets/emoji",
         },
       ],
     }),

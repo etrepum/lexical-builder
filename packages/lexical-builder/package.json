@@ -6,6 +6,7 @@
     "lexical",
     "editor",
     "builder",
+    "lexical-builder",
     "configuration",
     "plugin",
     "plug-in"

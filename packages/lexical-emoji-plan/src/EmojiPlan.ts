@@ -14,7 +14,7 @@ import { unifiedIDFromText } from "./unifiedID";
 
 export const EmojiPlan = definePlan({
   config: {
-    emojiBaseUrl: "/emoji",
+    emojiBaseUrl: "/assets/emoji",
     emojiClass: "emoji-node",
   },
   name: "@lexical/examples/vanilla-js/emoji-plan",
@@ -22,14 +22,16 @@ export const EmojiPlan = definePlan({
   register(editor: LexicalEditor, config, state) {
     let cleanup = editor.registerMutationListener(EmojiNode, (nodes) => {
       // Everything we already need is in the DOM, otherwise we would
-      // want to get the node reference from here as well.
-      // We could do it from the node class itself, of course, but in
-      // order to pass configuration it would require an awkward
-      // WeakMap<LexicalEditor, Config> or similar approach.
+      // want to get the node reference from here as well
+      // (using editor.update and $getNodeByKey).
       for (const [nodeKey, mutation] of nodes) {
         if (mutation !== "destroyed") {
           const dom = editor.getElementByKey(nodeKey);
           if (dom) {
+            // A possible future enhancement would be to allow both image
+            // emojis and plain text emojis that we do not have images for,
+            // in which case we would want to have a separate class and not
+            // use a background image if we don't have one.
             dom.classList.add(config.emojiClass);
             dom.style.backgroundImage = `url(${config.emojiBaseUrl}/${unifiedIDFromText(dom.innerText)}.png)`;
           }

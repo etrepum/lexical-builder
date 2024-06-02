@@ -8,6 +8,7 @@
 import "./styles.css";
 
 import {
+  configPlan,
   DragonPlan,
   HistoryPlan,
   LexicalBuilder,
@@ -20,7 +21,7 @@ import { TreeView } from "@lexical/react/LexicalTreeView";
 import { LexicalEditor } from "lexical";
 
 import { $prepopulatedRichText } from "./$prepopulatedRichText";
-import { EmojiPlan } from "./emoji-plan/EmojiPlan";
+import { EmojiPlan } from "@etrepum/lexical-emoji-plan";
 
 const editorHandle = LexicalBuilder.fromPlans({
   $initialEditorState: $prepopulatedRichText,
@@ -29,7 +30,7 @@ const editorHandle = LexicalBuilder.fromPlans({
     DragonPlan,
     RichTextPlan,
     HistoryPlan,
-    EmojiPlan,
+    configPlan(EmojiPlan, { emojiBaseUrl: "/assets/emoji" }),
     ReactPluginHostPlan,
   ],
   name: "@lexical/examples/vanilla-js-plan",

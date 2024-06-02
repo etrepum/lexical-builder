@@ -40,5 +40,5 @@ export function $textNodeTransform(node: TextNode): void {
   }
 
   const emojiNode = $createEmojiNode(emojiMatch.emoji);
-  targetNode.replace(emojiNode);
+  targetNode!.replace(emojiNode);
 }

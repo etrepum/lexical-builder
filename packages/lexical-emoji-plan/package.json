@@ -1,0 +1,53 @@
+{
+  "name": "@etrepum/lexical-emoji-plan",
+  "description": "[EXPERIMENTAL] EmojiNode as a lazy loaded vanilla JS lexical plan",
+  "type": "module",
+  "keywords": [
+    "lexical",
+    "lexical-builder",
+    "emoji",
+    "plug-in",
+    "plan"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "version": "0.0.2",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etrepum/lexical-builder.git",
+    "directory": "packages/lexical-emoji-plan"
+  },
+  "bugs": {
+    "url": "https://github.com/etrepum/lexical-builder/issues"
+  },
+  "homepage": "https://github.com/etrepum/lexical-builder",
+  "dependencies": {
+    "@etrepum/lexical-builder": "*",
+    "@repo/typescript-config": "*",
+    "emoji-datasource-facebook": "15.1.2"
+  },
+  "peerDependencies": {
+    "@lexical/utils": ">=0.15.0",
+    "lexical": ">=0.15.0"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vite-plugin-data": "^0.2.5",
+    "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-static-copy": "^1.0.5",
+    "vitest": "^1.6.0"
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ]
+}

@@ -22,9 +22,9 @@ const emojiReplacementMap = supportedEmojis
   .split("\n")
   .reduce<Map<string, string>>((acc, line) => {
     const [emoji, short_name, ...texts] = line.split(" ");
-    acc.set(`:${short_name}:`, emoji);
+    acc.set(`:${short_name}:`, emoji!);
     for (const text of texts) {
-      acc.set(text, emoji);
+      acc.set(text, emoji!);
     }
     return acc;
   }, new Map());
@@ -35,7 +35,7 @@ const emojiReplacementMap = supportedEmojis
 export default function findEmoji(text: string): EmojiMatch | null {
   const words = text.split(" ");
   for (let i = 0, position = 0; i < words.length; i++) {
-    const word = words[i];
+    const word = words[i]!;
     const emoji = emojiReplacementMap.get(word);
     if (
       emoji &&
