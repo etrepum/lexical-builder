@@ -2,6 +2,14 @@ name: Publish to NPM
 on:
   workflow_dispatch:
     inputs:
+      channel:
+        description: 'release channel'
+        type: choice
+        options:
+          - latest
+          - next
+          - nightly
+        default: latest
       otp:
         description: '(optional) one-time password'
         type: string
@@ -10,9 +18,9 @@ jobs:
   release:
     uses: ./.github/workflows/call-npm-publish.yml
     with:
-      ref: main
+      ref: refs/heads/${{ inputs.channel }}__release
       dry-run: false
-      channel: latest
+      channel: ${{ inputs.channel }}
       otp: ${{ inputs.otp }}
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
