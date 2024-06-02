@@ -6,56 +6,51 @@
  *
  */
 
-import emojis from "emoji-datasource-facebook/emoji.json";
+import { supportedEmojis } from "./supportedEmojis.data";
 
 export type EmojiMatch = Readonly<{
   position: number;
   shortcode: string;
-  unifiedID: string;
+  emoji: string;
 }>;
 
 /**
- * Map where keys are possible replacements while values are unified emoji IDs
- * These IDs are essentially hex encoded UTF-8 characters
+ * Map where keys are possible replacements while values are emoji
+ * in text form
  */
-const emojiReplacementMap = emojis.reduce<Map<string, string>>((acc, row) => {
-  if (!row.has_img_facebook) {
+const emojiReplacementMap = supportedEmojis
+  .split("\n")
+  .reduce<Map<string, string>>((acc, line) => {
+    const [emoji, short_name, ...texts] = line.split(" ");
+    acc.set(`:${short_name}:`, emoji);
+    for (const text of texts) {
+      acc.set(text, emoji);
+    }
     return acc;
-  }
-  acc.set(`:${row.short_name}:`, row.unified);
-
-  if (row.text != null) {
-    acc.set(row.text, row.unified);
-  }
-  if (row.texts != null) {
-    row.texts.forEach((text) => acc.set(text, row.unified));
-  }
-
-  return acc;
-}, new Map());
+  }, new Map());
 
 /**
  * Finds emoji shortcodes in text and if found - returns its position in text, matched shortcode and unified ID
  */
 export default function findEmoji(text: string): EmojiMatch | null {
-  const skippedText: string[] = [];
-
-  for (const word of text.split(" ")) {
-    if (!emojiReplacementMap.has(word)) {
-      skippedText.push(word);
-      continue;
+  const words = text.split(" ");
+  for (let i = 0, position = 0; i < words.length; i++) {
+    const word = words[i];
+    const emoji = emojiReplacementMap.get(word);
+    if (
+      emoji &&
+      // only consider matches for the unique :shortname: unless it's not at the
+      // end of the text. This avoids having smileys taking precedence over
+      // emoji with longer names (e.g. :b vs. :bear: or :p vs. :pig:)
+      (text.length > position + word.length || word.endsWith(":"))
+    ) {
+      return {
+        position,
+        shortcode: word,
+        emoji,
+      };
     }
-    if (skippedText.length > 0) {
-      // Compensate for space between skippedText and word
-      skippedText.push("");
-    }
-
-    return {
-      position: skippedText.join(" ").length,
-      shortcode: word,
-      unifiedID: emojiReplacementMap.get(word)!,
-    };
+    position += word.length + 1;
   }
-
   return null;
 }

@@ -7,48 +7,44 @@
  */
 
 import { definePlan } from "@etrepum/lexical-builder";
+import { mergeRegister } from "@lexical/utils";
 import { LexicalEditor, TextNode } from "lexical";
-
-import { $createEmojiNode, EmojiNode } from "./EmojiNode";
-import findEmoji from "./findEmoji";
-
-function $textNodeTransform(node: TextNode): void {
-  if (!node.isSimpleText() || node.hasFormat("code")) {
-    return;
-  }
-
-  const text = node.getTextContent();
-
-  // Find only 1st occurrence as transform will be re-run anyway for the rest
-  // because newly inserted nodes are considered to be dirty
-  const emojiMatch = findEmoji(text);
-  if (emojiMatch === null) {
-    return;
-  }
-
-  let targetNode;
-  if (emojiMatch.position === 0) {
-    // First text chunk within string, splitting into 2 parts
-    [targetNode] = node.splitText(
-      emojiMatch.position + emojiMatch.shortcode.length,
-    );
-  } else {
-    // In the middle of a string
-    [, targetNode] = node.splitText(
-      emojiMatch.position,
-      emojiMatch.position + emojiMatch.shortcode.length,
-    );
-  }
-
-  const emojiNode = $createEmojiNode(emojiMatch.unifiedID);
-  targetNode.replace(emojiNode);
-}
+import { EmojiNode } from "./EmojiNode";
+import { unifiedIDFromText } from "./unifiedID";
 
 export const EmojiPlan = definePlan({
-  config: {},
+  config: {
+    emojiBaseUrl: "/emoji",
+    emojiClass: "emoji-node",
+  },
   name: "@lexical/examples/vanilla-js/emoji-plan",
   nodes: [EmojiNode],
-  register(editor: LexicalEditor) {
-    return editor.registerNodeTransform(TextNode, $textNodeTransform);
+  register(editor: LexicalEditor, config, state) {
+    let cleanup = editor.registerMutationListener(EmojiNode, (nodes) => {
+      // Everything we already need is in the DOM, otherwise we would
+      // want to get the node reference from here as well.
+      // We could do it from the node class itself, of course, but in
+      // order to pass configuration it would require an awkward
+      // WeakMap<LexicalEditor, Config> or similar approach.
+      for (const [nodeKey, mutation] of nodes) {
+        if (mutation !== "destroyed") {
+          const dom = editor.getElementByKey(nodeKey);
+          if (dom) {
+            dom.classList.add(config.emojiClass);
+            dom.style.backgroundImage = `url(${config.emojiBaseUrl}/${unifiedIDFromText(dom.innerText)}.png)`;
+          }
+        }
+      }
+    });
+    // Defer loading of the transform which needs to load the emoji JSON
+    import("./$textNodeTransform").then(({ $textNodeTransform }) => {
+      if (!state.signal.aborted) {
+        cleanup = mergeRegister(
+          cleanup,
+          editor.registerNodeTransform(TextNode, $textNodeTransform)
+        );
+      }
+    });
+    return () => cleanup();
   },
 });

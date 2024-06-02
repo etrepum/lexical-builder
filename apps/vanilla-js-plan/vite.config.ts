@@ -7,17 +7,28 @@
  */
 import path from "path";
 import { defineConfig } from "vite";
+import dataPlugin from "vite-plugin-data";
+import { viteStaticCopy } from "vite-plugin-static-copy";
+import { normalizePath } from "vite";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  resolve: {
-    alias: {
-      "@emoji-datasource-facebook": path.resolve(
-        require.resolve("emoji-datasource-facebook"),
-        "../img/facebook/64/",
-      ),
-    },
-  },
+  plugins: [
+    dataPlugin(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: normalizePath(
+            path.resolve(
+              require.resolve("emoji-datasource-facebook"),
+              "../img/facebook/64/*.png"
+            )
+          ),
+          dest: "../public/emoji",
+        },
+      ],
+    }),
+  ],
 });

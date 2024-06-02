@@ -6,96 +6,51 @@
  *
  */
 
-import type {
-  EditorConfig,
-  NodeKey,
-  SerializedTextNode,
-  Spread,
-} from "lexical";
+import type { LexicalNode, SerializedTextNode, Spread } from "lexical";
 
 import { TextNode } from "lexical";
 
 export type SerializedEmojiNode = Spread<
   {
-    unifiedID: string;
+    type: ReturnType<typeof EmojiNode.getType>;
   },
   SerializedTextNode
 >;
 
-const EMOJI_CACHE = new Map<string, string | Promise<string>>();
-
-function cacheEmoji(id: string): Promise<string> | string {
-  const rval = EMOJI_CACHE.get(id);
-  if (rval) {
-    return rval;
-  }
-  // @emoji-datasource-facebook is defined in vite.config.ts
-  const promise = import(`@emoji-datasource-facebook/${id}.png`).then(
-    ({ default: url }) => {
-      EMOJI_CACHE.set(id, url);
-      return url;
-    },
-  );
-  EMOJI_CACHE.set(id, promise);
-  return promise;
-}
-
+/**
+ * EmojiNode doesn't really need to override any of TextNode's functionality,
+ * other than these serialization and type related static methods.
+ * 
+ * The behavior is augmented in $createEmojiNode where we set mode to token
+ * so it is treated as an "atomic" unit and not considered for further text
+ * transforms.
+ * 
+ * The display behavior is all implemented in the mutation listener set up
+ * by EmojiPlan.
+ */
 export class EmojiNode extends TextNode {
-  __unifiedID: string;
-
-  static getType(): string {
+  static getType(): "emoji" {
     return "emoji";
   }
 
   static clone(node: EmojiNode): EmojiNode {
-    return new EmojiNode(node.__unifiedID, node.__key);
-  }
-
-  constructor(unifiedID: string, key?: NodeKey) {
-    const unicodeEmoji = String.fromCodePoint(
-      ...unifiedID.split("-").map((v) => parseInt(v, 16)),
-    );
-    super(unicodeEmoji, key);
-
-    this.__unifiedID = unifiedID.toLowerCase();
-    cacheEmoji(this.__unifiedID);
-  }
-
-  /**
-   * DOM that will be rendered by browser within contenteditable
-   * This is what Lexical renders
-   */
-  createDOM(_config: EditorConfig): HTMLElement {
-    const dom = document.createElement("span");
-    dom.className = "emoji-node";
-    const cached = cacheEmoji(this.__unifiedID);
-    const setImage = (url: string) => {
-      dom.style.backgroundImage = `url(${url})`;
-    };
-    if (typeof cached === "string") {
-      setImage(cached);
-    } else {
-      cached.then(setImage);
-    }
-    dom.innerText = this.__text;
-    return dom;
+    return new EmojiNode(node.__text, node.__key);
   }
 
   static importJSON(serializedNode: SerializedEmojiNode): EmojiNode {
-    return $createEmojiNode(serializedNode.unifiedID);
+    return $createEmojiNode(serializedNode.text);
   }
 
   exportJSON(): SerializedEmojiNode {
     return {
       ...super.exportJSON(),
       type: "emoji",
-      unifiedID: this.__unifiedID,
     };
   }
 }
 
-export function $createEmojiNode(unifiedID: string): EmojiNode {
-  const node = new EmojiNode(unifiedID)
+export function $createEmojiNode(text: string): EmojiNode {
+  const node = new EmojiNode(text)
     // In token mode node can be navigated through character-by-character,
     // but are deleted as a single entity (not invdividually by character).
     // This also forces Lexical to create adjacent TextNode on user input instead of
@@ -103,4 +58,10 @@ export function $createEmojiNode(unifiedID: string): EmojiNode {
     .setMode("token");
 
   return node;
+}
+
+export function $isEmojiNode(
+  node: LexicalNode | null | undefined
+): node is EmojiNode {
+  return node instanceof EmojiNode;
 }
