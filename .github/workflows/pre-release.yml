@@ -1,5 +1,10 @@
 name: Publish to NPM
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      otp:
+        description: '(optional) one-time password'
+        type: string
 
 jobs:
   release:
@@ -8,5 +13,6 @@ jobs:
       ref: main
       dry-run: false
       channel: latest
+      otp: ${{ inputs.otp }}
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

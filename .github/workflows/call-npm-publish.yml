@@ -11,6 +11,9 @@ on:
       channel:
         required: true
         type: string
+      otp:
+        required: false
+        type: string
     secrets:
       NPM_TOKEN:
         required: true
@@ -34,3 +37,4 @@ jobs:
       - run: node ./scripts/npm/release.js --non-interactive $DRY_RUN_ARG --channel='${{ inputs.channel }}'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_OTP: ${{ inputs.otp }}

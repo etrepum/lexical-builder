@@ -9,59 +9,68 @@
  */
 /* eslint-disable turbo/no-undeclared-env-vars */
 
-'use strict';
+"use strict";
 
-const {spawn} = require('child-process-promise');
-const argv = require('minimist')(process.argv.slice(2));
+const { spawn } = require("child-process-promise");
 
-const increment = argv.i || process.env.INCREMENT;
-const channel = argv.channel || process.env.CHANNEL;
-
-const validChannels = new Set(['next', 'latest', 'nightly', 'dev']);
-if (!validChannels.has(channel)) {
-  console.error(`Invalid value for channel: ${channel}`);
+const { INCREMENT, CHANNEL, npm_package_version, GIT_REPO, LATEST_RELEASE } = process.env;
+for (const [k, v] of Object.entries({
+  INCREMENT,
+  CHANNEL,
+  GIT_REPO,
+  npm_package_version,
+  LATEST_RELEASE,
+})) {
+  if (!v && !(k === 'LATEST_RELEASE' && CHANNEL !== 'latest')) {
+    console.error(`Expecting ${k} to be set in the environment`);
+    process.exit(1);
+  }
+}
+const validChannels = new Set(["next", "latest", "nightly", "dev"]);
+if (!validChannels.has(CHANNEL)) {
+  console.error(`Invalid value for channel: ${CHANNEL}`);
   process.exit(1);
 }
 
-const validIncrements = new Set(['minor', 'patch', 'prerelease']);
+const validIncrements = new Set(["minor", "patch", "prerelease"]);
 if (
-  !validIncrements.has(increment) ||
-  (channel === 'nightly' && increment !== 'prerelease')
+  !validIncrements.has(INCREMENT) ||
+  (CHANNEL === "nightly" && INCREMENT !== "prerelease")
 ) {
   console.error(
-    `Invalid value for increment in ${channel} channel: ${increment}`,
+    `Invalid value for increment in ${CHANNEL} channel: ${INCREMENT}`
   );
   process.exit(1);
 }
 
 function incrementArgs() {
   return [
-    ...(increment === 'prerelease'
+    ...(INCREMENT === "prerelease"
       ? [
-          '--preid',
-          channel === 'nightly'
-            ? `${channel}.${new Date()
+          "--preid",
+          CHANNEL === "nightly"
+            ? `${CHANNEL}.${new Date()
                 .toISOString()
-                .split('T')[0]
-                .replaceAll('-', '')}`
-            : channel,
+                .split("T")[0]
+                .replaceAll("-", "")}`
+            : CHANNEL,
         ]
       : []),
-    increment,
+    INCREMENT,
   ];
 }
 
 async function incrementVersion() {
   const commandArr = [
-    'npm',
-    'version',
-    '--no-git-tag-version',
-    '--include-workspace-root',
-    'true',
+    "npm",
+    "version",
+    "--no-git-tag-version",
+    "--include-workspace-root",
+    "true",
     ...incrementArgs(),
   ];
-  console.log(commandArr.join(' '));
-  await spawn(commandArr[0], commandArr.slice(1), {stdio: 'inherit'});
+  console.log(commandArr.join(" "));
+  await spawn(commandArr[0], commandArr.slice(1), { stdio: "inherit" });
 }
 
 incrementVersion();

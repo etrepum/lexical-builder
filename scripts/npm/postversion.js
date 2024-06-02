@@ -8,13 +8,14 @@
  *
  */
 
-'use strict';
+"use strict";
 
 /* eslint-disable turbo/no-undeclared-env-vars */
 
-const {spawn} = require('child-process-promise');
+const { spawn } = require("child-process-promise");
 
-const {npm_package_version, CHANNEL, GIT_REPO, GITHUB_OUTPUT} = process.env;
+const { npm_package_version, CHANNEL, GIT_REPO, GITHUB_OUTPUT, DRY_RUN } =
+  process.env;
 
 // Previously this script was defined directly in package.json as the
 // following (in one line):
@@ -43,7 +44,7 @@ async function main() {
   }
   const commands = [
     // Create or force update the channel branch to build the docs site from
-    ['git', 'checkout', '-B', `${CHANNEL}__release`],
+    ["git", "checkout", "-B", `${CHANNEL}__release`],
     // Update all package.json versions in the monorepo
     `npm run update-version`,
     // Update package-lock.json
@@ -51,17 +52,17 @@ async function main() {
     // Fix up all package.json files
     `npm run update-packages`,
     // Extract error codes and update changelog, but only in production
-    ...(CHANNEL === 'latest'
+    ...(CHANNEL === "latest"
       ? [`npm run extract-codes`, `npm run update-changelog`]
       : []),
     `git add -A`,
-    ['git', 'commit', '-m', `v${npm_package_version}`],
+    ["git", "commit", "-m", `v${npm_package_version}`],
     [
-      'git',
-      'tag',
-      '-a',
+      "git",
+      "tag",
+      "-a",
       `v${npm_package_version}`,
-      '-m',
+      "-m",
       `v${npm_package_version}`,
     ],
   ];
@@ -69,31 +70,31 @@ async function main() {
     `refs/tags/v${npm_package_version}`,
     `refs/heads/${CHANNEL}__release`,
   ];
-  if (CHANNEL !== 'nightly') {
+  if (CHANNEL !== "nightly") {
     // Create or force update the remote version branch for creating a PR
     refs.push(
-      `refs/heads/${CHANNEL}__release:refs/heads/${npm_package_version}__release`,
+      `refs/heads/${CHANNEL}__release:refs/heads/${npm_package_version}__release`
     );
   }
   commands.push([
-    'git',
-    'push',
-    ...(process.env.DRY_RUN === '1' ? ['--dry-run'] : []),
+    "git",
+    "push",
+    ...(DRY_RUN === "1" ? ["--dry-run"] : []),
     GIT_REPO,
     ...refs.map((ref) => `+${ref}`),
   ]);
   if (GITHUB_OUTPUT) {
     commands.push(
-      `echo "version=${npm_package_version}" >> '${GITHUB_OUTPUT}'`,
+      `echo "version=${npm_package_version}" >> '${GITHUB_OUTPUT}'`
     );
     commands.push(`echo "tag-ref=${refs[0]}" >> '${GITHUB_OUTPUT}'`);
   }
   for (const command of commands) {
     const commandArr = Array.isArray(command)
       ? command
-      : ['bash', '-c', command];
-    console.log(commandArr.join(' '));
-    await spawn(commandArr[0], commandArr.slice(1), {stdio: 'inherit'});
+      : ["bash", "-c", command];
+    console.log(commandArr === command ? commandArr.join(" ") : command);
+    await spawn(commandArr[0], commandArr.slice(1), { stdio: "inherit" });
   }
 }
 main();

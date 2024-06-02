@@ -8,17 +8,20 @@
  *
  */
 
-'use strict';
+"use strict";
 
-const readline = require('readline');
-const {exec} = require('child-process-promise');
-const {packagesManager} = require('../shared/packagesManager');
-const argv = require('minimist')(process.argv.slice(2));
+const readline = require("readline");
+const { spawn } = require("child-process-promise");
+const { packagesManager } = require("../shared/packagesManager");
+const argv = require("minimist")(process.argv.slice(2));
 
-const nonInteractive = argv['non-interactive'];
-const dryRun = argv['dry-run'];
+const nonInteractive = argv["non-interactive"];
+const dryRun = argv["dry-run"];
 const channel = argv.channel;
-const validChannels = new Set(['next', 'latest', 'nightly', 'dev']);
+// eslint-disable-next-line turbo/no-undeclared-env-vars
+const { OTP } = process.env;
+
+const validChannels = new Set(["next", "latest", "nightly", "dev"]);
 if (!validChannels.has(channel)) {
   console.error(`Invalid release channel: ${channel}`);
   process.exit(1);
@@ -29,23 +32,32 @@ async function publish() {
   if (!nonInteractive) {
     console.info(
       `You're about to publish:
-    ${pkgs.map((pkg) => pkg.getNpmName()).join('\n')}
+${pkgs.map((pkg) => pkg.getNpmName()).join("\n")}
 
-    Type "publish" to confirm.`,
+Type "publish" to confirm.`
     );
     await waitForInput();
   }
 
+  const cmd = [
+    "npm",
+    "publish",
+    "--access",
+    "public",
+    "--tag",
+    channel,
+    ...(dryRun ? ["--dry-run"] : []),
+    ...(OTP ? ["--otp", OTP] : []),
+  ];
   for (const pkg of pkgs) {
     console.info(`Publishing ${pkg.getNpmName()}...`);
-    if (dryRun === undefined || dryRun === 0) {
-      await exec(
-        `cd ./packages/${pkg.getDirectoryName()} && npm publish --access public --tag ${channel}`,
-      );
-      console.info(`Done!`);
-    } else {
-      console.info(`Dry run - skipping publish step.`);
-    }
+    const cwd = `./packages/${pkg.getDirectoryName()}`;
+    console.log(`cd ${cwd} && ${cmd.join(" ")}`);
+    await spawn(cmd[0], cmd.slice(1), {
+      stdio: "inherit",
+      cwd,
+    });
+    console.info(`Done!`);
   }
 }
 
@@ -57,8 +69,8 @@ async function waitForInput() {
       terminal: false,
     });
 
-    rl.on('line', function (line) {
-      if (line === 'publish') {
+    rl.on("line", function (line) {
+      if (line === "publish") {
         rl.close();
         resolve();
       }
