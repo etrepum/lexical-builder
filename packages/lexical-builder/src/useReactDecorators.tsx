@@ -14,7 +14,7 @@ import { createPortal, flushSync } from "react-dom";
 import useLayoutEffect from "./shared/useLayoutEffect";
 import invariant from "./shared/invariant";
 
-type ErrorBoundaryProps = {
+export type ErrorBoundaryProps = {
   children: JSX.Element;
   onError: (error: Error) => void;
 };

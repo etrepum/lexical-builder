@@ -17,11 +17,11 @@ const TEST_MAP = {
 describe("unifiedIDFromText", () => {
   Object.entries(TEST_MAP).forEach(([k, v]) =>
     it(`${v} -> ${k}`, () =>
-      expect(unifiedIDFromText(v).toUpperCase()).toEqual(k))
+      expect(unifiedIDFromText(v).toUpperCase()).toEqual(k)),
   );
 });
 describe("unifiedIDFromText", () => {
   Object.entries(TEST_MAP).forEach(([k, v]) =>
-    it(`${v} -> ${k}`, () => expect(textFromUnifiedID(k)).toEqual(v))
+    it(`${v} -> ${k}`, () => expect(textFromUnifiedID(k)).toEqual(v)),
   );
 });

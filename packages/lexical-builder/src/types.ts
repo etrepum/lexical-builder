@@ -36,13 +36,6 @@ export type LexicalPlanArgument<
   Name extends string,
 > = LexicalPlan<Config, Name> | NormalizedLexicalPlanArgument<Config, Name>;
 
-/** The first argument to LexicalBuilder.fromPlans may be a LexicalPlan without name or config */
-export interface LexicalRootPlan
-  extends Omit<LexicalPlan<PlanConfigBase, "">, "name" | "config"> {
-  name: never;
-  config: never;
-}
-
 export interface LexicalPlan<
   Config extends PlanConfigBase = PlanConfigBase,
   Name extends string = string,

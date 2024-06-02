@@ -7,10 +7,10 @@
  */
 
 export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
-export { configPlan, definePlan } from "./definePlan";
+export { configPlan, definePlan, defineRootPlan } from "./definePlan";
 export { DragonPlan } from "./DragonPlan";
 export { type HistoryConfig, HistoryPlan } from "./HistoryPlan";
-export { LexicalBuilder } from "./LexicalBuilder";
+export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
 export { PlainTextPlan } from "./PlainTextPlan";
 export {
   type DecoratorComponentProps,
@@ -27,6 +27,7 @@ export {
 export {
   type HostMountCommandArg,
   type MountPluginCommandArg,
+  type Container,
   mountReactPluginComponent,
   mountReactPluginElement,
   mountReactPluginHost,
@@ -50,4 +51,7 @@ export {
   type PlanConfigBase,
   type RegisterState,
 } from "./types";
-export { type ErrorBoundaryType } from "./useReactDecorators";
+export {
+  type ErrorBoundaryType,
+  type ErrorBoundaryProps,
+} from "./useReactDecorators";

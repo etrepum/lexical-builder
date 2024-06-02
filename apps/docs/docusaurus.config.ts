@@ -24,15 +24,7 @@ const config: Config = {
     locales: ["en"],
   },
 
-  plugins: [
-    [
-      "docusaurus-plugin-typedoc",
-      {
-        entryPoints: ["../../packages/lexical-builder/src/index.ts"],
-        tsconfig: "../../packages/lexical-builder/tsconfig.json",
-      },
-    ],
-  ],
+  plugins: ["docusaurus-plugin-typedoc"],
 
   presets: [
     [

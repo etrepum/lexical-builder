@@ -1,0 +1,7 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["../../packages/lexical-*"],
+  "name": "Lexical Builder",
+  "entryPointStrategy": "packages",
+  "includeVersion": true
+}

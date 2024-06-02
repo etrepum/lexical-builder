@@ -24,7 +24,7 @@ export interface HostMountCommandArg {
   root: Root;
 }
 
-type Container = Element | DocumentFragment;
+export type Container = Element | DocumentFragment;
 
 export interface MountPluginCommandArg {
   key: string;

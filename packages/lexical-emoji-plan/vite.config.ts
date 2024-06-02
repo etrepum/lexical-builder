@@ -11,9 +11,10 @@ import dataPlugin from "vite-plugin-data";
 import dts from "vite-plugin-dts";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { normalizePath } from "vite";
+import packageVersion from "vite-plugin-package-version";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
-const pkg = require("./package.json");
+
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
@@ -23,10 +24,12 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: Object.keys(pkg.peerDependencies),
+      // Anything that does not start with . or / is external
+      external: /^[^./]/,
     },
   },
   plugins: [
+    packageVersion(),
     dataPlugin(),
     viteStaticCopy({
       targets: [

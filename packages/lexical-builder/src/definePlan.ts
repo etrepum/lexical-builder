@@ -15,8 +15,14 @@ import type {
 
 export function definePlan<Config extends PlanConfigBase, Name extends string>(
   plan: LexicalPlan<Config, Name>,
-) {
+): LexicalPlan<Config, Name> {
   return plan;
+}
+
+export function defineRootPlan(
+  plan: Omit<LexicalPlan<PlanConfigBase, string>, "config" | "name">,
+): LexicalPlan<PlanConfigBase, "[root]"> {
+  return { ...plan, name: "[root]", config: {} };
 }
 
 export function configPlan<Plan extends AnyLexicalPlan>(

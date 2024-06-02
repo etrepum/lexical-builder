@@ -7,7 +7,7 @@
  */
 import type { Provider } from "@lexical/yjs";
 
-import { definePlan, LexicalPlanComposer } from "@etrepum/lexical-builder";
+import { defineRootPlan, LexicalPlanComposer } from "@etrepum/lexical-builder";
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import * as Y from "yjs";
@@ -21,14 +21,12 @@ interface ActiveUserProfile extends UserProfile {
   userId: number;
 }
 
-const plan = definePlan({
+const plan = defineRootPlan({
   // NOTE: This is critical for collaboration plugin to set editor state to null. It
   // would indicate that the editor should not try to set any default state
   // (not even empty one), and let collaboration plugin do it instead
   $initialEditorState: null,
-  config: {},
   dependencies: [EditorPlan],
-  name: "@lexical/examples/react-rich-collab-plan",
   namespace: "React.js Collab Demo",
   // Handling of errors during update
   onError(error: Error) {

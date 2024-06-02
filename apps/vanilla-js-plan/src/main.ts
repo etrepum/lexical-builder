@@ -8,10 +8,11 @@
 import "./styles.css";
 
 import {
+  buildEditorFromPlans,
   configPlan,
+  defineRootPlan,
   DragonPlan,
   HistoryPlan,
-  LexicalBuilder,
   mountReactPluginComponent,
   mountReactPluginHost,
   ReactPluginHostPlan,
@@ -23,42 +24,42 @@ import { LexicalEditor } from "lexical";
 import { $prepopulatedRichText } from "./$prepopulatedRichText";
 import { EmojiPlan } from "@etrepum/lexical-emoji-plan";
 
-const editorHandle = LexicalBuilder.fromPlans({
-  $initialEditorState: $prepopulatedRichText,
-  config: {},
-  dependencies: [
-    DragonPlan,
-    RichTextPlan,
-    HistoryPlan,
-    configPlan(EmojiPlan, { emojiBaseUrl: "/assets/emoji" }),
-    ReactPluginHostPlan,
-  ],
-  name: "@lexical/examples/vanilla-js-plan",
-  namespace: "Vanilla JS Plan Demo",
-  onError: (error: Error) => {
-    throw error;
-  },
-  register: (editor: LexicalEditor) => {
-    const el = document.createElement("div");
-    document.body.appendChild(el);
-    mountReactPluginHost(editor, el);
-    mountReactPluginComponent(editor, {
-      Component: TreeView,
-      domNode: document.getElementById("lexical-state")!,
-      key: "tree-view",
-      props: {
-        editor,
-        timeTravelButtonClassName: "debug-timetravel-button",
-        timeTravelPanelButtonClassName: "debug-timetravel-panel-button",
-        timeTravelPanelClassName: "debug-timetravel-panel",
-        timeTravelPanelSliderClassName: "debug-timetravel-panel-slider",
-        treeTypeButtonClassName: "debug-treetype-button",
-        viewClassName: "tree-view-output",
-      },
-    });
-    return () => {
-      el.remove();
-    };
-  },
-}).buildEditor();
+const editorHandle = buildEditorFromPlans(
+  defineRootPlan({
+    $initialEditorState: $prepopulatedRichText,
+    dependencies: [
+      DragonPlan,
+      RichTextPlan,
+      HistoryPlan,
+      configPlan(EmojiPlan, { emojiBaseUrl: "/assets/emoji" }),
+      ReactPluginHostPlan,
+    ],
+    namespace: "Vanilla JS Plan Demo",
+    onError: (error: Error) => {
+      throw error;
+    },
+    register: (editor: LexicalEditor) => {
+      const el = document.createElement("div");
+      document.body.appendChild(el);
+      mountReactPluginHost(editor, el);
+      mountReactPluginComponent(editor, {
+        Component: TreeView,
+        domNode: document.getElementById("lexical-state")!,
+        key: "tree-view",
+        props: {
+          editor,
+          timeTravelButtonClassName: "debug-timetravel-button",
+          timeTravelPanelButtonClassName: "debug-timetravel-panel-button",
+          timeTravelPanelClassName: "debug-timetravel-panel",
+          timeTravelPanelSliderClassName: "debug-timetravel-panel-slider",
+          treeTypeButtonClassName: "debug-treetype-button",
+          viewClassName: "tree-view-output",
+        },
+      });
+      return () => {
+        el.remove();
+      };
+    },
+  }),
+);
 editorHandle.editor.setRootElement(document.getElementById("lexical-editor"));

@@ -29,7 +29,19 @@ import { mergeRegister } from "@lexical/utils";
 
 const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
 
-/** @experimental */
+export function buildEditorFromPlans(
+  plan: AnyLexicalPlanArgument,
+  ...plans: AnyLexicalPlanArgument[]
+): EditorHandle {
+  const builder = new LexicalBuilder();
+  builder.addPlan(plan);
+  for (const otherPlan of plans) {
+    builder.addPlan(otherPlan);
+  }
+  return builder.buildEditor();
+}
+
+/** @internal */
 export class LexicalBuilder {
   phases: Map<AnyLexicalPlan, PlanRep<AnyLexicalPlan>>[];
   planMap: Map<AnyLexicalPlan, [number, PlanRep<AnyLexicalPlan>]>;
@@ -44,19 +56,6 @@ export class LexicalBuilder {
     this.conflicts = new Map();
   }
 
-  static fromPlans(
-    rootPlan: AnyLexicalPlanArgument,
-    ...args: AnyLexicalPlanArgument[]
-  ): LexicalBuilder {
-    const builder = new LexicalBuilder();
-    builder.addPlan(rootPlan);
-    for (const plan of args) {
-      builder.addPlan(plan);
-    }
-    return builder;
-  }
-
-  /** @internal */
   static fromEditor(editor: LexicalEditor): LexicalBuilder {
     const builder = buildersForEditors.get(editor);
     invariant(

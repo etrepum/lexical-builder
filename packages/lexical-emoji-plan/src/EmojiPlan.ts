@@ -14,7 +14,7 @@ import { unifiedIDFromText } from "./unifiedID";
 
 export const EmojiPlan = definePlan({
   config: {
-    emojiBaseUrl: "/assets/emoji",
+    emojiBaseUrl: `https://cdn.jsdelivr.net/npm/@etrepum/lexical-emoji-plan@${import.meta.env.PACKAGE_VERSION}/dist/emoji`,
     emojiClass: "emoji-node",
   },
   name: "@lexical/examples/vanilla-js/emoji-plan",

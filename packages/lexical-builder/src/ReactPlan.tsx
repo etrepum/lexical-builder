@@ -19,7 +19,7 @@ import * as React from "react";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 
 import { definePlan } from "./definePlan";
-import { LexicalBuilder } from "./LexicalBuilder";
+import { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
 import { canShowPlaceholder } from "./registerShowPlaceholder";
 import { shallowMergeConfig } from "./shallowMergeConfig";
 import {
@@ -91,8 +91,8 @@ export function LexicalPlanComposer({
 }: LexicalPlanComposerProps) {
   const componentRef = useRef<EditorComponentType | undefined>(undefined);
   const handle = useMemo(() => {
-    return LexicalBuilder.fromPlans(
-      {
+    return buildEditorFromPlans(
+      definePlan({
         name: "@lexical/builder/LexicalPlanComposer",
         config: {},
         dependencies: [ReactPlan],
@@ -102,9 +102,9 @@ export function LexicalPlanComposer({
             componentRef.current = undefined;
           };
         },
-      },
+      }),
       plan,
-    ).buildEditor();
+    );
   }, [plan]);
   useEffect(() => {
     // This is an awful trick to detect StrictMode
