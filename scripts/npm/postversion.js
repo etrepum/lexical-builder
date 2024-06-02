@@ -60,6 +60,7 @@ async function main() {
     [
       "git",
       "tag",
+      "--force",
       "-a",
       `v${npm_package_version}`,
       "-m",
