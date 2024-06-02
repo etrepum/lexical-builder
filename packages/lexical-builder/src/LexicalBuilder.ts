@@ -9,15 +9,16 @@ import type {
   AnyLexicalPlan,
   AnyLexicalPlanArgument,
   EditorHandle,
+  LexicalRootPlan,
 } from "./types";
 
 import {
+  LexicalEditor,
   createEditor,
   type CreateEditorArgs,
   type EditorThemeClasses,
   type HTMLConfig,
   type KlassConstructor,
-  type LexicalEditor,
   type LexicalNode,
 } from "lexical";
 import invariant from "./shared/invariant";
@@ -25,6 +26,9 @@ import invariant from "./shared/invariant";
 import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
 import { initializeEditor } from "./initializeEditor";
 import { PlanRep } from "./PlanRep";
+import { mergeRegister } from "@lexical/utils";
+
+const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
 
 /** @experimental */
 export class LexicalBuilder {
@@ -41,11 +45,28 @@ export class LexicalBuilder {
     this.conflicts = new Map();
   }
 
-  static fromPlans(...args: AnyLexicalPlanArgument[]): LexicalBuilder {
+  static fromPlans(
+    rootPlan: LexicalRootPlan | AnyLexicalPlanArgument,
+    ...args: AnyLexicalPlanArgument[]
+  ): LexicalBuilder {
     const builder = new LexicalBuilder();
+    if (!("name" in rootPlan || "config" in rootPlan)) {
+      Object.assign(rootPlan, { name: "[LexicalRootPlan]", config: {} });
+    }
+    builder.addPlan(rootPlan);
     for (const plan of args) {
       builder.addPlan(plan);
     }
+    return builder;
+  }
+
+  /** @internal */
+  static fromEditor(editor: LexicalEditor): LexicalBuilder {
+    const builder = buildersForEditors.get(editor);
+    invariant(
+      builder !== undefined,
+      "LexicalBuilder.fromEditor: editor was not created with this version of LexicalBuilder",
+    );
     return builder;
   }
 
@@ -57,7 +78,11 @@ export class LexicalBuilder {
       ...(onError ? { onError: (err) => onError(err, editor) } : {}),
     });
     initializeEditor(editor, $initialEditorState);
-    const dispose = this.registerEditor(editor);
+    buildersForEditors.set(editor, this);
+    const dispose = mergeRegister(
+      () => buildersForEditors.delete(editor),
+      this.registerEditor(editor),
+    );
     return { dispose, editor };
   }
 

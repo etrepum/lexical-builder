@@ -18,7 +18,7 @@ const pkg = require("./package.json");
 export default defineConfig({
   build: {
     lib: {
-      fileName: 'index',
+      fileName: "index",
       entry: path.resolve(__dirname, "src/index.ts"),
       formats: ["es"],
     },
@@ -34,8 +34,8 @@ export default defineConfig({
           src: normalizePath(
             path.resolve(
               require.resolve("emoji-datasource-facebook"),
-              "../img/facebook/64/*.png"
-            )
+              "../img/facebook/64/*.png",
+            ),
           ),
           dest: "./emoji",
         },

@@ -62,7 +62,7 @@ export function $createEmojiNode(text: string): EmojiNode {
 }
 
 export function $isEmojiNode(
-  node: LexicalNode | null | undefined
+  node: LexicalNode | null | undefined,
 ): node is EmojiNode {
   return node instanceof EmojiNode;
 }

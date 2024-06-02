@@ -20,9 +20,9 @@ export default defineConfig({
             fileURLToPath(
               resolve(
                 "@etrepum/lexical-emoji-plan/dist/emoji/*.png",
-                import.meta.url
-              )
-            )
+                import.meta.url,
+              ),
+            ),
           ),
           dest: "./assets/emoji",
         },

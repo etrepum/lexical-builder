@@ -46,6 +46,7 @@ export {
   type LexicalPlanConfig,
   type LexicalPlanName,
   type LexicalPlanRegistry,
+  type LexicalRootPlan,
   type NormalizedLexicalPlanArgument,
   type PlanConfigBase,
   type RegisterState,

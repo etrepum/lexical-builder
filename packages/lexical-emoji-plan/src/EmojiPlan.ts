@@ -43,7 +43,7 @@ export const EmojiPlan = definePlan({
       if (!state.signal.aborted) {
         cleanup = mergeRegister(
           cleanup,
-          editor.registerNodeTransform(TextNode, $textNodeTransform)
+          editor.registerNodeTransform(TextNode, $textNodeTransform),
         );
       }
     });

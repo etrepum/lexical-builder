@@ -18,8 +18,6 @@ const argv = require("minimist")(process.argv.slice(2));
 const nonInteractive = argv["non-interactive"];
 const dryRun = argv["dry-run"];
 const channel = argv.channel;
-// eslint-disable-next-line turbo/no-undeclared-env-vars
-const { OTP } = process.env;
 
 const validChannels = new Set(["next", "latest", "nightly", "dev"]);
 if (!validChannels.has(channel)) {
@@ -47,7 +45,6 @@ Type "publish" to confirm.`
     "--tag",
     channel,
     ...(dryRun ? ["--dry-run"] : []),
-    ...(OTP ? ["--otp", OTP] : []),
   ];
   for (const pkg of pkgs) {
     console.info(`Publishing ${pkg.getNpmName()}...`);
@@ -78,4 +75,9 @@ async function waitForInput() {
   });
 }
 
-publish();
+publish().catch((err) => {
+  if (err.childProcess?.exitCode) {
+    process.exit(err.childProcess.exitCode);
+  }
+  throw err;
+});

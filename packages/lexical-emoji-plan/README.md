@@ -1,3 +1,4 @@
-# `@etrepum/lexical-builder`
+# `@etrepum/lexical-emoji-plan`
 
-**EXPERIMENTAL** A high-level way to manage Lexical config and plug-ins for any framework
+**EXPERIMENTAL** A lexical builder optimized Emoji plugin with deferred
+loading of the emoji database

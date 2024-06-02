@@ -36,6 +36,13 @@ export type LexicalPlanArgument<
   Name extends string,
 > = LexicalPlan<Config, Name> | NormalizedLexicalPlanArgument<Config, Name>;
 
+/** The first argument to LexicalBuilder.fromPlans may be a LexicalPlan without name or config */
+export interface LexicalRootPlan
+  extends Omit<LexicalPlan<PlanConfigBase, "">, "name" | "config"> {
+  name: never;
+  config: never;
+}
+
 export interface LexicalPlan<
   Config extends PlanConfigBase = PlanConfigBase,
   Name extends string = string,
@@ -107,8 +114,8 @@ export interface LexicalPlan<
   /**
    * By default, Config is shallow merged `{...a, ...b}`, if your Plan
    * requires other strategies (such as concatenating an Array) you can
-   * implement it here. 
-   * 
+   * implement it here.
+   *
    * @param a The current configuration
    * @param b The partial configuration to merge
    * @returns The merged configuration

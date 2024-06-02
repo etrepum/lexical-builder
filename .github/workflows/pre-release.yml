@@ -10,9 +10,6 @@ on:
           - next
           - nightly
         default: latest
-      otp:
-        description: '(optional) one-time password'
-        type: string
 
 jobs:
   release:
@@ -21,6 +18,5 @@ jobs:
       ref: refs/heads/${{ inputs.channel }}__release
       dry-run: false
       channel: ${{ inputs.channel }}
-      otp: ${{ inputs.otp }}
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

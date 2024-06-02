@@ -98,4 +98,9 @@ async function main() {
     await spawn(commandArr[0], commandArr.slice(1), { stdio: "inherit" });
   }
 }
-main();
+main().catch((err) => {
+  if (err.childProcess?.exitCode) {
+    process.exit(err.childProcess.exitCode);
+  }
+  throw err;
+});

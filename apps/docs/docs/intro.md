@@ -16,20 +16,20 @@ next generation of plug-ins.
 Lexical Builder attempts to solve several problems with code re-use
 and scaffolding in Lexical:
 
-* Plug-ins can only support code that can be asynchronously added to a
+- Plug-ins can only support code that can be asynchronously added to a
   LexicalEditor after construction, but most use cases also require
   configuration that must be specified synchronously during construction
   (such as any new nodes that are being registered)
-* Plug-ins are all React dependent. There is no standard to package code
+- Plug-ins are all React dependent. There is no standard to package code
   that can support both React and non-React use cases from the same
   package, whether or not the package has React dependencies
-* Configuration is verbose, several properties of the editor or
+- Configuration is verbose, several properties of the editor or
   LexicalComposer have "obvious" defaults that must be specified
-* Configuration is not composable, it is not easy to copy and paste
+- Configuration is not composable, it is not easy to copy and paste
   an editor together because at minimum you must edit two places
   (config and plug-ins) and the config section requires manual merging of
   the nodes and theme properties.
-* The nature of using a context and hooks to set up the editor can be
+- The nature of using a context and hooks to set up the editor can be
   cumbersome, having to author a top-level component for each piece
   of code that has to interact with the editor
 
@@ -49,7 +49,7 @@ component from `@lexical/react`!
 I think this one is great because it shows us a potential future where people
 can use all of the great React based plug-ins that have been developed, even
 if they don't want to directly use React themselves. This one requires a bit
-more props configuration than most beacuse of the classes 
+more props configuration than most beacuse of the classes
 
 ## React Rich Collab Plan
 

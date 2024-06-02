@@ -39,7 +39,7 @@ export function mountReactPluginComponent<
   opts: {
     Component: null | React.ComponentType<P>;
     props: (P & React.Attributes) | null;
-  } & Omit<MountPluginCommandArg, "element">
+  } & Omit<MountPluginCommandArg, "element">,
 ) {
   const { Component, props, ...rest } = opts;
   return mountReactPluginElement(editor, {
@@ -50,14 +50,14 @@ export function mountReactPluginComponent<
 
 export function mountReactPluginElement(
   editor: LexicalEditor,
-  opts: MountPluginCommandArg
+  opts: MountPluginCommandArg,
 ) {
   editor.dispatchCommand(REACT_MOUNT_PLUGIN_COMMAND, opts);
 }
 
 export function mountReactPluginHost(
   editor: LexicalEditor,
-  container: Container
+  container: Container,
 ) {
   editor.dispatchCommand(REACT_PLUGIN_HOST_MOUNT_COMMAND, {
     root: createRoot(container),
@@ -67,7 +67,7 @@ export function mountReactPluginHost(
 export const REACT_PLUGIN_HOST_MOUNT_COMMAND =
   createCommand<HostMountCommandArg>("REACT_PLUGIN_HOST_MOUNT_COMMAND");
 export const REACT_MOUNT_PLUGIN_COMMAND = createCommand<MountPluginCommandArg>(
-  "REACT_MOUNT_PLUGIN_COMMAND"
+  "REACT_MOUNT_PLUGIN_COMMAND",
 );
 
 export const ReactPluginHostPlan = definePlan({
@@ -109,7 +109,7 @@ export const ReactPluginHostPlan = definePlan({
             setChildren(renderMountedPlugins);
             return true;
           },
-          COMMAND_PRIORITY_EDITOR
+          COMMAND_PRIORITY_EDITOR,
         );
       }, []);
       return children;
@@ -126,7 +126,7 @@ export const ReactPluginHostPlan = definePlan({
           mountedPlugins.set(arg.key, arg);
           return false;
         },
-        COMMAND_PRIORITY_CRITICAL
+        COMMAND_PRIORITY_CRITICAL,
       ),
       editor.registerCommand(
         REACT_PLUGIN_HOST_MOUNT_COMMAND,
@@ -135,12 +135,12 @@ export const ReactPluginHostPlan = definePlan({
           root.render(
             <Component>
               <PluginHost />
-            </Component>
+            </Component>,
           );
           return true;
         },
-        COMMAND_PRIORITY_EDITOR
-      )
+        COMMAND_PRIORITY_EDITOR,
+      ),
     );
   },
 });

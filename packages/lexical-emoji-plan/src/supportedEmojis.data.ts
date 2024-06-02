@@ -12,12 +12,9 @@ export const supportedEmojis = emojis
           [
             textFromUnifiedID(unified),
             short_name,
-            ...new Set([
-              ...(text ? [text] : []),
-              ...(texts ?? []),
-            ]),
+            ...new Set([...(text ? [text] : []), ...(texts ?? [])]),
           ].join(" "),
         ]
-      : []
+      : [],
   )
   .join("\n");
