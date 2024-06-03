@@ -1,3 +1,4 @@
+name: Publish to NPM when release is published
 on:
   release:
     types: [published]
