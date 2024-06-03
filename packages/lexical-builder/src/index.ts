@@ -13,13 +13,11 @@
  *
  * @example Extending LexicalPlanRegistry
  * ```ts
- * const SOME_PLAN_NAME = "@some/plan";
- * interface SomePlanConfig {
- *   // …
- * }
+ * const NAME = "@some/plan";
+ * export const SomePlan = definePlan({ name: NAME, config: { className: "default" } });
  * declare module '@etrepum/lexical-builder' {
  *   interface LexicalPlanRegistry {
- *     [SOME_PLAN_NAME]: SomePlanConfig;
+ *     [NAME]: typeof SomePlan;
  *   }
  * }
  * ```

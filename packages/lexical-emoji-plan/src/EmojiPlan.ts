@@ -21,7 +21,7 @@ export interface EmojiPlanConfig {
 
 declare module "@etrepum/lexical-builder" {
   interface LexicalPlanRegistry {
-    [NAME]: EmojiPlanConfig;
+    [NAME]: typeof EmojiPlan;
   }
 }
 

@@ -8,29 +8,36 @@
  *
  */
 
-'use strict';
+"use strict";
 
 /* eslint-disable turbo/no-undeclared-env-vars */
 
-const {exec} = require('child-process-promise');
+const { exec } = require("child-process-promise");
+const fs = require("node:fs");
 
-const isPrerelease = process.env.npm_package_version.indexOf('-') !== -1;
+const isPrerelease = process.env.npm_package_version.indexOf("-") !== -1;
 
 async function updateChangelog() {
   const date = (await exec(`git show --format=%as | head -1`)).stdout.trim();
   const header = `## v${process.env.npm_package_version} (${date})`;
   const changelogContent = (
     await exec(
-      `git --no-pager log --oneline ${process.env.LATEST_RELEASE}...HEAD~1 --pretty=format:"- %s %an"`,
+      `git --no-pager log --oneline ${process.env.LATEST_RELEASE}...HEAD~1 --pretty=format:"- %s %an"`
     )
   ).stdout
-    .replace(/[^a-zA-Z0-9()\n \-,.#]/g, '')
+    .replace(/[^a-zA-Z0-9()\n \-,.#]/g, "")
     .trim();
-  const tmpFilePath = './changelog-tmp';
+  if (process.env.GITHUB_OUTPUT) {
+    fs.appendFileSync(
+      process.env.GITHUB_OUTPUT,
+      ["changelog<<EOF", header, changelogContent, "EOF", ""].join("\n")
+    );
+  }
+  const tmpFilePath = "./changelog-tmp";
   await exec(`echo "${header}\n" >> ${tmpFilePath}`);
   await exec(`echo "${changelogContent}\n" >> ${tmpFilePath}`);
   await exec(
-    `cat ./CHANGELOG.md >> ${tmpFilePath} && mv ${tmpFilePath} ./CHANGELOG.md`,
+    `cat ./CHANGELOG.md >> ${tmpFilePath} && mv ${tmpFilePath} ./CHANGELOG.md`
   );
 }
 

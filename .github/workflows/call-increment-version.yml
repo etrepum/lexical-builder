@@ -27,6 +27,9 @@ on:
       latest-release:
         description: 'The latest release (per GitHub releases) prior to this increment, e.g. "v0.15.0"'
         value: ${{ jobs.release.outputs.latest-release }}
+      changelog:
+        description: 'The changelog from latest-release to version if it is the latest release channel'
+        value: ${{ jobs.release.outputs.changelog }}
 
 jobs:
   release:
@@ -34,6 +37,7 @@ jobs:
     outputs:
       version: ${{ steps.increment-version.outputs.version }}
       tag-ref: ${{ steps.increment-version.outputs.tag-ref }}
+      changelog: ${{ steps.increment-version.outputs.changelog }}
       latest-release: ${{ steps.latest.outputs.release }}
     steps:
       - uses: actions/checkout@v4

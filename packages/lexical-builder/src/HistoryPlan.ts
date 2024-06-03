@@ -17,7 +17,7 @@ import { safeCast } from "./safeCast";
 const NAME = "@etrepum/lexical-builder/HistoryPlan";
 declare module "@etrepum/lexical-builder" {
   interface LexicalPlanRegistry {
-    [NAME]: HistoryConfig;
+    [NAME]: typeof HistoryPlan;
   }
 }
 

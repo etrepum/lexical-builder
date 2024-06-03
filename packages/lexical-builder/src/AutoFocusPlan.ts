@@ -12,7 +12,7 @@ import { safeCast } from "./safeCast";
 const NAME = "@etrepum/lexical-builder/AutoFocusPlan";
 declare module "@etrepum/lexical-builder" {
   interface LexicalPlanRegistry {
-    [NAME]: AutoFocusConfig;
+    [NAME]: typeof AutoFocusPlan;
   }
 }
 

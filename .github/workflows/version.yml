@@ -1,4 +1,6 @@
 name: Create New Release Branch
+permissions:
+  contents: write
 on:
   workflow_dispatch:
     inputs:
@@ -12,7 +14,7 @@ on:
           - patch
           - minor
 jobs:
-  release:
+  increment-version:
     uses: ./.github/workflows/call-increment-version.yml
     with:
       increment: ${{ inputs.increment }}
@@ -21,3 +23,13 @@ jobs:
       git-repo: 'git@github.com:etrepum/lexical-builder.git'
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
+  draft-latest-release:
+    needs: [increment-version]
+    runs-on: ubuntu-latest
+    if: needs.increment-version.outputs.changelog && inputs.increment != 'prerelease'
+    steps:
+      - uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          body: ${{ needs.increment-version.outputs.changelog }}
+          tag_name: v${{ needs.increment-version.outputs.version }}
