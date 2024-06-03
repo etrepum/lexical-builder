@@ -7,7 +7,6 @@
  */
 
 import type { CreateEditorArgs, EditorState, LexicalEditor } from "lexical";
-import type { LexicalPlanRegistry } from "./";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyLexicalPlan = LexicalPlan<any, string>;
@@ -23,10 +22,10 @@ export type NormalizedLexicalPlanArgument<
 export interface RegisterState {
   signal: AbortSignal;
   getPeerConfig<Name extends keyof LexicalPlanRegistry>(
-    name: string,
+    name: string
   ): undefined | LexicalPlanConfig<LexicalPlanRegistry[Name]>;
   getDependencyConfig<Dependency extends AnyLexicalPlan>(
-    dep: Dependency,
+    dep: Dependency
   ): LexicalPlanConfig<Dependency>;
 }
 
@@ -127,7 +126,7 @@ export interface LexicalPlan<
   register?: (
     editor: LexicalEditor,
     config: Config,
-    state: RegisterState,
+    state: RegisterState
   ) => () => void;
 }
 
@@ -150,3 +149,20 @@ export type InitialEditorStateType =
   | string
   | EditorState
   | ((editor: LexicalEditor) => void);
+
+/**
+ * An open interface for Name -> Config mappings. If you are defining a
+ * plan with non-empty config and it may be used as a peerDependency then
+ * you should extend this as follows:
+ *
+ * @example Extending LexicalPlanRegistry
+ * ```ts
+ * export const SomePlan = definePlan({ name: "@some/plan", config: { className: "default" } });
+ * declare module '@etrepum/lexical-builder' {
+ *   interface LexicalPlanRegistry {
+ *     [SomePlan.name]: typeof SomePlan;
+ *   }
+ * }
+ * ```
+ */
+export interface LexicalPlanRegistry {}

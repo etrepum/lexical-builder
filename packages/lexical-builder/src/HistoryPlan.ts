@@ -14,10 +14,10 @@ import {
 import { definePlan } from "./definePlan";
 import { safeCast } from "./safeCast";
 
-const NAME = "@etrepum/lexical-builder/HistoryPlan";
+import type {} from "@etrepum/lexical-builder";
 declare module "@etrepum/lexical-builder" {
   interface LexicalPlanRegistry {
-    [NAME]: typeof HistoryPlan;
+    [HistoryPlan.name]: typeof HistoryPlan;
   }
 }
 
@@ -31,7 +31,7 @@ export const HistoryPlan = definePlan({
     createInitialHistoryState: createEmptyHistoryState,
     delay: 300,
   }),
-  name: NAME,
+  name: "@etrepum/lexical-builder/HistoryPlan",
   register(editor, { delay, createInitialHistoryState }) {
     return registerHistory(editor, createInitialHistoryState(), delay);
   },

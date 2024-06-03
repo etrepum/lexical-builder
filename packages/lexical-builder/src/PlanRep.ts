@@ -8,7 +8,7 @@
 
 import type { LexicalBuilder } from "./LexicalBuilder";
 import type { AnyLexicalPlan, LexicalPlanConfig } from "./types";
-import type { LexicalPlanRegistry } from "./";
+import type { LexicalPlanRegistry } from "./types";
 
 import invariant from "./shared/invariant";
 
