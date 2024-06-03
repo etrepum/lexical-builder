@@ -1,3 +1,8 @@
+## v0.0.7 (2024-06-02)
+
+- npm publish on release Bob Ippolito
+- v0.0.6 Lexical Builder GitHub Actions Bot
+
 ## v0.0.6 (2024-06-02)
 
 - format and start docs Bob Ippolito
