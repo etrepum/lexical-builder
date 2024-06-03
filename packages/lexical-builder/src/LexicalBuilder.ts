@@ -55,6 +55,10 @@ class DisposableEditorHandle implements EditorHandle {
   }
 }
 
+function defaultOnError(err: Error) {
+  throw err;
+}
+
 /** @internal */
 export class LexicalBuilder {
   phases: Map<AnyLexicalPlan, PlanRep<AnyLexicalPlan>>[];
@@ -207,7 +211,10 @@ export class LexicalBuilder {
       CreateEditorArgs,
       "nodes" | "html" | "theme" | "disableEvents" | "editable" | "namespace"
     > &
-      Pick<AnyLexicalPlan, "$initialEditorState" | "onError"> = {};
+      Pick<AnyLexicalPlan, "$initialEditorState" | "onError"> = {
+        // Prefer throwing errors rather than console.error by default
+        onError: defaultOnError
+      };
     const nodes = new Set<NonNullable<CreateEditorArgs["nodes"]>[number]>();
     const replacedNodes = new Map<
       KlassConstructor<typeof LexicalNode>,

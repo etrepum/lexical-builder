@@ -1,12 +1,4 @@
 {
   "extends": "@repo/typescript-config/react-library.json",
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-    "module": "ES2022",
-    "moduleResolution": "Bundler",
-    "paths": {
-      "@etrepum/lexical-builder": ["./src"]
-    }
-  },
+  "include": ["src"]
 }

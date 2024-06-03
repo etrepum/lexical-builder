@@ -1,0 +1,24 @@
+name: Lexical Builder Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'apps/docs/**'
+      - 'packages/*/README.md'
+      - 'apps/*/README.md'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - 'apps/docs/**'
+      - 'packages/*/README.md'
+      - 'apps/*/README.md'
+  
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core-tests:
+    uses: ./.github/workflows/call-core-tests.yml

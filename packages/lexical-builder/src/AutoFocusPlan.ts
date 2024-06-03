@@ -9,10 +9,10 @@
 import { definePlan } from "./definePlan";
 import { safeCast } from "./safeCast";
 
-const NAME = "@etrepum/lexical-builder/AutoFocusPlan";
+import type {} from "@etrepum/lexical-builder";
 declare module "@etrepum/lexical-builder" {
   interface LexicalPlanRegistry {
-    [NAME]: typeof AutoFocusPlan;
+    [AutoFocusPlan.name]: typeof AutoFocusPlan;
   }
 }
 
@@ -22,7 +22,7 @@ export interface AutoFocusConfig {
 
 export const AutoFocusPlan = definePlan({
   config: safeCast<AutoFocusConfig>({}),
-  name: NAME,
+  name: "@etrepum/lexical-builder/AutoFocusPlan",
   register(editor, { defaultSelection }) {
     return editor.registerRootListener((rootElement) => {
       editor.focus(
@@ -40,7 +40,7 @@ export const AutoFocusPlan = definePlan({
             rootElement.focus({ preventScroll: true });
           }
         },
-        { defaultSelection },
+        { defaultSelection }
       );
     });
   },

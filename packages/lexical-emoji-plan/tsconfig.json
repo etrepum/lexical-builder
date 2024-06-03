@@ -1,12 +1,4 @@
 {
   "extends": "@repo/typescript-config/base.json",
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-    "module": "ES2022",
-    "moduleResolution": "Bundler",
-    "paths": {
-      "@etrepum/lexical-emoji-plan": ["./src"]
-    }
-  }
+  "include": ["src"]
 }

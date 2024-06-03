@@ -1,0 +1,19 @@
+name: Lexical Builder Core Tests
+
+on:
+  workflow_call:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npm run test
