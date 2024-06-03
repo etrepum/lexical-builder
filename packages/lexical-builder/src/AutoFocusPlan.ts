@@ -9,13 +9,20 @@
 import { definePlan } from "./definePlan";
 import { safeCast } from "./safeCast";
 
+const NAME = "@etrepum/lexical-builder/AutoFocusPlan";
+declare module "@etrepum/lexical-builder" {
+  interface LexicalPlanRegistry {
+    [NAME]: AutoFocusConfig;
+  }
+}
+
 export interface AutoFocusConfig {
   defaultSelection?: "rootStart" | "rootEnd";
 }
 
 export const AutoFocusPlan = definePlan({
   config: safeCast<AutoFocusConfig>({}),
-  name: "@etrepum/lexical-builder/AutoFocusPlan",
+  name: NAME,
   register(editor, { defaultSelection }) {
     return editor.registerRootListener((rootElement) => {
       editor.focus(

@@ -7,10 +7,7 @@
  */
 
 import type { LexicalBuilder } from "./LexicalBuilder";
-import type {
-  AnyLexicalPlan,
-  LexicalPlanConfig,
-} from "./types";
+import type { AnyLexicalPlan, LexicalPlanConfig } from "./types";
 import type { LexicalPlanRegistry } from "./";
 
 import invariant from "./shared/invariant";

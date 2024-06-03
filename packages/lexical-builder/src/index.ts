@@ -6,17 +6,29 @@
  *
  */
 
-/** An open interface for Name -> Config mappings */
+/**
+ * An open interface for Name -> Config mappings. If you are defining a
+ * plan with non-empty config and it may be used as a peerDependency then
+ * you should extend this as follows:
+ *
+ * @example Extending LexicalPlanRegistry
+ * ```ts
+ * const SOME_PLAN_NAME = "@some/plan";
+ * interface SomePlanConfig {
+ *   // …
+ * }
+ * declare module '@etrepum/lexical-builder' {
+ *   interface LexicalPlanRegistry {
+ *     [SOME_PLAN_NAME]: SomePlanConfig;
+ *   }
+ * }
+ * ```
+ */
 export interface LexicalPlanRegistry {}
 export const PACKAGE_VERSION = import.meta.env.PACKAGE_VERSION;
 
-export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
 export { configPlan, definePlan, defineRootPlan } from "./definePlan";
-export { DragonPlan } from "./DragonPlan";
-export { type HistoryConfig, HistoryPlan } from "./HistoryPlan";
 export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
-export { PlainTextPlan } from "./PlainTextPlan";
-export { RichTextPlan } from "./RichTextPlan";
 export {
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
@@ -33,3 +45,9 @@ export {
 } from "./types";
 export { safeCast } from "./safeCast";
 export { shallowMergeConfig } from "./shallowMergeConfig";
+// These plan definitions should all be colocated with their implementations, only here for convenience
+export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
+export { DragonPlan } from "./DragonPlan";
+export { type HistoryConfig, HistoryPlan } from "./HistoryPlan";
+export { PlainTextPlan } from "./PlainTextPlan";
+export { RichTextPlan } from "./RichTextPlan";

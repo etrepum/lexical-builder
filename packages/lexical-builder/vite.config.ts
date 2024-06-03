@@ -25,8 +25,5 @@ export default defineConfig({
       external: /^[^./]/,
     },
   },
-  plugins: [
-    packageVersion(),
-    dts({ include: ["src"] }),
-  ],
+  plugins: [packageVersion(), dts({ include: ["src"] })],
 });

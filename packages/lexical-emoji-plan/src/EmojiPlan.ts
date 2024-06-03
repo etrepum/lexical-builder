@@ -19,7 +19,7 @@ export interface EmojiPlanConfig {
   emojiLoadedClass: string;
 }
 
-declare module '@etrepum/lexical-builder' {
+declare module "@etrepum/lexical-builder" {
   interface LexicalPlanRegistry {
     [NAME]: EmojiPlanConfig;
   }
@@ -53,7 +53,7 @@ export const EmojiPlan = definePlan({
             img.addEventListener(
               "load",
               () => dom.classList.add(config.emojiLoadedClass),
-              { signal: state.signal, once: true }
+              { signal: state.signal, once: true },
             );
             img.src = imageUrl;
           }
@@ -65,7 +65,7 @@ export const EmojiPlan = definePlan({
       if (!state.signal.aborted) {
         cleanup = mergeRegister(
           cleanup,
-          editor.registerNodeTransform(TextNode, $textNodeTransform)
+          editor.registerNodeTransform(TextNode, $textNodeTransform),
         );
       }
     });

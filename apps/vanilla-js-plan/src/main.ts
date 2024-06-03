@@ -66,6 +66,6 @@ const editorHandle = buildEditorFromPlans(
         el.remove();
       };
     },
-  })
+  }),
 );
 editorHandle.editor.setRootElement(document.getElementById("lexical-editor"));

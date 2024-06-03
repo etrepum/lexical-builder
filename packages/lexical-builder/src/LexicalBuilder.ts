@@ -74,7 +74,7 @@ export class LexicalBuilder {
     const builder = buildersForEditors.get(editor);
     invariant(
       builder !== undefined,
-      "LexicalBuilder.fromEditor: editor was not created with this version of LexicalBuilder"
+      "LexicalBuilder.fromEditor: editor was not created with this version of LexicalBuilder",
     );
     return builder;
   }
@@ -92,8 +92,8 @@ export class LexicalBuilder {
       editor,
       mergeRegister(
         () => buildersForEditors.delete(editor),
-        this.registerEditor(editor)
-      )
+        this.registerEditor(editor),
+      ),
     );
   }
 
@@ -114,7 +114,7 @@ export class LexicalBuilder {
           false,
           "LexicalBuilder: plan %s conflicts with %s",
           plan.name,
-          hasConflict
+          hasConflict,
         );
       }
       for (const name of plan.conflictsWith || []) {
@@ -122,7 +122,7 @@ export class LexicalBuilder {
           !this.planNameMap.has(name),
           "LexicalBuilder: plan %s conflicts with %s",
           plan.name,
-          name
+          name,
         );
         this.conflicts.set(name, plan.name);
       }
@@ -131,7 +131,7 @@ export class LexicalBuilder {
         phase = Math.max(phase, 1 + this.addPlan(dep));
       }
       for (const [depName, cfg] of Object.entries(
-        plan.peerDependencies || {}
+        plan.peerDependencies || {},
       )) {
         const dep = this.planNameMap.get(depName);
         if (dep) {
@@ -140,7 +140,7 @@ export class LexicalBuilder {
       }
       invariant(
         this.phases.length >= phase,
-        "LexicalBuilder: Expected phase to be no greater than phases.length"
+        "LexicalBuilder: Expected phase to be no greater than phases.length",
       );
       if (this.phases.length === phase) {
         this.phases.push(new Map());
@@ -149,7 +149,7 @@ export class LexicalBuilder {
       invariant(
         !this.planNameMap.has(plan.name),
         "LexicalBuilder: Multiple plans registered with name %s, names must be unique",
-        plan.name
+        plan.name,
       );
       this.planMap.set(plan, [phase, planRep]);
       this.planNameMap.set(plan.name, planRep);
@@ -157,7 +157,7 @@ export class LexicalBuilder {
       invariant(
         currentPhaseMap !== undefined,
         "LexicalBuilder: Expecting phase map for phase %s",
-        String(phase)
+        String(phase),
       );
       currentPhaseMap.set(plan, planRep);
     }
@@ -183,7 +183,7 @@ export class LexicalBuilder {
             getDependencyConfig: planRep.getDependencyConfig.bind(planRep),
             getPeerConfig: planRep.getPeerConfig.bind(planRep),
             signal: controller.signal,
-          })
+          }),
         );
       }
     }
@@ -193,7 +193,7 @@ export class LexicalBuilder {
         invariant(
           cleanupFun !== undefined,
           "LexicalBuilder: Expecting cleanups[%s] to be defined",
-          String(i)
+          String(i),
         );
         cleanupFun();
       }
@@ -243,7 +243,7 @@ export class LexicalBuilder {
                 "LexicalBuilder: Plan %s can not register replacement for node %s because %s already did",
                 plan.name,
                 node.replace.name,
-                conflictPlan.plan.name
+                conflictPlan.plan.name,
               );
             }
             replacedNodes.set(node.replace, planRep);

@@ -6,7 +6,11 @@
  *
  */
 
-// TypeScript 4.9's satisfies operator is not supported by our version of prettier
+/**
+ * Explicitly and safely cast a value to a specific type when inference or
+ * satisfies isn't going to work as expected (often useful for the config
+ * property with definePlan)
+ */
 export function safeCast<T>(value: T): T {
   return value;
 }
