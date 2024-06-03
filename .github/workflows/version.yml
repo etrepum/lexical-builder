@@ -1,13 +1,14 @@
 name: Create New Release Branch
 permissions:
   contents: write
+  pull-requests: write
 on:
   workflow_dispatch:
     inputs:
       increment:
-        description: 'Version Increment'
+        description: "Version Increment"
         required: true
-        default: 'prerelease'
+        default: "prerelease"
         type: choice
         options:
           - prerelease
@@ -20,16 +21,70 @@ jobs:
       increment: ${{ inputs.increment }}
       dry-run: false
       channel: ${{ inputs.increment == 'prerelease' && 'next' || 'latest' }}
-      git-repo: 'git@github.com:etrepum/lexical-builder.git'
+      git-repo: "git@github.com:etrepum/lexical-builder.git"
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
   draft-latest-release:
     needs: [increment-version]
     runs-on: ubuntu-latest
     if: needs.increment-version.outputs.changelog && inputs.increment != 'prerelease'
+    outputs:
+      release-url: ${{ steps.draft-latest-release.outputs.url }}
     steps:
-      - uses: softprops/action-gh-release@v2
+      - id: draft-latest-release
+        uses: softprops/action-gh-release@v2
         with:
           draft: true
           body: ${{ needs.increment-version.outputs.changelog }}
           tag_name: v${{ needs.increment-version.outputs.version }}
+  create-pull-request:
+    needs: [increment-version, draft-latest-release]
+    runs-on: ubuntu-latest
+    if: needs.increment-version.outputs.changelog && inputs.increment != 'prerelease'
+    steps:
+      - name: Create Pull Request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { repo, owner } = context.repo;
+            const opts = {
+              base: 'main',
+              head: `${owner}:${{ needs.increment-version.outputs.version }}__release`,
+              owner,
+              repo,
+            };
+            const body = [
+              ${{ toJson(needs.draft-latest-release.outputs.release-url ) }},
+              '',
+              'Do not modify this branch in any way, changes will not propagte to the release tag.',
+              'If you want to make code changes, close this PR, and start over after the changes are in main.',
+              '',
+              ${{ toJson(needs.increment-version.outputs.changelog) }},
+            ].join('\n');
+            const pulls = await github.rest.pulls.list({
+              ...opts,
+              state: 'open',
+            });
+            let [pr] = pulls.data;
+            if (pr) {
+              await github.rest.pulls.update({
+                owner: owner,
+                repo: repo,
+                pull_number: pr.number,
+                body,
+              });
+            } else {
+              const result = await github.rest.pulls.create({
+                ...opts,
+                body,
+                title: 'v${{ needs.increment-version.outputs.version }}',
+                maintainer_can_modify: false,
+              });
+              pr = result.data;
+            }
+            github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: pr.number,
+              labels: ['release', 'extended-tests']
+            });
