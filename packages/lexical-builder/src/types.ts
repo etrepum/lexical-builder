@@ -7,7 +7,7 @@
  */
 
 import type { CreateEditorArgs, EditorState, LexicalEditor } from "lexical";
-import type { LexicalPlanRegistry } from "@etrepum/lexical-builder";
+import type { LexicalPlanRegistry } from "./";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyLexicalPlan = LexicalPlan<any, string>;

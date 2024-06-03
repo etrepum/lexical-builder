@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { textFromUnifiedID, unifiedIDFromText } from "../unifiedID";
+import { textFromUnifiedID, unifiedIDFromText } from "../src/unifiedID.js";
 
 const TEST_MAP = {
   "1F926-200D-2642-FE0F": "🤦‍♂️",

@@ -11,7 +11,7 @@ import type {
   AnyLexicalPlan,
   LexicalPlanConfig,
 } from "./types";
-import type { LexicalPlanRegistry } from "@etrepum/lexical-builder";
+import type { LexicalPlanRegistry } from "./";
 
 import invariant from "./shared/invariant";
 
