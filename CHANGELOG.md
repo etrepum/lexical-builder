@@ -1,3 +1,11 @@
+## v0.0.6 (2024-06-02)
+
+- format and start docs Bob Ippolito
+- move tests around Bob Ippolito
+- refactor react plan to separate package Bob Ippolito
+- update CHANGELOG.md Bob Ippolito
+- Merge pull request #4 from etrepum0.0.5release Bob Ippolito
+
 ## v0.0.5 (2024-06-02)
 
 - plan and emoji refactor Bob Ippolito
