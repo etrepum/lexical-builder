@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "React Tests",
-  "extends": "./react-library.json",
   "compilerOptions": {
     "types": ["vitest/jsdom"]
   }

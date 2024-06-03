@@ -41,12 +41,19 @@ export function buildEditorFromPlans(
   return builder.buildEditor();
 }
 
+function noop() {}
 class DisposableEditorHandle implements EditorHandle {
   editor: LexicalEditor;
   dispose: () => void;
   constructor(editor: LexicalEditor, dispose: () => void) {
     this.editor = editor;
-    this.dispose = dispose;
+    this.dispose = () => {
+      try {
+        dispose();
+      } finally {
+        this.dispose = noop;
+      }
+    };
   }
   // This should be safe even if the runtime doesn't have Symbol.dispose
   // because it will just be `handle[undefined] = dispose;`
@@ -96,6 +103,7 @@ export class LexicalBuilder {
       editor,
       mergeRegister(
         () => buildersForEditors.delete(editor),
+        () => editor.setRootElement(null),
         this.registerEditor(editor),
       ),
     );
