@@ -1,3 +1,10 @@
+## v0.0.8 (2024-06-03)
+
+- more test stuff Bob Ippolito
+- Merge pull request #7 from etrepumpr-tests Bob Ippolito
+- refactor tsconfig and add test workflow Bob Ippolito
+- Merge pull request #6 from etrepum0.0.7release Bob Ippolito
+
 ## v0.0.7 (2024-06-02)
 
 - npm publish on release Bob Ippolito
