@@ -1,0 +1,13 @@
+on:
+  release:
+    types: [published]
+jobs:
+  npm-release:
+    if: github.event.release.draft == false && github.event.release.prerelease == false
+    uses: ./.github/workflows/call-npm-publish.yml
+    with:
+      ref: refs/tags/${{ github.event.release.tag_name }}
+      dry-run: false
+      channel: latest
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
