@@ -16,29 +16,6 @@ export { DragonPlan } from "./DragonPlan";
 export { type HistoryConfig, HistoryPlan } from "./HistoryPlan";
 export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
 export { PlainTextPlan } from "./PlainTextPlan";
-export {
-  type DecoratorComponentProps,
-  type DecoratorComponentType,
-  type EditorChildrenComponentProps,
-  type EditorChildrenComponentType,
-  type EditorComponentProps,
-  type EditorComponentType,
-  LexicalPlanComposer,
-  type LexicalPlanComposerProps,
-  type ReactConfig,
-  ReactPlan,
-} from "./ReactPlan";
-export {
-  type HostMountCommandArg,
-  type MountPluginCommandArg,
-  type Container,
-  mountReactPluginComponent,
-  mountReactPluginElement,
-  mountReactPluginHost,
-  REACT_MOUNT_PLUGIN_COMMAND,
-  REACT_PLUGIN_HOST_MOUNT_COMMAND,
-  ReactPluginHostPlan,
-} from "./ReactPluginHostPlan";
 export { RichTextPlan } from "./RichTextPlan";
 export {
   type AnyLexicalPlan,
@@ -54,8 +31,5 @@ export {
   type PlanConfigBase,
   type RegisterState,
 } from "./types";
-export {
-  type ErrorBoundaryType,
-  type ErrorBoundaryProps,
-} from "./useReactDecorators";
 export { safeCast } from "./safeCast";
+export { shallowMergeConfig } from "./shallowMergeConfig";

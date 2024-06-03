@@ -140,7 +140,7 @@ export type LexicalPlanConfig<Plan extends AnyLexicalPlan> = Plan["config"];
 
 export type LexicalPlanName<Plan extends AnyLexicalPlan> = Plan["name"];
 
-export interface EditorHandle {
+export interface EditorHandle extends Disposable {
   editor: LexicalEditor;
   dispose: () => void;
 }

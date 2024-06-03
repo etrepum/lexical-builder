@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@etrepum/lexical-builder": "*",
+    "@etrepum/lexical-react-plan": "*",
     "@lexical/react": "0.15.0",
     "@lexical/yjs": "0.15.0",
     "lexical": "0.15.0",

@@ -7,7 +7,8 @@
  */
 import type { Provider } from "@lexical/yjs";
 
-import { defineRootPlan, LexicalPlanComposer } from "@etrepum/lexical-builder";
+import { defineRootPlan } from "@etrepum/lexical-builder";
+import { LexicalPlanComposer } from "@etrepum/lexical-react-plan";
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import * as Y from "yjs";

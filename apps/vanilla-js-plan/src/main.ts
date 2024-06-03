@@ -13,11 +13,13 @@ import {
   defineRootPlan,
   DragonPlan,
   HistoryPlan,
+  RichTextPlan,
+} from "@etrepum/lexical-builder";
+import {
   mountReactPluginComponent,
   mountReactPluginHost,
   ReactPluginHostPlan,
-  RichTextPlan,
-} from "@etrepum/lexical-builder";
+} from "@etrepum/lexical-react-plan";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { LexicalEditor } from "lexical";
 

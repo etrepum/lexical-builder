@@ -17,7 +17,7 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 import { createRoot, Root } from "react-dom/client";
 
-import { configPlan, definePlan } from "./definePlan";
+import { configPlan, definePlan } from "@etrepum/lexical-builder";
 import { ReactPlan } from "./ReactPlan";
 
 export interface HostMountCommandArg {

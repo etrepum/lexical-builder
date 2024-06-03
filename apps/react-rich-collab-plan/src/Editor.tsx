@@ -9,11 +9,13 @@ import {
   AutoFocusPlan,
   configPlan,
   definePlan,
-  type EditorChildrenComponentProps,
-  ReactPlan,
   RichTextPlan,
   DragonPlan,
 } from "@etrepum/lexical-builder";
+import {
+  type EditorChildrenComponentProps,
+  ReactPlan,
+} from "@etrepum/lexical-react-plan";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 
 import ToolbarPlugin from "./plugins/ToolbarPlugin";

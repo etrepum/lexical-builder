@@ -6,7 +6,12 @@
  *
  */
 
-import type { AnyLexicalPlanArgument } from "./types";
+import {
+  type AnyLexicalPlanArgument,
+  definePlan,
+  buildEditorFromPlans,
+  shallowMergeConfig,
+} from "@etrepum/lexical-builder";
 
 import {
   LexicalComposerContext,
@@ -18,10 +23,7 @@ import useLexicalEditable from "@lexical/react/useLexicalEditable";
 import * as React from "react";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 
-import { definePlan } from "./definePlan";
-import { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
 import { canShowPlaceholder } from "./registerShowPlaceholder";
-import { shallowMergeConfig } from "./shallowMergeConfig";
 import {
   type ErrorBoundaryType,
   useReactDecorators,
@@ -37,7 +39,7 @@ export interface EditorChildrenComponentProps {
 }
 
 export type EditorChildrenComponentType = (
-  props: EditorChildrenComponentProps,
+  props: EditorChildrenComponentProps
 ) => JSX.Element | null;
 
 export interface DecoratorComponentProps {
@@ -59,7 +61,7 @@ export interface EditorComponentProps {
 }
 
 export type EditorComponentType = (
-  props: Partial<EditorComponentProps>,
+  props: Partial<EditorComponentProps>
 ) => JSX.Element;
 
 export interface ReactConfig {
@@ -103,7 +105,7 @@ export function LexicalPlanComposer({
           };
         },
       }),
-      plan,
+      plan
     );
   }, [plan]);
   useEffect(() => {
@@ -140,7 +142,7 @@ function buildEditorComponent(config: ReactConfig) {
   const context = config.getContext();
   const [editor] = context;
   const rawConfigDecorators = config.decorators.map((El) =>
-    typeof El === "function" ? <El context={context} /> : El,
+    typeof El === "function" ? <El context={context} /> : El
   );
   return function EditorComponent(props: Partial<EditorComponentProps>) {
     const {
@@ -158,7 +160,7 @@ function buildEditorComponent(config: ReactConfig) {
             <Suspense fallback={null}>{decorator}</Suspense>
           </ErrorBoundary>
         )),
-      [ErrorBoundary],
+      [ErrorBoundary]
     );
     return (
       <LexicalComposerContext.Provider value={context}>
