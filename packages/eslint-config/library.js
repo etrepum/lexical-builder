@@ -8,8 +8,8 @@ module.exports = {
     "eslint:recommended",
     "prettier",
     "eslint-config-turbo",
-    // https://github.com/facebook/lexical/pull/6252
-    // "plugin:@lexical/recommended",
+    // https://github.com/facebook/lexical/pull/6252 - do not upgrade to v0.16.0
+    "plugin:@lexical/recommended",
   ],
   plugins: ["only-warn"],
   globals: {

@@ -18,6 +18,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@lexical/eslint-plugin": "^0.15.0",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "child-process-promise": "^2.2.1",
