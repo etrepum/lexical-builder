@@ -32,7 +32,7 @@ async function publish() {
       `You're about to publish:
 ${pkgs.map((pkg) => pkg.getNpmName()).join("\n")}
 
-Type "publish" to confirm.`
+Type "publish" to confirm.`,
     );
     await waitForInput();
   }

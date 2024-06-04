@@ -74,7 +74,7 @@ async function main() {
   if (CHANNEL !== "nightly") {
     // Create or force update the remote version branch for creating a PR
     refs.push(
-      `refs/heads/${CHANNEL}__release:refs/heads/${npm_package_version}__release`
+      `refs/heads/${CHANNEL}__release:refs/heads/${npm_package_version}__release`,
     );
   }
   commands.push([
@@ -86,7 +86,7 @@ async function main() {
   ]);
   if (GITHUB_OUTPUT) {
     commands.push(
-      `echo "version=${npm_package_version}" >> '${GITHUB_OUTPUT}'`
+      `echo "version=${npm_package_version}" >> '${GITHUB_OUTPUT}'`,
     );
     commands.push(`echo "tag-ref=${refs[0]}" >> '${GITHUB_OUTPUT}'`);
   }

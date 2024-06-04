@@ -13,7 +13,8 @@
 
 const { spawn } = require("child-process-promise");
 
-const { INCREMENT, CHANNEL, npm_package_version, GIT_REPO, LATEST_RELEASE } = process.env;
+const { INCREMENT, CHANNEL, npm_package_version, GIT_REPO, LATEST_RELEASE } =
+  process.env;
 for (const [k, v] of Object.entries({
   INCREMENT,
   CHANNEL,
@@ -21,7 +22,7 @@ for (const [k, v] of Object.entries({
   npm_package_version,
   LATEST_RELEASE,
 })) {
-  if (!v && !(k === 'LATEST_RELEASE' && CHANNEL !== 'latest')) {
+  if (!v && !(k === "LATEST_RELEASE" && CHANNEL !== "latest")) {
     console.error(`Expecting ${k} to be set in the environment`);
     process.exit(1);
   }
@@ -38,7 +39,7 @@ if (
   (CHANNEL === "nightly" && INCREMENT !== "prerelease")
 ) {
   console.error(
-    `Invalid value for increment in ${CHANNEL} channel: ${INCREMENT}`
+    `Invalid value for increment in ${CHANNEL} channel: ${INCREMENT}`,
   );
   process.exit(1);
 }

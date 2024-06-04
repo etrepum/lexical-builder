@@ -7,7 +7,7 @@
     "lint": "turbo lint",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,md,js,jsx,mjs,yml,json,css,html}\"",
     "increment-version": "node ./scripts/npm/increment-version",
     "postversion": "node ./scripts/npm/postversion",
     "update-changelog": "node ./scripts/npm/update-changelog",

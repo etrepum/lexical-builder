@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       channel:
-        description: 'release channel'
+        description: "release channel"
         type: choice
         options:
           - latest

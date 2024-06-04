@@ -28,7 +28,7 @@ on:
         description: 'The latest release (per GitHub releases) prior to this increment, e.g. "v0.15.0"'
         value: ${{ jobs.release.outputs.latest-release }}
       changelog:
-        description: 'The changelog from latest-release to version if it is the latest release channel'
+        description: "The changelog from latest-release to version if it is the latest release channel"
         value: ${{ jobs.release.outputs.changelog }}
 
 jobs:
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
       - run: npm ci
       - run: |
           git config user.name "Lexical Builder GitHub Actions Bot"

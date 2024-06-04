@@ -5,16 +5,16 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'apps/docs/**'
-      - 'packages/*/README.md'
-      - 'apps/*/README.md'
+      - "apps/docs/**"
+      - "packages/*/README.md"
+      - "apps/*/README.md"
   pull_request:
     types: [opened, synchronize, reopened]
     paths-ignore:
-      - 'apps/docs/**'
-      - 'packages/*/README.md'
-      - 'apps/*/README.md'
-  
+      - "apps/docs/**"
+      - "packages/*/README.md"
+      - "apps/*/README.md"
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

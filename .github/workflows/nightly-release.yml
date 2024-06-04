@@ -2,7 +2,7 @@ name: Nightly Release Branch
 on:
   # Run daily at 2:30am UTC
   schedule:
-    - cron: '30 2 * * 1-5'
+    - cron: "30 2 * * 1-5"
   workflow_dispatch:
 jobs:
   increment-version:
@@ -13,7 +13,7 @@ jobs:
       channel: nightly
       increment: prerelease
       dry-run: false
-      git-repo: 'git@github.com:etrepum/lexical-builder.git'
+      git-repo: "git@github.com:etrepum/lexical-builder.git"
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
   npm-release:
