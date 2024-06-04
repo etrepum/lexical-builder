@@ -1,3 +1,7 @@
+## v0.0.10 (2024-06-03)
+
+- Merge pull request #9 from etrepum0.0.9release Bob Ippolito
+
 ## v0.0.9 (2024-06-03)
 
 - rename workflow Bob Ippolito
