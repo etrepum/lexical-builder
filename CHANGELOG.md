@@ -1,3 +1,10 @@
+## v0.0.11 (2024-06-04)
+
+- upgrade lexical Bob Ippolito
+- more docs Bob Ippolito
+- prettier Bob Ippolito
+- Merge pull request #10 from etrepum0.0.10release Bob Ippolito
+
 ## v0.0.10 (2024-06-03)
 
 - Merge pull request #9 from etrepum0.0.9release Bob Ippolito
