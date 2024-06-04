@@ -10,6 +10,10 @@ import { registerDragonSupport } from "@lexical/dragon";
 
 import { definePlan } from "./definePlan";
 
+/**
+ * Add Dragon speech to text input support to the editor, via the
+ * @lexical/dragon module.
+ */
 export const DragonPlan = definePlan({
   config: {},
   name: "@lexical/dragon",

@@ -17,9 +17,17 @@ declare module "@etrepum/lexical-builder" {
 }
 
 export interface AutoFocusConfig {
+  /**
+   * Where to move the selection when the editor is focused and there is no
+   * existing selection. Can be "rootStart" or "rootEnd" (the default).
+   */
   defaultSelection?: "rootStart" | "rootEnd";
 }
 
+/**
+ * A Plan to focus the LexicalEditor when the root element is set
+ * (typically only when the editor is first created).
+ */
 export const AutoFocusPlan = definePlan({
   config: safeCast<AutoFocusConfig>({}),
   name: "@etrepum/lexical-builder/AutoFocusPlan",

@@ -22,10 +22,21 @@ declare module "@etrepum/lexical-builder" {
 }
 
 export interface HistoryConfig {
+  /**
+   * The time (in milliseconds) the editor should delay generating a new history stack,
+   * instead of merging the current changes with the current stack. The default is 300ms.
+   */
   delay: number;
+  /**
+   * The initial history state, the default is {@link createEmptyHistoryState}.
+   */
   createInitialHistoryState: () => HistoryState;
 }
 
+/**
+ * Registers necessary listeners to manage undo/redo history stack and related
+ * editor commands, via the @lexical/history module.
+ */
 export const HistoryPlan = definePlan({
   config: safeCast<HistoryConfig>({
     createInitialHistoryState: createEmptyHistoryState,

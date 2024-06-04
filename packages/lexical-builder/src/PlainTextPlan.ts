@@ -9,6 +9,9 @@ import { registerPlainText } from "@lexical/plain-text";
 
 import { definePlan } from "./definePlan";
 
+/**
+ * A plan to register @lexical/plain-text behavior
+ */
 export const PlainTextPlan = definePlan({
   config: {},
   conflictsWith: ["@lexical/rich-text"],

@@ -6,7 +6,7 @@
  *
  */
 
-export const PACKAGE_VERSION = import.meta.env.PACKAGE_VERSION;
+export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
 
 export { configPlan, definePlan, defineRootPlan } from "./definePlan";
 export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
@@ -32,3 +32,23 @@ export { DragonPlan } from "./DragonPlan";
 export { type HistoryConfig, HistoryPlan } from "./HistoryPlan";
 export { PlainTextPlan } from "./PlainTextPlan";
 export { RichTextPlan } from "./RichTextPlan";
+
+/**
+ * An open interface for Name -> Config mappings. If you are defining a
+ * plan with non-empty config and it may be used as a peerDependency then
+ * you should extend this as follows:
+ *
+ * @example Extending LexicalPlanRegistry
+ * ```ts
+ * export const SomePlan = definePlan({
+ *   name: "@some/plan",
+ *   config: { className: "default" }
+ * });
+ * declare module '@etrepum/lexical-builder' {
+ *   interface LexicalPlanRegistry {
+ *     [SomePlan.name]: typeof SomePlan;
+ *   }
+ * }
+ * ```
+ */
+export interface LexicalPlanRegistry {}

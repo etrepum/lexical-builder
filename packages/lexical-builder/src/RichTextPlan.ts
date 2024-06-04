@@ -10,6 +10,10 @@ import { HeadingNode, QuoteNode, registerRichText } from "@lexical/rich-text";
 
 import { definePlan } from "./definePlan";
 
+/**
+ * A plan to register @lexical/rich-text behavior and nodes
+ * ({@link HeadingNode}, {@link QuoteNode})
+ */
 export const RichTextPlan = definePlan({
   config: {},
   conflictsWith: ["@lexical/plain-text"],

@@ -324,7 +324,6 @@ export class LexicalBuilder {
         deepThemeMergeInPlace(theme, plan.theme);
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     if (Object.keys(theme).length > 0) {
       config.theme = theme;
     }

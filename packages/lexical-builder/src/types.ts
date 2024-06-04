@@ -7,33 +7,70 @@
  */
 
 import type { CreateEditorArgs, EditorState, LexicalEditor } from "lexical";
+import type { LexicalPlanRegistry } from "@etrepum/lexical-builder";
 
+/**
+ * Any concrete {@link LexicalPlan}
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyLexicalPlan = LexicalPlan<any, string>;
+/**
+ * Any {@link LexicalPlan} or {@link NormalizedLexicalPlanArgument}
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyLexicalPlanArgument = LexicalPlanArgument<any, string>;
+/**
+ * The default plan configuration of an empty object
+ */
 export type PlanConfigBase = Record<never, never>;
 
+/**
+ * A tuple of [plan, configOverride, ...configOverrides]
+ */
 export type NormalizedLexicalPlanArgument<
   Config extends PlanConfigBase,
   Name extends string,
 > = [LexicalPlan<Config, Name>, Partial<Config>, ...Partial<Config>[]];
 
+/**
+ * An object that the register method can use to detect unmount and access the
+ * configuration for plan dependencies
+ */
 export interface RegisterState {
+  /** An AbortSignal that is aborted when the EditorHandle is disposed */
   signal: AbortSignal;
+  /**
+   * Get the configuration of a peerDependency by name, if it exists
+   * (must be a peerDependency of this plan)
+   */
   getPeerConfig<Name extends keyof LexicalPlanRegistry>(
     name: string,
   ): undefined | LexicalPlanConfig<LexicalPlanRegistry[Name]>;
+  /**
+   * Get the configuration of a dependency by plan
+   * (must be a direct dependency of this plan)
+   */
   getDependencyConfig<Dependency extends AnyLexicalPlan>(
     dep: Dependency,
   ): LexicalPlanConfig<Dependency>;
 }
 
+/**
+ * A {@link LexicalPlan} or {@link NormalizedLexicalPlanArgument} (plan with config overrides)
+ */
 export type LexicalPlanArgument<
   Config extends PlanConfigBase,
   Name extends string,
 > = LexicalPlan<Config, Name> | NormalizedLexicalPlanArgument<Config, Name>;
 
+/**
+ * A Plan is a composable unit of LexicalEditor configuration
+ * (nodes, theme, etc) used to create an editor, plus runtime behavior
+ * that is registered after the editor is created.
+ *
+ * A Plan may depend on other Plans, and provide functionality to other
+ * plans through its config.
+ */
 export interface LexicalPlan<
   Config extends PlanConfigBase = PlanConfigBase,
   Name extends string = string,
@@ -87,7 +124,7 @@ export interface LexicalPlan<
   /**
    * The editor will catch errors that happen during updates and
    * reconciliation and call this. It defaults to
-   * `(error) => console.error(error)`.
+   * `(error) => { throw error }`.
    *
    * @param error The Error object
    * @param editor The editor that this error came from
@@ -95,23 +132,27 @@ export interface LexicalPlan<
   onError?: (error: Error, editor: LexicalEditor) => void;
   /**
    * The initial EditorState as a JSON string, an EditorState, or a function
-   * to update the editor once.
+   * to update the editor (once).
    */
   $initialEditorState?: InitialEditorStateType;
   /**
-   * The default configuration specific to this Plan
+   * The default configuration specific to this Plan. This Config may be
+   * seen by this Plan, or any Plan that uses it as a dependency.
+   *
+   * The config may be mutated on register, this is particularly useful
+   * for vending functionality to other Plans that depend on this Plan.
    */
   config: Config;
   /**
-   * By default, Config is shallow merged `{...a, ...b}`, if your Plan
-   * requires other strategies (such as concatenating an Array) you can
-   * implement it here.
+   * By default, Config is shallow merged `{...a, ...b}` with
+   * {@link shallowMergeConfig}, if your Plan requires other strategies
+   * (such as concatenating an Array) you can implement it here.
    *
-   * @param a The current configuration
-   * @param b The partial configuration to merge
+   * @param config The current configuration
+   * @param overrides The partial configuration to merge
    * @returns The merged configuration
    */
-  mergeConfig?: (a: Config, b?: Partial<Config>) => Config;
+  mergeConfig?: (config: Config, overrides?: Partial<Config>) => Config;
   /**
    * Add behavior to the editor (register transforms, listeners, etc.) after
    * the Editor is created.
@@ -130,39 +171,46 @@ export interface LexicalPlan<
   ) => () => void;
 }
 
+/**
+ * Get the Config type of a peer Plan from {@link LexicalPlanRegistry} by
+ * name, or the empty {@link PlanConfigBase} if it is not globally registered.
+ */
 export type LexicalPeerConfig<Name extends keyof LexicalPlanRegistry | string> =
   [Name] extends [keyof LexicalPlanRegistry]
     ? LexicalPlanRegistry[Name]
     : PlanConfigBase;
 
+/**
+ * Extract the Config type from a Plan
+ */
 export type LexicalPlanConfig<Plan extends AnyLexicalPlan> = Plan["config"];
-
+/**
+ * Extract the Name type from a Plan
+ */
 export type LexicalPlanName<Plan extends AnyLexicalPlan> = Plan["name"];
 
+/**
+ * A handle to the editor and its dispose function
+ */
 export interface EditorHandle extends Disposable {
+  /** The created editor */
   editor: LexicalEditor;
+  /**
+   * Dispose the editor and perform all clean-up
+   * (also available as Symbol.dispose via Disposable)
+   */
   dispose: () => void;
 }
 
+/**
+ * All of the possible ways to initialize $initialEditorState:
+ * - `null` an empty state, the default
+ * - `string` an EditorState serialized to JSON
+ * - `EditorState` an EditorState that has been deserialized already (not just parsed JSON)
+ * - `((editor: LexicalEditor) => void)` A function that is called with the editor for you to mutate it
+ */
 export type InitialEditorStateType =
   | null
   | string
   | EditorState
   | ((editor: LexicalEditor) => void);
-
-/**
- * An open interface for Name -> Config mappings. If you are defining a
- * plan with non-empty config and it may be used as a peerDependency then
- * you should extend this as follows:
- *
- * @example Extending LexicalPlanRegistry
- * ```ts
- * export const SomePlan = definePlan({ name: "@some/plan", config: { className: "default" } });
- * declare module '@etrepum/lexical-builder' {
- *   interface LexicalPlanRegistry {
- *     [SomePlan.name]: typeof SomePlan;
- *   }
- * }
- * ```
- */
-export interface LexicalPlanRegistry {}

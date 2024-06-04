@@ -6,7 +6,7 @@
  *
  */
 
-export const PACKAGE_VERSION = import.meta.env.PACKAGE_VERSION;
+export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
 
 export {
   type DecoratorComponentProps,

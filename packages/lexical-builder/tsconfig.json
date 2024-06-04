@@ -1,4 +1,9 @@
 {
   "extends": "@repo/typescript-config/react-library.json",
-  "include": ["src"]
+  "include": ["src"],
+  "compilerOptions": {
+    "paths": {
+      "@etrepum/lexical-builder": ["./src"]
+    }
+  }
 }

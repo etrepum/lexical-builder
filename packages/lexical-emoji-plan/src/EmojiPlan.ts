@@ -12,6 +12,8 @@ import { LexicalEditor, TextNode } from "lexical";
 import { EmojiNode } from "./EmojiNode";
 import { unifiedIDFromText } from "./unifiedID";
 
+export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
+
 const NAME = "@etrepum/lexical-builder/emoji-plan";
 export interface EmojiPlanConfig {
   emojiBaseUrl: string;

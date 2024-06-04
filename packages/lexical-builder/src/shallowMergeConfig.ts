@@ -7,17 +7,24 @@
  */
 import type { PlanConfigBase } from "./types";
 
+/**
+ * The default merge strategy for plan configuration is a shallow merge.
+ *
+ * @param config A full config
+ * @param overrides A partial config of overrides
+ * @returns config if there are no overrides, otherwise `{...config, ...overrides}`
+ */
 export function shallowMergeConfig<T extends PlanConfigBase>(
-  a: T,
-  b?: Partial<T>,
+  config: T,
+  overrides?: Partial<T>,
 ): T {
-  if (!b || a === b) {
-    return a;
+  if (!overrides || config === overrides) {
+    return config;
   }
-  for (const k in b) {
-    if (b[k] !== a[k]) {
-      return { ...a, ...b };
+  for (const k in overrides) {
+    if (overrides[k] !== overrides[k]) {
+      return { ...config, ...overrides };
     }
   }
-  return a;
+  return config;
 }
