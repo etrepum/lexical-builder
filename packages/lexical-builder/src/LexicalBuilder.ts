@@ -218,7 +218,7 @@ export class LexicalBuilder {
       currentPhaseMap.set(plan, planRep);
     }
     for (const config of configs) {
-      planRep.configs.add(config);
+      planRep.configs.add(config as Partial<LexicalPlanConfig<AnyLexicalPlan>>);
     }
     return phase;
   }

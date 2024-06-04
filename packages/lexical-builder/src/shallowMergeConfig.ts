@@ -22,7 +22,7 @@ export function shallowMergeConfig<T extends PlanConfigBase>(
     return config;
   }
   for (const k in overrides) {
-    if (overrides[k] !== overrides[k]) {
+    if (config[k] !== overrides[k]) {
       return { ...config, ...overrides };
     }
   }

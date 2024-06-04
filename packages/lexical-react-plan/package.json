@@ -31,10 +31,10 @@
     "@repo/typescript-config": "*"
   },
   "peerDependencies": {
-    "@lexical/react": ">=0.15.0",
-    "@lexical/text": ">=0.15.0",
-    "@lexical/utils": ">=0.15.0",
-    "lexical": ">=0.15.0",
+    "@lexical/react": ">=0.16.0",
+    "@lexical/text": ">=0.16.0",
+    "@lexical/utils": ">=0.16.0",
+    "lexical": ">=0.16.0",
     "react": ">=18"
   },
   "sideEffects": false,

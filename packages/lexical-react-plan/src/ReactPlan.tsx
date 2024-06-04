@@ -18,8 +18,8 @@ import {
   type LexicalComposerContextWithEditor,
 } from "@lexical/react/LexicalComposerContext";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-import useLexicalEditable from "@lexical/react/useLexicalEditable";
+import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
+import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import * as React from "react";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 
@@ -144,7 +144,9 @@ function buildEditorComponent(config: ReactConfig) {
   const rawConfigDecorators = config.decorators.map((El) =>
     typeof El === "function" ? <El context={context} /> : El,
   );
+  console.log({ config });
   return function EditorComponent(props: Partial<EditorComponentProps>) {
+    console.log({ props });
     const {
       EditorChildrenComponent = config.EditorChildrenComponent,
       ErrorBoundary = config.ErrorBoundary,

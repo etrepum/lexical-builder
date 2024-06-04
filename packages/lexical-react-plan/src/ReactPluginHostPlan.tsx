@@ -19,6 +19,7 @@ import { createRoot, Root } from "react-dom/client";
 
 import { configPlan, definePlan } from "@etrepum/lexical-builder";
 import { ReactPlan } from "./ReactPlan";
+import invariant from "./shared/invariant";
 
 export interface HostMountCommandArg {
   root: Root;
@@ -123,6 +124,7 @@ export const ReactPluginHostPlan = definePlan({
       editor.registerCommand(
         REACT_MOUNT_PLUGIN_COMMAND,
         (arg) => {
+          // This runs before the PluginHost version
           mountedPlugins.set(arg.key, arg);
           return false;
         },
@@ -131,6 +133,10 @@ export const ReactPluginHostPlan = definePlan({
       editor.registerCommand(
         REACT_PLUGIN_HOST_MOUNT_COMMAND,
         (arg) => {
+          invariant(
+            root === undefined,
+            "ReactPluginHostPlan: Root is already mounted",
+          );
           root = arg.root;
           root.render(
             <Component>

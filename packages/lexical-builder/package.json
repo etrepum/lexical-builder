@@ -29,13 +29,13 @@
   },
   "homepage": "https://github.com/etrepum/lexical-builder",
   "peerDependencies": {
-    "@lexical/dragon": ">=0.15.0",
-    "@lexical/history": ">=0.15.0",
-    "@lexical/plain-text": ">=0.15.0",
-    "@lexical/rich-text": ">=0.15.0",
-    "@lexical/text": ">=0.15.0",
-    "@lexical/utils": ">=0.15.0",
-    "lexical": ">=0.15.0"
+    "@lexical/dragon": ">=0.16.0",
+    "@lexical/history": ">=0.16.0",
+    "@lexical/plain-text": ">=0.16.0",
+    "@lexical/rich-text": ">=0.16.0",
+    "@lexical/text": ">=0.16.0",
+    "@lexical/utils": ">=0.16.0",
+    "lexical": ">=0.16.0"
   },
   "sideEffects": false,
   "devDependencies": {

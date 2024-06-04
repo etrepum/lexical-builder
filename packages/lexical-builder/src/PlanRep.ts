@@ -19,7 +19,7 @@ import { shallowMergeConfig } from "./shallowMergeConfig";
  */
 export class PlanRep<Plan extends AnyLexicalPlan> {
   builder: LexicalBuilder;
-  configs: Set<LexicalPlanConfig<Plan>>;
+  configs: Set<Partial<LexicalPlanConfig<Plan>>>;
   _config?: LexicalPlanConfig<Plan>;
   plan: Plan;
   constructor(builder: LexicalBuilder, plan: Plan) {

@@ -1,5 +1,6 @@
 import {
   buildEditorFromPlans,
+  configPlan,
   defineRootPlan,
   DragonPlan,
   EditorHandle,
@@ -9,6 +10,7 @@ import {
 import {
   mountReactPluginComponent,
   mountReactPluginHost,
+  ReactPlan,
   ReactPluginHostPlan,
 } from "@etrepum/lexical-react-plan";
 import { TreeView } from "@lexical/react/LexicalTreeView";
@@ -16,7 +18,8 @@ import { $createLineBreakNode, LexicalEditor } from "lexical";
 import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
 import { act } from "@testing-library/react";
 
-import { describe, beforeEach, it, afterEach, expect } from "vitest";
+import { describe, beforeEach, it, afterEach, expect, vi, Mock } from "vitest";
+import { mergeRegister } from "@lexical/utils";
 
 function $prepopulatedRichText() {
   const root = $getRoot();
@@ -33,17 +36,35 @@ function $prepopulatedRichText() {
   root.append(paragraph);
 }
 
+describe("configPlan", () => {
+  it("returns what is expected", () => {
+    const arg = configPlan(ReactPlan, { contentEditable: null });
+    expect(arg.length).toBe(2);
+    expect(arg[0]).toBe(ReactPlan);
+    expect(arg[1]).toEqual({ contentEditable: null });
+  });
+});
 describe("ReactPluginHostPlan", () => {
   let editorHandle: EditorHandle;
   let rootDom: HTMLDivElement;
   let treeDom: HTMLDivElement;
+  let cleanupFn: Mock;
+  let registerFn: Mock;
+  let pluginHostDom: HTMLDivElement;
+
   beforeEach(async () => {
+    cleanupFn = vi.fn();
+    registerFn = vi.fn().mockReturnValue(cleanupFn);
+    expect(document.body.children.length).toBe(0);
     await act(async () => {
       rootDom = document.createElement("div");
       rootDom.id = "lexical-editor";
       treeDom = document.createElement("div");
       treeDom.id = "lexical-state";
-      document.body.append(rootDom, treeDom);
+      pluginHostDom = document.createElement("div");
+      pluginHostDom.id = "react-plugin-host";
+
+      document.body.append(rootDom, pluginHostDom, treeDom);
       editorHandle = buildEditorFromPlans(
         defineRootPlan({
           $initialEditorState: $prepopulatedRichText,
@@ -55,12 +76,10 @@ describe("ReactPluginHostPlan", () => {
           ],
           namespace: "Vanilla JS Plan Demo",
           register: (editor: LexicalEditor) => {
-            const el = document.createElement("div");
-            document.body.appendChild(el);
-            mountReactPluginHost(editor, el);
+            mountReactPluginHost(editor, pluginHostDom);
             mountReactPluginComponent(editor, {
               Component: TreeView,
-              domNode: document.getElementById("lexical-state")!,
+              domNode: treeDom,
               key: "tree-view",
               props: {
                 editor,
@@ -72,15 +91,11 @@ describe("ReactPluginHostPlan", () => {
                 viewClassName: "tree-view-output",
               },
             });
-            return () => {
-              el.remove();
-            };
+            return registerFn();
           },
         }),
       );
-      editorHandle.editor.setRootElement(
-        document.getElementById("lexical-editor"),
-      );
+      editorHandle.editor.setRootElement(rootDom);
     });
   });
   afterEach(async () => {
@@ -97,14 +112,19 @@ describe("ReactPluginHostPlan", () => {
     await act(async () => {
       editorHandle.dispose();
     });
-    // The TreeView is removed when the editor is cleaned up
+    // All nodes are still in the document after dispose
+    expect(rootDom.isConnected).toBe(true);
+    expect(treeDom.isConnected).toBe(true);
+    expect(pluginHostDom.isConnected).toBe(true);
+    // The TreeView and plugin host are removed when the editor is cleaned up
     expect(treeDom.innerHTML).toEqual("");
+    expect(pluginHostDom.innerHTML).toEqual("");
     // The editor removes its contents too
     expect((rootDom as any).__lexicalEditor).toBe(null);
     expect(rootDom.innerHTML).toEqual("");
     // Check the whole body for expectations
     expect(document.body.innerHTML).toEqual(
-      `<div id="lexical-editor" style="user-select: text; white-space: pre-wrap; word-break: break-word;" data-lexical-editor="true"></div><div id="lexical-state"></div>`,
+      `<div id="lexical-editor" style="user-select: text; white-space: pre-wrap; word-break: break-word;" data-lexical-editor="true"></div><div id="react-plugin-host"></div><div id="lexical-state"></div>`,
     );
   });
 });

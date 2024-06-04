@@ -8,7 +8,7 @@
     "react-internal.js"
   ],
   "devDependencies": {
-    "@lexical/eslint-plugin": "^0.15.0",
+    "@lexical/eslint-plugin": "^0.16.0",
     "@typescript-eslint/eslint-plugin": "^7.10.0",
     "@typescript-eslint/parser": "^7.10.0",
     "@vercel/style-guide": "^6.0.0",
