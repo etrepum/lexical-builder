@@ -40,7 +40,7 @@ export const AutoFocusPlan = definePlan({
             rootElement.focus({ preventScroll: true });
           }
         },
-        { defaultSelection }
+        { defaultSelection },
       );
     });
   },

@@ -17,15 +17,15 @@ export type PlanConfigBase = Record<never, never>;
 export type NormalizedLexicalPlanArgument<
   Config extends PlanConfigBase,
   Name extends string,
-> = [LexicalPlan<Config, Name>, Config, ...Config[]];
+> = [LexicalPlan<Config, Name>, Partial<Config>, ...Partial<Config>[]];
 
 export interface RegisterState {
   signal: AbortSignal;
   getPeerConfig<Name extends keyof LexicalPlanRegistry>(
-    name: string
+    name: string,
   ): undefined | LexicalPlanConfig<LexicalPlanRegistry[Name]>;
   getDependencyConfig<Dependency extends AnyLexicalPlan>(
-    dep: Dependency
+    dep: Dependency,
   ): LexicalPlanConfig<Dependency>;
 }
 
@@ -49,7 +49,7 @@ export interface LexicalPlan<
    * configure, if they are directly depended on by another Plan
    */
   peerDependencies?: {
-    [k in keyof LexicalPlanRegistry]?: LexicalPeerConfig<k>;
+    [k in keyof LexicalPlanRegistry]?: Partial<LexicalPeerConfig<k>>;
   };
 
   /**
@@ -126,7 +126,7 @@ export interface LexicalPlan<
   register?: (
     editor: LexicalEditor,
     config: Config,
-    state: RegisterState
+    state: RegisterState,
   ) => () => void;
 }
 

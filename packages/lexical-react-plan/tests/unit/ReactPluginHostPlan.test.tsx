@@ -28,7 +28,7 @@ function $prepopulatedRichText() {
   paragraph.append(
     $createTextNode("Plain Text!"),
     $createLineBreakNode(),
-    $createTextNode("Bold Text!").toggleFormat("bold")
+    $createTextNode("Bold Text!").toggleFormat("bold"),
   );
   root.append(paragraph);
 }
@@ -76,10 +76,10 @@ describe("ReactPluginHostPlan", () => {
               el.remove();
             };
           },
-        })
+        }),
       );
       editorHandle.editor.setRootElement(
-        document.getElementById("lexical-editor")
+        document.getElementById("lexical-editor"),
       );
     });
   });
@@ -104,7 +104,7 @@ describe("ReactPluginHostPlan", () => {
     expect(rootDom.innerHTML).toEqual("");
     // Check the whole body for expectations
     expect(document.body.innerHTML).toEqual(
-      `<div id="lexical-editor" style="user-select: text; white-space: pre-wrap; word-break: break-word;" data-lexical-editor="true"></div><div id="lexical-state"></div>`
+      `<div id="lexical-editor" style="user-select: text; white-space: pre-wrap; word-break: break-word;" data-lexical-editor="true"></div><div id="lexical-state"></div>`,
     );
   });
 });

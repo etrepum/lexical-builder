@@ -9,6 +9,7 @@ import type {
   AnyLexicalPlan,
   AnyLexicalPlanArgument,
   EditorHandle,
+  LexicalPlanConfig,
 } from "./types";
 
 import {
@@ -26,9 +27,41 @@ import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
 import { initializeEditor } from "./initializeEditor";
 import { PlanRep } from "./PlanRep";
 import { mergeRegister } from "@lexical/utils";
+import { configPlan } from "./definePlan";
 
 const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
 
+/**
+ * Build a LexicalEditor by combining together one or more plans, optionally
+ * overriding some of their configuration.
+ *
+ * @param plan A plan argument (a plan, or a plan with config overrides)
+ * @param plans Optional additional plan arguments
+ * @returns An editor handle
+ *
+ * @example A single root plan with multiple dependencies
+ * ```ts
+ * const editorHandle = buildEditorFromPlans(
+ *   defineRootPlan({
+ *     dependencies: [
+ *       RichTextPlan,
+ *       configPlan(EmojiPlan, { emojiBaseUrl: "/assets/emoji" }),
+ *     ],
+ *     register: (editor: LexicalEditor) => {
+ *       console.log("Editor Created");
+ *       return () => console.log("Editor Disposed");
+ *     },
+ *   }),
+ * );
+ * ```
+ * @example A very similar minimal configuration without the register hook
+ * ```ts
+ * const editorHandle = buildEditorFromPlans(
+ *   RichTextPlan,
+ *   configPlan(EmojiPlan, { emojiBaseUrl: "/assets/emoji" }),
+ * );
+ * ```
+ */
 export function buildEditorFromPlans(
   plan: AnyLexicalPlanArgument,
   ...plans: AnyLexicalPlanArgument[]
@@ -41,7 +74,10 @@ export function buildEditorFromPlans(
   return builder.buildEditor();
 }
 
+/** @internal */
 function noop() {}
+
+/** @internal */
 class DisposableEditorHandle implements EditorHandle {
   editor: LexicalEditor;
   dispose: () => void;
@@ -62,6 +98,7 @@ class DisposableEditorHandle implements EditorHandle {
   }
 }
 
+/** Throw the given Error */
 function defaultOnError(err: Error) {
   throw err;
 }
@@ -81,6 +118,7 @@ export class LexicalBuilder {
     this.conflicts = new Map();
   }
 
+  /** Look up the editor that was created by this LexicalBuilder or throw */
   static fromEditor(editor: LexicalEditor): LexicalBuilder {
     const builder = buildersForEditors.get(editor);
     invariant(
@@ -147,7 +185,13 @@ export class LexicalBuilder {
       )) {
         const dep = this.planNameMap.get(depName);
         if (dep) {
-          phase = Math.max(phase, 1 + this.addPlan([dep.plan, cfg]));
+          phase = Math.max(
+            phase,
+            1 +
+              this.addPlan(
+                configPlan(dep.plan, cfg as LexicalPlanConfig<typeof dep.plan>),
+              ),
+          );
         }
       }
       invariant(
@@ -220,9 +264,9 @@ export class LexicalBuilder {
       "nodes" | "html" | "theme" | "disableEvents" | "editable" | "namespace"
     > &
       Pick<AnyLexicalPlan, "$initialEditorState" | "onError"> = {
-        // Prefer throwing errors rather than console.error by default
-        onError: defaultOnError
-      };
+      // Prefer throwing errors rather than console.error by default
+      onError: defaultOnError,
+    };
     const nodes = new Set<NonNullable<CreateEditorArgs["nodes"]>[number]>();
     const replacedNodes = new Map<
       KlassConstructor<typeof LexicalNode>,

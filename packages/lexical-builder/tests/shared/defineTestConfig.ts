@@ -12,19 +12,19 @@ function buildResolveAlias(base: string | URL): AliasOptions {
   return Object.fromEntries(
     globSync(
       fileURLToPath(
-        new URL("../lexical-*/src/index.{ts,tsx}", base)
-      ).replaceAll("\\", "/")
+        new URL("../lexical-*/src/index.{ts,tsx}", base),
+      ).replaceAll("\\", "/"),
     ).map((entry) => [
       readPackageJson(
-        new URL(`../${path.basename(path.resolve(entry, "..", ".."))}/`, base)
+        new URL(`../${path.basename(path.resolve(entry, "..", ".."))}/`, base),
       ).name,
       entry,
-    ])
+    ]),
   );
 }
 
 export async function defineTestConfig(
-  base: URL | string
+  base: URL | string,
 ): Promise<UserConfig> {
   const pkg = readPackageJson(base);
   const hasReact = "@vitejs/plugin-react" in (pkg.devDependencies ?? {});
@@ -35,9 +35,11 @@ export async function defineTestConfig(
     test: {
       environment: "jsdom",
       setupFiles: [
-        fileURLToPath(new URL('./setupJestDom.ts', import.meta.url)),
-        ...(hasReact ? [fileURLToPath(new URL('./setupReact.ts', import.meta.url))] : [])
-      ]
+        fileURLToPath(new URL("./setupJestDom.ts", import.meta.url)),
+        ...(hasReact
+          ? [fileURLToPath(new URL("./setupReact.ts", import.meta.url))]
+          : []),
+      ],
     },
     resolve: { alias: buildResolveAlias(base) },
   };

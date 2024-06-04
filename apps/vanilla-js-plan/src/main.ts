@@ -36,7 +36,7 @@ const editorHandle = buildEditorFromPlans(
       configPlan(EmojiPlan, {
         emojiClass: "emoji-node",
         emojiLoadedClass: "emoji-node-loaded",
-        /*emojiBaseUrl: "/assets/emoji"*/
+        emojiBaseUrl: "/assets/emoji",
       }),
       ReactPluginHostPlan,
     ],
