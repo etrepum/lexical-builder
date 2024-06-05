@@ -8,7 +8,7 @@
 
 import type { RegisterLexicalSubscription } from "./registerSubscription";
 
-import useLexicalSubscription from "@lexical/react/useLexicalSubscription";
+import { useLexicalSubscription } from "@lexical/react/useLexicalSubscription";
 import { LexicalEditor } from "lexical";
 import { useCallback } from "react";
 

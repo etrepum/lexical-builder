@@ -15,11 +15,15 @@ export {
   type EditorChildrenComponentType,
   type EditorComponentProps,
   type EditorComponentType,
-  LexicalPlanComposer,
-  type LexicalPlanComposerProps,
   type ReactConfig,
-  ReactPlan,
-} from "./ReactPlan";
+  type ErrorBoundaryType,
+  type ErrorBoundaryProps,
+} from "./types";
+export { ReactPlan } from "./ReactPlan";
+export {
+  type LexicalPlanComposerProps,
+  LexicalPlanComposer,
+} from "./LexicalPlanComposer";
 export {
   type HostMountCommandArg,
   type MountPluginCommandArg,
@@ -31,7 +35,3 @@ export {
   REACT_PLUGIN_HOST_MOUNT_COMMAND,
   ReactPluginHostPlan,
 } from "./ReactPluginHostPlan";
-export {
-  type ErrorBoundaryType,
-  type ErrorBoundaryProps,
-} from "./useReactDecorators";

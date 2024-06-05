@@ -152,7 +152,7 @@ export interface LexicalPlan<
    * @param overrides The partial configuration to merge
    * @returns The merged configuration
    */
-  mergeConfig?: (config: Config, overrides?: Partial<Config>) => Config;
+  mergeConfig?: (config: Config, overrides: Partial<Config>) => Config;
   /**
    * Add behavior to the editor (register transforms, listeners, etc.) after
    * the Editor is created.
