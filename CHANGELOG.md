@@ -1,3 +1,9 @@
+## v0.0.12 (2024-06-05)
+
+- add wrangler.toml Bob Ippolito
+- version workflow with push Bob Ippolito
+- Merge pull request #11 from etrepum0.0.11release Bob Ippolito
+
 ## v0.0.11 (2024-06-04)
 
 - upgrade lexical Bob Ippolito
