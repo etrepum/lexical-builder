@@ -5,23 +5,37 @@ on:
     - cron: "30 2 * * 1-5"
   workflow_dispatch:
 jobs:
+  get-settings:
+    runs-on: ubuntu-latest
+    outputs:
+      increment: prerelease
+      channel: nightly
+  get-versions:
+    needs: [get-settings]
+    uses: ./.github/workflows/call-get-versions.yml
+    with:
+      increment: ${{ needs.get-settings.outputs.increment }}
+      channel: ${{ needs.get-settings.outputs.channel }}
   increment-version:
     # prevents this action from running on forks
     if: github.repository_owner == 'etrepum'
+    needs: [get-settings, get-versions]
     uses: ./.github/workflows/call-increment-version.yml
     with:
-      channel: nightly
-      increment: prerelease
+      increment: ${{ needs.get-settings.outputs.increment }}
+      channel: ${{ needs.get-settings.outputs.channel }}
+      latest-release: ${{ needs.get-versions.outputs.latest-release }}
+      next-version: ${{ needs.get-versions.outputs.next-version }}
       dry-run: false
-      git-repo: "git@github.com:etrepum/lexical-builder.git"
+      git-repo: ${{ needs.get-versions.outputs.ssh-git-origin }}
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
   npm-release:
     uses: ./.github/workflows/call-npm-publish.yml
-    needs: [increment-version]
+    needs: [get-settings, increment-version]
     with:
       ref: ${{ needs.increment-version.outputs.tag-ref }}
       dry-run: false
-      channel: nightly
+      channel: ${{ needs.get-settings.outputs.channel }}
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

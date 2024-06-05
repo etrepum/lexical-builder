@@ -14,8 +14,14 @@
 
 const { spawn } = require("child-process-promise");
 
-const { npm_package_version, CHANNEL, GIT_REPO, GITHUB_OUTPUT, DRY_RUN } =
-  process.env;
+const {
+  npm_package_version,
+  CHANNEL,
+  GIT_REPO,
+  GITHUB_OUTPUT,
+  DRY_RUN,
+  NEXT_VERSION,
+} = process.env;
 
 // Previously this script was defined directly in package.json as the
 // following (in one line):
@@ -35,12 +41,20 @@ async function main() {
   for (const [k, v] of Object.entries({
     CHANNEL,
     GIT_REPO,
+    NEXT_VERSION,
     npm_package_version,
   })) {
     if (!v) {
       console.error(`Expecting ${k} to be set in the environment`);
       process.exit(1);
     }
+  }
+
+  if (npm_package_version !== NEXT_VERSION) {
+    console.error(
+      `Expecting npm_package_version to equal NEXT_VERSION from get-versions workflow ('${npm_package_version}' !== '${NEXT_VERSION}').`,
+    );
+    process.exit(1);
   }
   const commands = [
     // Create or force update the channel branch to build the docs site from

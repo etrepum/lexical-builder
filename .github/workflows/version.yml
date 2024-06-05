@@ -15,19 +15,86 @@ on:
           - patch
           - minor
 jobs:
-  increment-version:
-    uses: ./.github/workflows/call-increment-version.yml
+  get-settings:
+    runs-on: ubuntu-latest
+    outputs:
+      channel: ${{ inputs.increment == 'prerelease' && 'next' || 'latest' }}
+  get-versions:
+    needs: [get-settings]
+    uses: ./.github/workflows/call-get-versions.yml
     with:
       increment: ${{ inputs.increment }}
+      channel: ${{ needs.get-settings.outputs.channel }}
+  create-initial-pull-request:
+    if: needs.get-settings.outputs.channel == 'latest'
+    needs: [get-settings, get-versions]
+    runs-on: ubuntu-latest
+    outputs:
+      release-branch: ${{ steps.push-release-branch.outputs.release-branch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.SSH_KEY }}
+          fetch-depth: 0
+      # Ensure a release branch exists, we need to to push the real commit *after*
+      # the PR is created.
+      - id: push-release-branch
+        run: |
+          git config user.name "Lexical Builder GitHub Actions Bot"
+          git config user.email "<>"
+          SSH_GIT_ORIGIN=${{ needs.get-versions.outputs.ssh-git-origin }}
+          RELEASE_BRANCH=${{ needs.get-versions.outputs.next-version }}__release
+          echo "release-branch=$RELEASE_BRANCH" >> $GITHUB_OUTPUT
+          # Create the release branch if it doesn't exist already
+          if [ -z "$(git ls-remote --heads $SSH_GIT_ORIGIN refs/heads/$RELEASE_BRANCH)" ]; then
+            # This empty commit will be force-pushed away later
+            git checkout -B $RELEASE_BRANCH
+            git commit -m "v${{ needs.get-versions.outputs.next-version }} *ACTION IN-PROGRESS*" --allow-empty
+            git push $SSH_GIT_ORIGIN refs/heads/$RELEASE_BRANCH:refs/heads/$RELEASE_BRANCH
+          fi
+      # The test workflows will not run here, because GitHub Actions can not
+      # initiate a test run. We will later update the PR and push to the branch
+      # with the SSH_KEY which will create a push action and should run the tests.
+      - id: create-pull-request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { repo, owner } = context.repo;
+            const opts = {
+              base: 'main',
+              head: `${owner}:${{ steps.push-release-branch.outputs.release-branch }}`,
+              owner,
+              repo,
+            };
+            const pulls = await github.rest.pulls.list({
+              ...opts,
+              state: 'open',
+            });
+            if (pulls.data.length === 0) {
+              const result = await github.rest.pulls.create({
+                ...opts,
+                body: '*Create New Release Branch in-progress*',
+                title: 'v${{ needs.get-versions.outputs.next-version }}',
+                maintainer_can_modify: false,
+              });
+            }
+  # This will push to the PR's branch with SSH and should run the tests
+  increment-version:
+    uses: ./.github/workflows/call-increment-version.yml
+    needs: [get-settings, get-versions, create-initial-pull-request]
+    with:
+      increment: ${{ inputs.increment }}
+      channel: ${{ needs.get-settings.outputs.channel }}
       dry-run: false
-      channel: ${{ inputs.increment == 'prerelease' && 'next' || 'latest' }}
-      git-repo: "git@github.com:etrepum/lexical-builder.git"
+      git-repo: ${{ needs.get-versions.outputs.ssh-git-origin }}
+      latest-release: ${{ needs.get-versions.outputs.latest-release }}
+      next-version: ${{ needs.get-versions.outputs.next-version }}
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
   draft-latest-release:
-    needs: [increment-version]
+    if: needs.get-settings.outputs.channel == 'latest'
+    needs: [get-settings, increment-version]
     runs-on: ubuntu-latest
-    if: needs.increment-version.outputs.changelog && inputs.increment != 'prerelease'
     outputs:
       release-url: ${{ steps.draft-latest-release.outputs.url }}
     steps:
@@ -37,12 +104,19 @@ jobs:
           draft: true
           generate_release_notes: true
           tag_name: v${{ needs.increment-version.outputs.version }}
-  create-pull-request:
-    needs: [increment-version, draft-latest-release]
+  # Now we have all of the information available to populate the body of the PR
+  update-pull-request:
+    if: needs.get-settings.outputs.channel == 'latest'
+    needs:
+      [
+        get-settings,
+        increment-version,
+        draft-latest-release,
+        create-initial-pull-request,
+      ]
     runs-on: ubuntu-latest
-    if: needs.increment-version.outputs.changelog && inputs.increment != 'prerelease'
     steps:
-      - name: Create Pull Request
+      - name: Update Pull Request
         uses: actions/github-script@v7
         with:
           script: |

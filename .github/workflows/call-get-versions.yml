@@ -1,0 +1,58 @@
+name: Get Versions
+on:
+  workflow_call:
+    inputs:
+      increment:
+        required: true
+        type: string
+      channel:
+        required: true
+        type: string
+    outputs:
+      version:
+        description: 'The new package.json version, e.g. "0.16.0"'
+        value: ${{ jobs.release.outputs.version }}
+      next-version:
+        description: 'The next package.json version, e.g. "0.16.1"'
+        value: ${{ jobs.release.outputs.next-version }}
+      latest-release:
+        description: 'The latest release (per GitHub releases) prior to this increment, e.g. "v0.15.0"'
+        value: ${{ jobs.release.outputs.latest-release }}
+      ssh-git-origin:
+        description: "The SSH git origin to push to"
+        value: git@github.com:etrepum/lexical-builder.git
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-versions.outputs.version }}
+      next-version: ${{ steps.get-versions.outputs.next-version }}
+      latest-release: ${{ steps.latest.outputs.release }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+      - id: latest
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          owner: etrepum
+          repo: lexical-builder
+          excludes: draft
+      - id: get-versions
+        run: |
+          VERSION=$(jq .version -r package.json)
+          case ${{ inputs.channel }} in
+            latest)
+              PREID=""
+              ;;
+            nightly)
+              PREID="--preid nightly.$(date +%Y%m%d)"
+              ;;
+            *)
+              PREID="--preid ${{ inputs.channel }}"
+              ;;
+          esac
+          echo "version=$(jq .version -r package.json)" >> $GITHUB_OUTPUT
+          echo "next-version=$(npx semver $VERSION -i ${{ inputs.increment }} $PREID)" >> $GITHUB_OUTPUT
