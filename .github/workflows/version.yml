@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       channel: ${{ inputs.increment == 'prerelease' && 'next' || 'latest' }}
+    steps:
+      - run: exit 0
   get-versions:
     needs: [get-settings]
     uses: ./.github/workflows/call-get-versions.yml

@@ -10,6 +10,8 @@ jobs:
     outputs:
       increment: prerelease
       channel: nightly
+    steps:
+      - run: exit 0
   get-versions:
     needs: [get-settings]
     uses: ./.github/workflows/call-get-versions.yml
