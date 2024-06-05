@@ -144,9 +144,7 @@ function buildEditorComponent(config: ReactConfig) {
   const rawConfigDecorators = config.decorators.map((El) =>
     typeof El === "function" ? <El context={context} /> : El,
   );
-  console.log({ config });
   return function EditorComponent(props: Partial<EditorComponentProps>) {
-    console.log({ props });
     const {
       EditorChildrenComponent = config.EditorChildrenComponent,
       ErrorBoundary = config.ErrorBoundary,
