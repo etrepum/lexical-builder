@@ -43,7 +43,6 @@ const emojiReplacementMap = supportedEmojis
  *
  * @example Matching canonical short names
  * ```js
- * const result =
  * assert(findEmoji(":man-facepalming").emoji === "🤦‍♂️");
  * ```
  *

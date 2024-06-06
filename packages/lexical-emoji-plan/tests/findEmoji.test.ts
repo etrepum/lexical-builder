@@ -10,6 +10,17 @@ import { describe, it, expect } from "vitest";
 import { findEmoji } from "../src/findEmoji.js";
 
 describe("findEmoji", () => {
+  it("can easily be used to replace the short code", () => {
+    const input = "handles :) mid-string";
+    const result = findEmoji(input)!;
+    expect(
+      [
+        input.slice(0, result.position),
+        result.emoji,
+        input.slice(result.position + result.shortcode.length),
+      ].join(""),
+    ).toEqual("handles 🙂 mid-string");
+  });
   Object.entries({
     "handles :) mid-string": {
       position: "handles ".length,
