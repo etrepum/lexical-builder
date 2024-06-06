@@ -1,3 +1,8 @@
+## v0.0.14 (2024-06-06)
+
+- update some docs Bob Ippolito
+- Merge pull request #13 from etrepum0.0.13release Bob Ippolito
+
 ## v0.0.13 (2024-06-05)
 
 - Refactor LexicalPlanComposer Bob Ippolito
