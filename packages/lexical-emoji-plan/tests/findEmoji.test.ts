@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import findEmoji from "../src/findEmoji.js";
+import { findEmoji } from "../src/findEmoji.js";
 
 describe("findEmoji", () => {
   Object.entries({

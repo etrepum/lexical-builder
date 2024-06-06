@@ -8,9 +8,15 @@
 
 import { supportedEmojis } from "./supportedEmojis.data";
 
+/**
+ * The location of the emoji match in the given text
+ */
 export type EmojiMatch = Readonly<{
+  /** The start position of the text */
   position: number;
+  /** The matching shortcode from the text, such as ":man-facepalming:" or ":)" */
   shortcode: string;
+  /** The text of the emoji from the database, such as "🤦‍♂️" or "🙂" */
   emoji: string;
 }>;
 
@@ -30,9 +36,37 @@ const emojiReplacementMap = supportedEmojis
   }, new Map());
 
 /**
- * Finds emoji shortcodes in text and if found - returns its position in text, matched shortcode and unified ID
+ * Finds emoji shortcodes in text, tokenized by spaces. The canonical short
+ * names such as ":smiley:" are matched even if they are at the end of the
+ * text, but a text such as ":)" is only matched if it is followed by a
+ * space.
+ *
+ * @example Matching canonical short names
+ * ```js
+ * const result =
+ * assert(findEmoji(":man-facepalming").emoji === "🤦‍♂️");
+ * ```
+ *
+ * @example Matching non-canonical text for an emoji
+ * ```js
+ * const input = "handles :) mid-string";
+ * const result = findEmoji(input);
+ * assert(result.position === "handles ".length);
+ * assert(result.shortcode === ":)")
+ * assert(result.emoji === "🙂");
+ * assert([
+ *   input.slice(0, result.position),
+ *   result.emoji,
+ *   input.slice(result.position + result.shortcode.length)
+ * ].join("") === "handles 🙂 mid-string");
+ * ```
+ *
+ * @example Non-canonical text does not match at the end
+ * ```js
+ * assert(findEmoji(":)") === null)
+ * ```
  */
-export default function findEmoji(text: string): EmojiMatch | null {
+export function findEmoji(text: string): EmojiMatch | null {
   const words = text.split(" ");
   for (let i = 0, position = 0; i < words.length; i++) {
     const word = words[i]!;

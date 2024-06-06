@@ -9,7 +9,7 @@
 import { TextNode } from "lexical";
 
 import { $createEmojiNode } from "./EmojiNode";
-import findEmoji from "./findEmoji";
+import { findEmoji } from "./findEmoji";
 
 export function $textNodeTransform(node: TextNode): void {
   if (!node.isSimpleText() || node.hasFormat("code")) {

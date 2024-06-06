@@ -78,10 +78,13 @@ export function defineRootPlan(
 }
 
 /**
- * Define a NormalizedLexicalPlanArgument from the given arguments,
- * this is a plan and one or more config partials for that plan.
- * Generally used in the dependencies array of another plan, or as
- * an argument to {@link buildEditorFromPlans}
+ * Override a partial of the configuration of a Plan, to be used
+ * in the dependencies array of another plan, or as
+ * an argument to {@link buildEditorFromPlans}.
+ *
+ * Before building the editor, configurations will be merged using
+ * plan.mergeConfig(plan, config) or {@link shallowMergeConfig} if
+ * this is not directly implemented by the Plan.
  *
  * @param args A plan followed by one or more config partials for that plan
  * @returns [plan, config, ...configs]

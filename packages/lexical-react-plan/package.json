@@ -27,8 +27,7 @@
   },
   "homepage": "https://github.com/etrepum/lexical-builder",
   "dependencies": {
-    "@etrepum/lexical-builder": "*",
-    "@repo/typescript-config": "*"
+    "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
     "@lexical/react": ">=0.16.0",

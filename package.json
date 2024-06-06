@@ -1,5 +1,5 @@
 {
-  "name": "@etrepum/lexical-builder",
+  "name": "@etrepum/lexical-builder-monorepo",
   "private": false,
   "scripts": {
     "build": "turbo build",

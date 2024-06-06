@@ -1,18 +1,19 @@
 import { LexicalEditor } from "lexical";
-import { LexicalPeerConfig, LexicalPlan, PlanConfigBase } from "./types";
+import { LexicalPeerConfig } from "./types";
 import { LexicalBuilder } from "./LexicalBuilder";
 import invariant from "./shared/invariant";
 import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
 
 /**
- * Get the finalized configuration of a Plan using the editor, can be
+ * Get the finalized configuration of a Plan using the editor by name, can be
  * used from the implementation of a LexicalNode or in other situations
  * where you have an editor reference but it's not easy to pass the config
- * around.
+ * around. Use this version if you do not have a concrete reference to the
+ * Plan for some reason (e.g. it is an optional peer dependency).
  *
- * @param editor The editor that was built using plan
- * @param plan The concrete reference to a Plan used to build this editor
- * @returns The configuration for that Plan
+ * @param editor The editor that may have been built using plan
+ * @param planName The name of the Plan
+ * @returns The configuration for that Plan or undefined
  */
 export function getPeerConfigFromEditor<Name extends string>(
   editor: LexicalEditor,

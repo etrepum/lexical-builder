@@ -5,10 +5,13 @@ import invariant from "./shared/invariant";
 import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
 
 /**
- * Get the finalized configuration of a Plan using the editor, can be
- * used from the implementation of a LexicalNode or in other situations
- * where you have an editor reference but it's not easy to pass the config
- * around.
+ * Get the finalized configuration of a Plan that was used to build the editor.
+ *
+ * This is useful in the implementation of a LexicalNode or in other
+ * situations where you have an editor reference but it's not easy to
+ * pass the config or {@link RegisterState} around.
+ *
+ * It will throw if the Editor was not built using this Plan.
  *
  * @param editor The editor that was built using plan
  * @param plan The concrete reference to a Plan used to build this editor

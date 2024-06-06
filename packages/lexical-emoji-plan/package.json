@@ -28,7 +28,6 @@
   "homepage": "https://github.com/etrepum/lexical-builder",
   "dependencies": {
     "@etrepum/lexical-builder": "*",
-    "@repo/typescript-config": "*",
     "emoji-datasource-facebook": "15.1.2"
   },
   "peerDependencies": {

@@ -26,7 +26,8 @@ export type SerializedEmojiNode = Spread<
  * transforms.
  *
  * The display behavior is all implemented in the mutation listener set up
- * by EmojiPlan.
+ * by EmojiPlan, which makes it a little easier to ensure that clean-up is
+ * done properly.
  */
 export class EmojiNode extends TextNode {
   static getType(): "emoji" {

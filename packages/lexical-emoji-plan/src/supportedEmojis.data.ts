@@ -2,8 +2,11 @@ import emojis from "emoji-datasource-facebook/emoji.json";
 import { textFromUnifiedID } from "./unifiedID";
 
 /**
- * We rewrite the emoji dataset into plain text, which serializes smaller and
- * is quicker to parse
+ * We rewrite the emoji dataset into plain text delimited by
+ * spaces and newlines, which serializes smaller and is quicker to parse.
+ *
+ * This is done at build time by vite-plugin-data, which does compile-time
+ * evaluation of modules with .data in their name.
  */
 export const supportedEmojis = emojis
   .flatMap(({ has_img_facebook, short_name, text, texts, unified }) =>

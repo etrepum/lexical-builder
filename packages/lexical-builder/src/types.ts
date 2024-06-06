@@ -148,6 +148,20 @@ export interface LexicalPlan<
    * {@link shallowMergeConfig}, if your Plan requires other strategies
    * (such as concatenating an Array) you can implement it here.
    *
+   * @example Merging an array
+   * ```js
+   * const plan = definePlan({
+   *   // ...
+   *   mergeConfig(config, overrides) {
+   *     const merged = shallowMergeConfig(config, overrides);
+   *     if (Array.isArray(overrides.decorators)) {
+   *       merged.decorators = [...config.decorators, ...overrides.decorators];
+   *     }
+   *     return merged;
+   *   }
+   * });
+   * ```
+   *
    * @param config The current configuration
    * @param overrides The partial configuration to merge
    * @returns The merged configuration
@@ -155,7 +169,8 @@ export interface LexicalPlan<
   mergeConfig?: (config: Config, overrides: Partial<Config>) => Config;
   /**
    * Add behavior to the editor (register transforms, listeners, etc.) after
-   * the Editor is created.
+   * the Editor is created. The register function may also mutate the config
+   * in-place to expose data to other plans that use it as a dependency.
    *
    * @param editor The editor this Plan is being registered with
    * @param config The merged configuration specific to this Plan
