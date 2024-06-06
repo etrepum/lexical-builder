@@ -41,9 +41,6 @@ const editorHandle = buildEditorFromPlans(
       ReactPluginHostPlan,
     ],
     namespace: "Vanilla JS Plan Demo",
-    onError: (error: Error) => {
-      throw error;
-    },
     register: (editor: LexicalEditor) => {
       const el = document.createElement("div");
       document.body.appendChild(el);

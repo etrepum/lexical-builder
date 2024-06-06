@@ -29,10 +29,6 @@ const plan = defineRootPlan({
   $initialEditorState: null,
   dependencies: [EditorPlan],
   namespace: "React.js Collab Demo",
-  // Handling of errors during update
-  onError(error: Error) {
-    throw error;
-  },
   // The editor theme
   theme: ExampleTheme,
 });

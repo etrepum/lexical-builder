@@ -15,11 +15,12 @@ import {
 import {
   type EditorChildrenComponentProps,
   ReactPlan,
+  TreeViewPlan,
+  usePlanComponent,
 } from "@etrepum/lexical-react-plan";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
-import TreeViewPlugin from "./plugins/TreeViewPlugin";
 
 function Placeholder() {
   return <div className="editor-placeholder">Enter some rich text...</div>;
@@ -30,13 +31,14 @@ function EditorChildrenComponent({
   placeholder,
   children,
 }: EditorChildrenComponentProps) {
+  const TreeView = usePlanComponent(TreeViewPlan);
   return (
     <div className="editor-container">
       <ToolbarPlugin />
       <div className="editor-inner">
         {contentEditable}
         {placeholder}
-        <TreeViewPlugin />
+        <TreeView />
       </div>
       {children}
     </div>
@@ -52,6 +54,14 @@ export const EditorPlan = definePlan({
       EditorChildrenComponent,
       contentEditable: <ContentEditable className="editor-input" />,
       placeholder: <Placeholder />,
+    }),
+    configPlan(TreeViewPlan, {
+      viewClassName: "tree-view-output",
+      treeTypeButtonClassName: "debug-treetype-button",
+      timeTravelPanelClassName: "debug-timetravel-panel",
+      timeTravelButtonClassName: "debug-timetravel-button",
+      timeTravelPanelSliderClassName: "debug-timetravel-panel-slider",
+      timeTravelPanelButtonClassName: "debug-timetravel-panel-button",
     }),
     AutoFocusPlan,
   ],
