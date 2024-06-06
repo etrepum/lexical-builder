@@ -1,11 +1,10 @@
 import {
-  definePlan,
   buildEditorFromPlans,
-  AnyLexicalPlanArgument,
+  getPlanConfigFromEditor,
+  type AnyLexicalPlanArgument,
 } from "@etrepum/lexical-builder";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { scheduleMicrotask } from "./shared/scheduleMicroTask";
-import { EditorComponentType } from "./types";
 import { ReactPlan } from "./ReactPlan";
 
 export interface LexicalPlanComposerProps {
@@ -17,25 +16,10 @@ export function LexicalPlanComposer({
   plan,
   children,
 }: LexicalPlanComposerProps) {
-  const componentRef = useRef<EditorComponentType | undefined>(undefined);
-  const handle = useMemo(() => {
-    return buildEditorFromPlans(
-      definePlan({
-        name: "@lexical/builder/LexicalPlanComposer",
-        config: {},
-        dependencies: [ReactPlan],
-        register(_editor, _config, state) {
-          componentRef.current = state.getDependencyConfig(ReactPlan).Component;
-          return () => {
-            componentRef.current = undefined;
-          };
-        },
-      }),
-      plan,
-    );
-  }, [plan]);
+  const handle = useMemo(() => buildEditorFromPlans(ReactPlan, plan), [plan]);
   useEffect(() => {
-    // This is an awful trick to detect StrictMode
+    // This is an awful trick to detect StrictMode so we don't dispose the
+    // editor that we just created
     let didMount = false;
     scheduleMicrotask(() => {
       didMount = true;
@@ -46,6 +30,6 @@ export function LexicalPlanComposer({
       }
     };
   }, [handle]);
-  const EditorComponent = componentRef.current;
-  return EditorComponent ? <EditorComponent>{children}</EditorComponent> : null;
+  const { Component } = getPlanConfigFromEditor(handle.editor, ReactPlan);
+  return <Component>{children}</Component>;
 }
