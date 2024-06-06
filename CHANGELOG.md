@@ -1,3 +1,12 @@
+## v0.0.13 (2024-06-05)
+
+- Refactor LexicalPlanComposer Bob Ippolito
+- more api Bob Ippolito
+- refactor react plan into more files Bob Ippolito
+- Remove console.log Bob Ippolito
+- add semver to cache Bob Ippolito
+- Merge pull request #12 from etrepum0.0.12release Bob Ippolito
+
 ## v0.0.12 (2024-06-05)
 
 - add wrangler.toml Bob Ippolito
