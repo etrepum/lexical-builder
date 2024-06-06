@@ -4,6 +4,7 @@ import { useReactDecorators } from "./useReactDecorators";
 import { ReactConfig, EditorComponentProps } from "./types";
 import { Placeholder } from "./Placeholder";
 
+/** @internal */
 export function buildEditorComponent(config: ReactConfig) {
   const context = config.getContext();
   const [editor] = context;

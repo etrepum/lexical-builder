@@ -6,8 +6,7 @@
  *
  */
 
-export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
-
+export { PACKAGE_VERSION } from "./PACKAGE_VERSION";
 export { configPlan, definePlan, defineRootPlan } from "./definePlan";
 export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
 export {
@@ -26,13 +25,14 @@ export {
 } from "./types";
 export { safeCast } from "./safeCast";
 export { shallowMergeConfig } from "./shallowMergeConfig";
+export { getPlanConfigFromEditor } from "./getPlanConfigFromEditor";
+export { getPeerConfigFromEditor } from "./getPeerConfigFromEditor";
 // These plan definitions should all be colocated with their implementations, only here for convenience
 export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
 export { DragonPlan } from "./DragonPlan";
 export { type HistoryConfig, HistoryPlan } from "./HistoryPlan";
 export { PlainTextPlan } from "./PlainTextPlan";
 export { RichTextPlan } from "./RichTextPlan";
-
 /**
  * An open interface for Name -> Config mappings. If you are defining a
  * plan with non-empty config and it may be used as a peerDependency then

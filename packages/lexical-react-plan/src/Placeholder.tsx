@@ -2,6 +2,11 @@ import { canShowPlaceholder } from "./registerShowPlaceholder";
 import { useRegisterSubscription } from "./useRegisterSubscription";
 import { WithEditable } from "./WithEditable";
 
+/**
+ * A placeholder component that returns the content, or the
+ * return value of content(isEditable),
+ * when `$canShowPlaceholder` from @lexical/text is true.
+ */
 export function Placeholder({
   content,
 }: {

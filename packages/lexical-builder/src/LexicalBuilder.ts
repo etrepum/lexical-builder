@@ -118,14 +118,9 @@ export class LexicalBuilder {
     this.conflicts = new Map();
   }
 
-  /** Look up the editor that was created by this LexicalBuilder or throw */
-  static fromEditor(editor: LexicalEditor): LexicalBuilder {
-    const builder = buildersForEditors.get(editor);
-    invariant(
-      builder !== undefined,
-      "LexicalBuilder.fromEditor: editor was not created with this version of LexicalBuilder",
-    );
-    return builder;
+  /** Look up the editor that was created by this LexicalBuilder or undefined */
+  static fromEditor(editor: LexicalEditor): LexicalBuilder | undefined {
+    return buildersForEditors.get(editor);
   }
 
   buildEditor(): EditorHandle {

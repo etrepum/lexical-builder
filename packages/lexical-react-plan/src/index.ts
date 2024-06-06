@@ -35,3 +35,5 @@ export {
   REACT_PLUGIN_HOST_MOUNT_COMMAND,
   ReactPluginHostPlan,
 } from "./ReactPluginHostPlan";
+export { DefaultEditorChildrenComponent } from "./DefaultEditorChildrenComponent";
+export { Placeholder } from "./Placeholder";

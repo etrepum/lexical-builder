@@ -177,7 +177,7 @@ export interface LexicalPlan<
  */
 export type LexicalPeerConfig<Name extends keyof LexicalPlanRegistry | string> =
   [Name] extends [keyof LexicalPlanRegistry]
-    ? LexicalPlanRegistry[Name]
+    ? LexicalPlanRegistry[Name]["config"]
     : PlanConfigBase;
 
 /**
