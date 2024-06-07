@@ -1,3 +1,10 @@
+## v0.0.15 (2024-06-06
+
+2024-06-06)
+
+- clean up changelog generation Bob Ippolito
+- Merge pull request #14 from etrepum/0.0.14release Bob Ippolito
+
 ## v0.0.14 (2024-06-06)
 
 - update some docs Bob Ippolito
