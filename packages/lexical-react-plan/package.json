@@ -10,7 +10,7 @@
     "plan"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "dev": "vite",
     "test": "vitest run",
     "test:watch": "vitest"

@@ -1,30 +1,31 @@
 import {
   type LexicalPlan,
   type PlanConfigBase,
-  getPlanConfigFromEditor,
+  getPlanDependencyFromEditor,
+  type AnyLexicalPlan,
+  type LexicalPlanDependency,
 } from "@etrepum/lexical-builder";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { type ReactNode, type ComponentType } from "react";
+import type { ComponentType } from "react";
 
-export function usePlanConfig<
-  Config extends PlanConfigBase,
-  Name extends string,
->(plan: LexicalPlan<Config, Name>): Config {
-  const [editor] = useLexicalComposerContext();
-  return getPlanConfigFromEditor(editor, plan);
+export function usePlanDependency<Plan extends AnyLexicalPlan>(
+  plan: Plan,
+): LexicalPlanDependency<Plan> {
+  return getPlanDependencyFromEditor(useLexicalComposerContext()[0], plan);
 }
 
 /**
  * Use a Component from the given Plan that uses the ReactPlan convention
- * of exposing a Component property in its config.
+ * of exposing a Component property in its output.
  *
- * @param plan A plan with a Component property in the config
+ * @param plan A plan with a Component property in the output
  * @returns `getPlanConfigFromEditor(useLexicalComposerContext()[0], plan).Component`
  */
 export function usePlanComponent<
-  Config extends PlanConfigBase & { Component: Component },
+  Config extends PlanConfigBase,
   Name extends string,
+  Output extends { Component: Component },
   Component extends ComponentType,
->(plan: LexicalPlan<Config, Name>): Config["Component"] {
-  return usePlanConfig(plan).Component;
+>(plan: LexicalPlan<Config, Name, Output>): Component {
+  return usePlanDependency(plan).output.Component;
 }

@@ -7,26 +7,42 @@
  */
 
 export { PACKAGE_VERSION } from "./PACKAGE_VERSION";
-export { configPlan, definePlan, defineRootPlan } from "./definePlan";
+export {
+  configPlan,
+  definePlan,
+  defineRootPlan,
+  provideOutput,
+} from "./definePlan";
 export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
 export {
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
   type EditorHandle,
   type InitialEditorStateType,
-  type LexicalPeerConfig,
   type LexicalPlan,
   type LexicalPlanArgument,
   type LexicalPlanConfig,
   type LexicalPlanName,
+  type LexicalPlanOutput,
+  type LexicalPlanDependency,
+  type LexicalPeerConfig,
+  type LexicalPeerDependency,
+  type LexicalPeerPlan,
   type NormalizedLexicalPlanArgument,
   type PlanConfigBase,
   type RegisterState,
+  type RegisterCleanup,
 } from "./types";
 export { safeCast } from "./safeCast";
 export { shallowMergeConfig } from "./shallowMergeConfig";
-export { getPlanConfigFromEditor } from "./getPlanConfigFromEditor";
-export { getPeerConfigFromEditor } from "./getPeerConfigFromEditor";
+export {
+  $getPlanDependency,
+  getPlanDependencyFromEditor,
+} from "./getPlanDependencyFromEditor";
+export {
+  $getPeerDependency,
+  getPeerDependencyFromEditor,
+} from "./getPeerDependencyFromEditor";
 // These plan definitions should all be colocated with their implementations, only here for convenience
 export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
 export { DragonPlan } from "./DragonPlan";

@@ -85,7 +85,10 @@ export const ReactPluginHostPlan = definePlan({
       MountPluginCommandArg["key"],
       MountPluginCommandArg
     >();
-    const { ErrorBoundary, Component } = state.getDependencyConfig(ReactPlan);
+    const {
+      config: { ErrorBoundary },
+      output: { Component },
+    } = state.getDependency(ReactPlan);
     function renderMountedPlugins() {
       const children: JSX.Element[] = [];
       for (const { key, element, domNode } of mountedPlugins.values()) {

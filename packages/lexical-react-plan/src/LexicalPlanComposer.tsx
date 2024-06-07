@@ -1,6 +1,6 @@
 import {
   buildEditorFromPlans,
-  getPlanConfigFromEditor,
+  getPlanDependencyFromEditor,
   type AnyLexicalPlanArgument,
 } from "@etrepum/lexical-builder";
 import { useEffect, useMemo } from "react";
@@ -80,6 +80,9 @@ export function LexicalPlanComposer({
       }
     };
   }, [handle]);
-  const { Component } = getPlanConfigFromEditor(handle.editor, ReactPlan);
+  const { Component } = getPlanDependencyFromEditor(
+    handle.editor,
+    ReactPlan,
+  ).output;
   return <Component>{children}</Component>;
 }

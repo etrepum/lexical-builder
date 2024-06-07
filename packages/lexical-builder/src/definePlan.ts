@@ -10,6 +10,7 @@ import type {
   LexicalPlan,
   NormalizedLexicalPlanArgument,
   PlanConfigBase,
+  RegisterCleanup,
 } from "./types";
 
 /**
@@ -46,9 +47,11 @@ import type {
  * });
  * ```
  */
-export function definePlan<Config extends PlanConfigBase, Name extends string>(
-  plan: LexicalPlan<Config, Name>,
-): LexicalPlan<Config, Name> {
+export function definePlan<
+  Config extends PlanConfigBase,
+  Name extends string,
+  Output,
+>(plan: LexicalPlan<Config, Name, Output>): LexicalPlan<Config, Name, Output> {
   return plan;
 }
 
@@ -71,9 +74,11 @@ export function definePlan<Config extends PlanConfigBase, Name extends string>(
  * ```
  */
 export function defineRootPlan(
-  rootPlan: Omit<LexicalPlan<PlanConfigBase, "[root]">, "config" | "name">,
-): LexicalPlan<PlanConfigBase, "[root]"> {
-  // @ts-ignore
+  rootPlan: Omit<
+    LexicalPlan<PlanConfigBase, "[root]", unknown>,
+    "config" | "name"
+  >,
+): LexicalPlan<PlanConfigBase, "[root]", unknown> {
   return Object.assign(rootPlan, { name: "[root]", config: {} }) as any;
 }
 
@@ -101,8 +106,19 @@ export function defineRootPlan(
  * });
  * ```
  */
-export function configPlan<Config extends PlanConfigBase, Name extends string>(
-  ...args: NormalizedLexicalPlanArgument<Config, Name>
-): NormalizedLexicalPlanArgument<Config, Name> {
+export function configPlan<
+  Config extends PlanConfigBase,
+  Name extends string,
+  Output,
+>(
+  ...args: NormalizedLexicalPlanArgument<Config, Name, Output>
+): NormalizedLexicalPlanArgument<Config, Name, Output> {
   return args;
+}
+
+export function provideOutput<Output>(
+  output: Output,
+  cleanup?: () => void,
+): RegisterCleanup<Output> {
+  return Object.assign(() => cleanup && cleanup(), { output });
 }
