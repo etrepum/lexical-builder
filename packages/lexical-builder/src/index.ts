@@ -13,7 +13,11 @@ export {
   defineRootPlan,
   provideOutput,
 } from "./definePlan";
-export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
+export {
+  LexicalBuilder,
+  buildEditorFromPlans,
+  coerceToPlanArgument,
+} from "./LexicalBuilder";
 export {
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
@@ -28,6 +32,8 @@ export {
   type LexicalPeerConfig,
   type LexicalPeerDependency,
   type LexicalPeerPlan,
+  type RootPlan,
+  type RootPlanArgument,
   type NormalizedLexicalPlanArgument,
   type PlanConfigBase,
   type RegisterState,
