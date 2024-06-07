@@ -10,6 +10,7 @@ import type {
   AnyLexicalPlanArgument,
   EditorHandle,
   LexicalPlanConfig,
+  RootPlanArgument,
 } from "./types";
 
 import {
@@ -27,7 +28,7 @@ import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
 import { initializeEditor } from "./initializeEditor";
 import { PlanRep } from "./PlanRep";
 import { mergeRegister } from "@lexical/utils";
-import { configPlan } from "./definePlan";
+import { configPlan, defineRootPlan } from "./definePlan";
 
 const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
 
@@ -63,15 +64,22 @@ const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
  * ```
  */
 export function buildEditorFromPlans(
-  plan: AnyLexicalPlanArgument,
-  ...plans: AnyLexicalPlanArgument[]
+  plan: AnyLexicalPlanArgument | RootPlanArgument,
+  ...plans: (AnyLexicalPlanArgument | RootPlanArgument)[]
 ): EditorHandle {
   const builder = new LexicalBuilder();
-  builder.addPlan(plan);
+  builder.addPlan(coerceToPlanArgument(plan));
   for (const otherPlan of plans) {
-    builder.addPlan(otherPlan);
+    builder.addPlan(coerceToPlanArgument(otherPlan));
   }
   return builder.buildEditor();
+}
+
+/** @internal */
+export function coerceToPlanArgument(
+  plan: AnyLexicalPlanArgument | RootPlanArgument,
+): AnyLexicalPlanArgument {
+  return "name" in plan || Array.isArray(plan) ? plan : defineRootPlan(plan);
 }
 
 /** @internal */

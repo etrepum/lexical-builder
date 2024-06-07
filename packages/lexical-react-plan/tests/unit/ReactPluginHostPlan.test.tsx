@@ -1,7 +1,6 @@
 import {
   buildEditorFromPlans,
   configPlan,
-  defineRootPlan,
   DragonPlan,
   EditorHandle,
   HistoryPlan,
@@ -19,7 +18,6 @@ import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
 import { act } from "@testing-library/react";
 
 import { describe, beforeEach, it, afterEach, expect, vi, Mock } from "vitest";
-import { mergeRegister } from "@lexical/utils";
 
 function $prepopulatedRichText() {
   const root = $getRoot();
@@ -46,7 +44,7 @@ describe("configPlan", () => {
 });
 describe("ReactPluginHostPlan", () => {
   let editorHandle: EditorHandle;
-  let rootDom: HTMLDivElement;
+  let rootDom: HTMLDivElement & { __lexicalEditor?: LexicalEditor | null };
   let treeDom: HTMLDivElement;
   let cleanupFn: Mock;
   let registerFn: Mock;
@@ -65,36 +63,34 @@ describe("ReactPluginHostPlan", () => {
       pluginHostDom.id = "react-plugin-host";
 
       document.body.append(rootDom, pluginHostDom, treeDom);
-      editorHandle = buildEditorFromPlans(
-        defineRootPlan({
-          $initialEditorState: $prepopulatedRichText,
-          dependencies: [
-            DragonPlan,
-            RichTextPlan,
-            HistoryPlan,
-            ReactPluginHostPlan,
-          ],
-          namespace: "Vanilla JS Plan Demo",
-          register: (editor: LexicalEditor) => {
-            mountReactPluginHost(editor, pluginHostDom);
-            mountReactPluginComponent(editor, {
-              Component: TreeView,
-              domNode: treeDom,
-              key: "tree-view",
-              props: {
-                editor,
-                timeTravelButtonClassName: "debug-timetravel-button",
-                timeTravelPanelButtonClassName: "debug-timetravel-panel-button",
-                timeTravelPanelClassName: "debug-timetravel-panel",
-                timeTravelPanelSliderClassName: "debug-timetravel-panel-slider",
-                treeTypeButtonClassName: "debug-treetype-button",
-                viewClassName: "tree-view-output",
-              },
-            });
-            return registerFn();
-          },
-        }),
-      );
+      editorHandle = buildEditorFromPlans({
+        $initialEditorState: $prepopulatedRichText,
+        dependencies: [
+          DragonPlan,
+          RichTextPlan,
+          HistoryPlan,
+          ReactPluginHostPlan,
+        ],
+        namespace: "Vanilla JS Plan Demo",
+        register: (editor: LexicalEditor) => {
+          mountReactPluginHost(editor, pluginHostDom);
+          mountReactPluginComponent(editor, {
+            Component: TreeView,
+            domNode: treeDom,
+            key: "tree-view",
+            props: {
+              editor,
+              timeTravelButtonClassName: "debug-timetravel-button",
+              timeTravelPanelButtonClassName: "debug-timetravel-panel-button",
+              timeTravelPanelClassName: "debug-timetravel-panel",
+              timeTravelPanelSliderClassName: "debug-timetravel-panel-slider",
+              treeTypeButtonClassName: "debug-treetype-button",
+              viewClassName: "tree-view-output",
+            },
+          });
+          return registerFn();
+        },
+      });
       editorHandle.editor.setRootElement(rootDom);
     });
   });
@@ -106,7 +102,7 @@ describe("ReactPluginHostPlan", () => {
   it("creates an editor", async () => {
     const EXPECT_HTML = `<p dir="ltr"><span data-lexical-text="true">Plain Text!</span><br><strong data-lexical-text="true">Bold Text!</strong></p>`;
     expect(editorHandle.editor.getRootElement()).toBe(rootDom);
-    expect((rootDom as any).__lexicalEditor).toBe(editorHandle.editor);
+    expect(rootDom.__lexicalEditor).toBe(editorHandle.editor);
     expect(rootDom.innerHTML).toEqual(EXPECT_HTML);
     expect(treeDom.innerHTML).toMatch(/None dispatched/);
     await act(async () => {
@@ -120,7 +116,7 @@ describe("ReactPluginHostPlan", () => {
     expect(treeDom.innerHTML).toEqual("");
     expect(pluginHostDom.innerHTML).toEqual("");
     // The editor removes its contents too
-    expect((rootDom as any).__lexicalEditor).toBe(null);
+    expect(rootDom.__lexicalEditor).toBe(null);
     expect(rootDom.innerHTML).toEqual("");
     // Check the whole body for expectations
     expect(document.body.innerHTML).toEqual(

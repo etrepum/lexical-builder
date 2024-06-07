@@ -11,6 +11,8 @@ import type {
   NormalizedLexicalPlanArgument,
   PlanConfigBase,
   RegisterCleanup,
+  RootPlan,
+  RootPlanArgument,
 } from "./types";
 
 /**
@@ -59,7 +61,8 @@ export function definePlan<
  * Define a LexicalPlan from the given object literal, assigning an
  * empty config and the name "[root]". This plan must only be used
  * at most once per editor, usually as the first argument to
- * {@link buildEditorFromPlans}
+ * {@link buildEditorFromPlans} or the plan argument to
+ * {@link LexicalPlanComposer}.
  *
  * @param rootPlan A plan without the config or name properties
  * @returns The given plan argument, after in-place assignment of config and name
@@ -73,13 +76,10 @@ export function definePlan<
  * );
  * ```
  */
-export function defineRootPlan(
-  rootPlan: Omit<
-    LexicalPlan<PlanConfigBase, "[root]", unknown>,
-    "config" | "name"
-  >,
-): LexicalPlan<PlanConfigBase, "[root]", unknown> {
-  return Object.assign(rootPlan, { name: "[root]", config: {} }) as any;
+export function defineRootPlan<Output>(
+  rootPlan: RootPlanArgument<Output>,
+): RootPlan<Output> {
+  return Object.assign(rootPlan, { name: "[root]", config: {} } as const);
 }
 
 /**
@@ -120,5 +120,5 @@ export function provideOutput<Output>(
   output: Output,
   cleanup?: () => void,
 ): RegisterCleanup<Output> {
-  return Object.assign(() => cleanup && cleanup(), { output });
+  return Object.assign(() => cleanup && cleanup(), { output } as const);
 }

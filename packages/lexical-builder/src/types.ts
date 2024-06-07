@@ -24,6 +24,12 @@ export type AnyLexicalPlanArgument = LexicalPlanArgument<any, string, any>;
  */
 export type PlanConfigBase = Record<never, never>;
 
+export type RootPlan<Output> = LexicalPlan<PlanConfigBase, "[root]", Output>;
+export type RootPlanArgument<Output = any> = Omit<
+  RootPlan<Output>,
+  "config" | "name"
+>;
+
 /**
  * A tuple of [plan, configOverride, ...configOverrides]
  */
