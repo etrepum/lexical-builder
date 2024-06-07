@@ -1,12 +1,17 @@
-import { LexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import {
+  LexicalComposerContext,
+  LexicalComposerContextWithEditor,
+} from "@lexical/react/LexicalComposerContext";
 import { Suspense, useMemo } from "react";
 import { useReactDecorators } from "./useReactDecorators";
-import { ReactConfig, EditorComponentProps } from "./types";
+import { ReactConfig, EditorComponentProps, ReactOutputs } from "./types";
 import { Placeholder } from "./Placeholder";
 
 /** @internal */
-export function buildEditorComponent(config: ReactConfig) {
-  const context = config.getContext();
+export function buildEditorComponent(
+  config: ReactConfig,
+  context: LexicalComposerContextWithEditor,
+) {
   const [editor] = context;
   const rawConfigDecorators = config.decorators.map((El) =>
     typeof El === "function" ? <El context={context} /> : El,

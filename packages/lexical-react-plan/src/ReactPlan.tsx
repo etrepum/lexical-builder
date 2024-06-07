@@ -6,13 +6,16 @@
  *
  */
 
-import { definePlan, shallowMergeConfig } from "@etrepum/lexical-builder";
+import {
+  definePlan,
+  provideOutput,
+  shallowMergeConfig,
+} from "@etrepum/lexical-builder";
 
 import { type LexicalComposerContextWithEditor } from "@lexical/react/LexicalComposerContext";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 
-import invariant from "./shared/invariant";
 import { buildEditorComponent } from "./buildEditorComponent";
 import { ReactConfig } from "./types";
 import { DefaultEditorChildrenComponent } from "./DefaultEditorChildrenComponent";
@@ -23,14 +26,6 @@ const initialConfig: ReactConfig = {
   contentEditable: <ContentEditable />,
   decorators: [],
   placeholder: null,
-  // Initialized on registration
-  Component(): JSX.Element {
-    invariant(false, "ReactPlan used before register");
-  },
-  // Initialized on registration
-  getContext() {
-    invariant(false, "ReactPlan used before register");
-  },
 };
 
 /**
@@ -65,11 +60,10 @@ export const ReactPlan = definePlan({
       editor,
       { getTheme: () => editor._config.theme },
     ];
-    config.getContext = () => context;
-    config.Component = buildEditorComponent(config);
-    return () => {
-      config.getContext = initialConfig.getContext;
-      config.Component = initialConfig.Component;
-    };
+    const Component = buildEditorComponent(config, context);
+    return provideOutput({
+      context,
+      Component,
+    });
   },
 });

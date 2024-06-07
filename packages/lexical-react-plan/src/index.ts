@@ -37,7 +37,7 @@ export {
 } from "./ReactPluginHostPlan";
 export { DefaultEditorChildrenComponent } from "./DefaultEditorChildrenComponent";
 export { Placeholder } from "./Placeholder";
-export { usePlanConfig, usePlanComponent } from "./usePlanComponent";
+export { usePlanDependency, usePlanComponent } from "./usePlanComponent";
 export {
   type TreeViewConfig,
   TreeViewPlanComponent,

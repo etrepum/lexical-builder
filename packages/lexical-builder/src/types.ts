@@ -13,12 +13,12 @@ import type { LexicalPlanRegistry } from "@etrepum/lexical-builder";
  * Any concrete {@link LexicalPlan}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyLexicalPlan = LexicalPlan<any, string>;
+export type AnyLexicalPlan = LexicalPlan<any, string, any>;
 /**
  * Any {@link LexicalPlan} or {@link NormalizedLexicalPlanArgument}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyLexicalPlanArgument = LexicalPlanArgument<any, string>;
+export type AnyLexicalPlanArgument = LexicalPlanArgument<any, string, any>;
 /**
  * The default plan configuration of an empty object
  */
@@ -30,7 +30,8 @@ export type PlanConfigBase = Record<never, never>;
 export type NormalizedLexicalPlanArgument<
   Config extends PlanConfigBase,
   Name extends string,
-> = [LexicalPlan<Config, Name>, Partial<Config>, ...Partial<Config>[]];
+  Output extends unknown,
+> = [LexicalPlan<Config, Name, Output>, Partial<Config>, ...Partial<Config>[]];
 
 /**
  * An object that the register method can use to detect unmount and access the
@@ -40,19 +41,19 @@ export interface RegisterState {
   /** An AbortSignal that is aborted when the EditorHandle is disposed */
   signal: AbortSignal;
   /**
-   * Get the configuration of a peerDependency by name, if it exists
+   * Get the result of a peerDependency by name, if it exists
    * (must be a peerDependency of this plan)
    */
-  getPeerConfig<Name extends keyof LexicalPlanRegistry>(
+  getPeer<Name extends keyof LexicalPlanRegistry>(
     name: string,
-  ): undefined | LexicalPlanConfig<LexicalPlanRegistry[Name]>;
+  ): undefined | LexicalPlanDependency<LexicalPlanRegistry[Name]>;
   /**
    * Get the configuration of a dependency by plan
    * (must be a direct dependency of this plan)
    */
-  getDependencyConfig<Dependency extends AnyLexicalPlan>(
+  getDependency<Dependency extends AnyLexicalPlan>(
     dep: Dependency,
-  ): LexicalPlanConfig<Dependency>;
+  ): LexicalPlanDependency<Dependency>;
 }
 
 /**
@@ -61,7 +62,15 @@ export interface RegisterState {
 export type LexicalPlanArgument<
   Config extends PlanConfigBase,
   Name extends string,
-> = LexicalPlan<Config, Name> | NormalizedLexicalPlanArgument<Config, Name>;
+  Output extends unknown,
+> =
+  | LexicalPlan<Config, Name, Output>
+  | NormalizedLexicalPlanArgument<Config, Name, Output>;
+
+export interface LexicalPlanDependency<Dependency extends AnyLexicalPlan> {
+  config: LexicalPlanConfig<Dependency>;
+  output: LexicalPlanOutput<Dependency>;
+}
 
 /**
  * A Plan is a composable unit of LexicalEditor configuration
@@ -74,6 +83,7 @@ export type LexicalPlanArgument<
 export interface LexicalPlan<
   Config extends PlanConfigBase = PlanConfigBase,
   Name extends string = string,
+  Output extends unknown = unknown,
 > {
   /** The name of the Plan, must be unique */
   name: Name;
@@ -183,17 +193,36 @@ export interface LexicalPlan<
     editor: LexicalEditor,
     config: Config,
     state: RegisterState,
-  ) => () => void;
+  ) => RegisterCleanup<Output>;
 }
+
+export type RegisterCleanup<Output> = (() => void) &
+  (unknown extends Output ? { output?: Output } : { output: Output });
 
 /**
  * Get the Config type of a peer Plan from {@link LexicalPlanRegistry} by
  * name, or the empty {@link PlanConfigBase} if it is not globally registered.
  */
 export type LexicalPeerConfig<Name extends keyof LexicalPlanRegistry | string> =
-  [Name] extends [keyof LexicalPlanRegistry]
-    ? LexicalPlanRegistry[Name]["config"]
-    : PlanConfigBase;
+  LexicalPeerPlan<Name>["config"];
+
+/**
+ * Get the Plan type of a peer Plan from {@link LexicalPlanRegistry} by
+ * name, or an "default" Plan type if it is not globally registered.
+ */
+export type LexicalPeerPlan<Name extends keyof LexicalPlanRegistry | string> = [
+  Name,
+] extends [keyof LexicalPlanRegistry]
+  ? LexicalPlanRegistry[Name]
+  : LexicalPlan<PlanConfigBase, Name, unknown>;
+
+/**
+ * Get the Config type of a peer Plan from {@link LexicalPlanRegistry} by
+ * name, or the empty {@link PlanConfigBase} if it is not globally registered.
+ */
+export type LexicalPeerDependency<
+  Name extends keyof LexicalPlanRegistry | string,
+> = LexicalPlanDependency<LexicalPeerPlan<Name>>;
 
 /**
  * Extract the Config type from a Plan
@@ -203,6 +232,11 @@ export type LexicalPlanConfig<Plan extends AnyLexicalPlan> = Plan["config"];
  * Extract the Name type from a Plan
  */
 export type LexicalPlanName<Plan extends AnyLexicalPlan> = Plan["name"];
+
+export type LexicalPlanOutput<Plan> =
+  Plan extends LexicalPlan<infer _Config, infer _Name, infer Output>
+    ? Output
+    : unknown;
 
 /**
  * A handle to the editor and its dispose function

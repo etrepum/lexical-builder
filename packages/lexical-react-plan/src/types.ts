@@ -84,10 +84,19 @@ export interface ReactConfig {
    * - children
    */
   EditorChildrenComponent: EditorChildrenComponentType;
+
   /**
-   * The editor component, this should not be specified as an override but is
-   * used by Plans that depend on this to render the editor such as
-   * {@link ReactPluginHostPlan} or internally by {@link LexicalPlanComposer}.
+   * An array of JSX or components that return JSX that should be rendered
+   * as children of Component. These will be merged by array concatenation.
+   */
+  decorators: readonly DecoratorComponentType[];
+}
+
+export interface ReactOutputs {
+  /**
+   * The editor component, this can be used by Plans that depend on this to
+   * render the editor such as {@link ReactPluginHostPlan} or internally by
+   * {@link LexicalPlanComposer}.
    *
    * All props have defaults based on the config and editor state, but may be
    * overridden.
@@ -95,15 +104,8 @@ export interface ReactConfig {
   Component: EditorComponentType;
   /**
    * This function is equivalent to useLexicalComposerContext() from @lexical/react/LexicalComposerContext.
-   * It should not be specified as an override, but may be used by Plans
-   * that depend on this Plan.
    */
   getContext: () => LexicalComposerContextWithEditor;
-  /**
-   * An array of JSX or components that return JSX that should be rendered
-   * as children of Component. These will be merged by array concatenation.
-   */
-  decorators: readonly DecoratorComponentType[];
 }
 
 export type ErrorBoundaryProps = {

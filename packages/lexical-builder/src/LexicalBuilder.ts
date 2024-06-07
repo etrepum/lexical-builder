@@ -142,6 +142,16 @@ export class LexicalBuilder {
     );
   }
 
+  getPlanRep<Plan extends AnyLexicalPlan>(
+    plan: Plan,
+  ): PlanRep<Plan> | undefined {
+    const pair = this.planMap.get(plan);
+    if (pair) {
+      const rep: PlanRep<AnyLexicalPlan> = pair[1];
+      return rep as PlanRep<Plan>;
+    }
+  }
+
   addPlan(arg: AnyLexicalPlanArgument): number {
     let plan: AnyLexicalPlan;
     let configs: unknown[];
@@ -228,15 +238,7 @@ export class LexicalBuilder {
     const cleanups: (() => void)[] = [];
     const controller = new AbortController();
     for (const planRep of this.sortedPlanReps()) {
-      if (planRep.plan.register) {
-        cleanups.push(
-          planRep.plan.register(editor, planRep.getConfig(), {
-            getDependencyConfig: planRep.getDependencyConfig.bind(planRep),
-            getPeerConfig: planRep.getPeerConfig.bind(planRep),
-            signal: controller.signal,
-          }),
-        );
-      }
+      cleanups.push(planRep.register(editor, controller.signal));
     }
     return () => {
       for (let i = cleanups.length - 1; i >= 0; i--) {
