@@ -5,13 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import { definePlan, provideOutput } from "@etrepum/lexical-builder";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from "@lexical/utils";
 import {
   $getSelection,
   $isRangeSelection,
+  BaseSelection,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
+  COMMAND_PRIORITY_LOW,
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
   REDO_COMMAND,
@@ -20,31 +23,62 @@ import {
 } from "lexical";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const LowPriority = 1;
-
 function Divider() {
   return <div className="divider" />;
 }
 
-export default function ToolbarPlugin() {
+export const ToolbarPlan = definePlan({
+  name: import.meta.url,
+  config: {},
+  register() {
+    return provideOutput({ Component: ToolbarPlugin });
+  },
+});
+
+const ALIGNMENTS = ["left", "center", "right", "justify"] as const;
+
+const FORMATS = ["bold", "italic", "underline", "strikethrough"] as const;
+type CurrentFormat = Set<(typeof FORMATS)[number]>;
+function formatFromSelection(selection: BaseSelection | null): CurrentFormat {
+  const rval: CurrentFormat = new Set();
+  if ($isRangeSelection(selection)) {
+    for (const format of FORMATS) {
+      if (selection.hasFormat(format)) {
+        rval.add(format);
+      }
+    }
+  }
+  return rval;
+}
+
+function formatEq(a: CurrentFormat, b: CurrentFormat): boolean {
+  if (a.size !== b.size) {
+    return false;
+  }
+  for (const k of a) {
+    if (!b.has(k)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function capitalizeName(name: string): string {
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
-  const [isBold, setIsBold] = useState(false);
-  const [isItalic, setIsItalic] = useState(false);
-  const [isUnderline, setIsUnderline] = useState(false);
-  const [isStrikethrough, setIsStrikethrough] = useState(false);
+  const [currentForamt, setCurrentFormat] = useState(() =>
+    formatFromSelection(null),
+  );
 
   const $updateToolbar = useCallback(() => {
-    const selection = $getSelection();
-    if ($isRangeSelection(selection)) {
-      // Update text format
-      setIsBold(selection.hasFormat("bold"));
-      setIsItalic(selection.hasFormat("italic"));
-      setIsUnderline(selection.hasFormat("underline"));
-      setIsStrikethrough(selection.hasFormat("strikethrough"));
-    }
+    const next = formatFromSelection($getSelection());
+    setCurrentFormat((prev) => (formatEq(prev, next) ? prev : next));
   }, []);
 
   useEffect(() => {
@@ -60,7 +94,7 @@ export default function ToolbarPlugin() {
           $updateToolbar();
           return false;
         },
-        LowPriority,
+        COMMAND_PRIORITY_LOW,
       ),
       editor.registerCommand(
         CAN_UNDO_COMMAND,
@@ -68,7 +102,7 @@ export default function ToolbarPlugin() {
           setCanUndo(payload);
           return false;
         },
-        LowPriority,
+        COMMAND_PRIORITY_LOW,
       ),
       editor.registerCommand(
         CAN_REDO_COMMAND,
@@ -76,7 +110,7 @@ export default function ToolbarPlugin() {
           setCanRedo(payload);
           return false;
         },
-        LowPriority,
+        COMMAND_PRIORITY_LOW,
       ),
     );
   }, [editor, $updateToolbar]);
@@ -104,79 +138,39 @@ export default function ToolbarPlugin() {
         <i className="format redo" />
       </button>
       <Divider />
-      <button
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
-        }}
-        className={"toolbar-item spaced " + (isBold ? "active" : "")}
-        aria-label="Format Bold"
-      >
-        <i className="format bold" />
-      </button>
-      <button
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
-        }}
-        className={"toolbar-item spaced " + (isItalic ? "active" : "")}
-        aria-label="Format Italics"
-      >
-        <i className="format italic" />
-      </button>
-      <button
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
-        }}
-        className={"toolbar-item spaced " + (isUnderline ? "active" : "")}
-        aria-label="Format Underline"
-      >
-        <i className="format underline" />
-      </button>
-      <button
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
-        }}
-        className={"toolbar-item spaced " + (isStrikethrough ? "active" : "")}
-        aria-label="Format Strikethrough"
-      >
-        <i className="format strikethrough" />
-      </button>
+      {FORMATS.map((format) => {
+        const name = capitalizeName(format);
+        return (
+          <button
+            key={format}
+            onClick={() => {
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
+            }}
+            className={
+              "toolbar-item spaced " + currentForamt.has(format) ? "active" : ""
+            }
+            aria-label={`Format ${name}`}
+          >
+            <i className={`Format ${name}`} />
+          </button>
+        );
+      })}
       <Divider />
-      <button
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
-        }}
-        className="toolbar-item spaced"
-        aria-label="Left Align"
-      >
-        <i className="format left-align" />
-      </button>
-      <button
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
-        }}
-        className="toolbar-item spaced"
-        aria-label="Center Align"
-      >
-        <i className="format center-align" />
-      </button>
-      <button
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
-        }}
-        className="toolbar-item spaced"
-        aria-label="Right Align"
-      >
-        <i className="format right-align" />
-      </button>
-      <button
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
-        }}
-        className="toolbar-item"
-        aria-label="Justify Align"
-      >
-        <i className="format justify-align" />
-      </button>{" "}
+      {ALIGNMENTS.map((alignment) => {
+        const name = capitalizeName(alignment);
+        return (
+          <button
+            key={alignment}
+            onClick={() => {
+              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment);
+            }}
+            className="toolbar-item spaced"
+            aria-label={`${name} Align`}
+          >
+            <i className={`format ${alignment}-align`} />
+          </button>
+        );
+      })}
     </div>
   );
 }

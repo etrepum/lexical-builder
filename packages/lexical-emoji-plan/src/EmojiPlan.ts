@@ -33,12 +33,6 @@ export interface EmojiPlanConfig {
   emojiLoadedClass: string;
 }
 
-declare module "@etrepum/lexical-builder" {
-  interface LexicalPlanRegistry {
-    [NAME]: typeof EmojiPlan;
-  }
-}
-
 /**
  * A plan to use the emoji-datasource-facebook emoji database to convert
  * short names such as :man-facepalming: or :) to their corresponding

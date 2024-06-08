@@ -16,29 +16,24 @@ import {
   type EditorChildrenComponentProps,
   ReactPlan,
   TreeViewPlan,
-  usePlanComponent,
+  UsePlanComponent,
 } from "@etrepum/lexical-react-plan";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 
-import ToolbarPlugin from "./plugins/ToolbarPlugin";
-
-function Placeholder() {
-  return <div className="editor-placeholder">Enter some rich text...</div>;
-}
+import { ToolbarPlan } from "./plugins/ToolbarPlugin";
 
 function EditorChildrenComponent({
   contentEditable,
   placeholder,
   children,
 }: EditorChildrenComponentProps) {
-  const TreeView = usePlanComponent(TreeViewPlan);
   return (
     <div className="editor-container">
-      <ToolbarPlugin />
+      <UsePlanComponent lexical:plan={ToolbarPlan} />
       <div className="editor-inner">
         {contentEditable}
         {placeholder}
-        <TreeView />
+        <UsePlanComponent lexical:plan={TreeViewPlan} />
       </div>
       {children}
     </div>
@@ -50,10 +45,13 @@ export const EditorPlan = definePlan({
   dependencies: [
     DragonPlan,
     RichTextPlan,
+    ToolbarPlan,
     configPlan(ReactPlan, {
       EditorChildrenComponent,
       contentEditable: <ContentEditable className="editor-input" />,
-      placeholder: <Placeholder />,
+      placeholder: (
+        <div className="editor-placeholder">Enter some rich text...</div>
+      ),
     }),
     configPlan(TreeViewPlan, {
       viewClassName: "tree-view-output",

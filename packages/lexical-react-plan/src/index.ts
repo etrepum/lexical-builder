@@ -18,6 +18,7 @@ export {
   type ReactConfig,
   type ErrorBoundaryType,
   type ErrorBoundaryProps,
+  type ReactOutputs,
 } from "./types";
 export { ReactPlan } from "./ReactPlan";
 export {
@@ -37,7 +38,12 @@ export {
 } from "./ReactPluginHostPlan";
 export { DefaultEditorChildrenComponent } from "./DefaultEditorChildrenComponent";
 export { Placeholder } from "./Placeholder";
-export { usePlanDependency, usePlanComponent } from "./usePlanComponent";
+export {
+  usePlanDependency,
+  usePlanComponent,
+  UsePlanComponent,
+  type UsePlanComponentProps,
+} from "./usePlanComponent";
 export {
   type TreeViewConfig,
   TreeViewPlanComponent,
