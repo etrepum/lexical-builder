@@ -17,8 +17,10 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 
 import { buildEditorComponent } from "./buildEditorComponent";
-import { ReactConfig } from "./types";
+import { ReactConfig, ReactOutputs } from "./types";
 import { DefaultEditorChildrenComponent } from "./DefaultEditorChildrenComponent";
+import { ReactProviderPlan } from "./ReactProviderPlan";
+import invariant from "./shared/invariant";
 
 const initialConfig: ReactConfig = {
   EditorChildrenComponent: DefaultEditorChildrenComponent,
@@ -55,13 +57,21 @@ export const ReactPlan = definePlan({
     return config;
   },
   name: "@etrepum/lexical-builder/ReactPlan",
-  register(editor, config) {
+  register(editor, config, state) {
+    invariant(
+      // We are not trying to avoid the import, just the direct dependency,
+      // so using the plan directly is fine.
+      state.getPeer<typeof ReactProviderPlan>(ReactProviderPlan.name) !==
+        undefined,
+      "No ReactProviderPlan detected. You must use ReactPluginHostPlan or LexicalPlanComposer to host React plans. The following plans depend on ReactPlan: %s",
+      state.getDirectDependentNames().join(" "),
+    );
     const context: LexicalComposerContextWithEditor = [
       editor,
       { getTheme: () => editor._config.theme },
     ];
     const Component = buildEditorComponent(config, context);
-    return provideOutput({
+    return provideOutput<ReactOutputs>({
       context,
       Component,
     });

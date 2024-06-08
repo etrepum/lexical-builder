@@ -5,6 +5,7 @@ import {
 } from "@etrepum/lexical-builder";
 import { useEffect, useMemo } from "react";
 import { scheduleMicrotask } from "./shared/scheduleMicroTask";
+import { ReactProviderPlan } from "./ReactProviderPlan";
 import { ReactPlan } from "./ReactPlan";
 
 export interface LexicalPlanComposerProps {
@@ -66,7 +67,10 @@ export function LexicalPlanComposer({
   plan,
   children,
 }: LexicalPlanComposerProps) {
-  const handle = useMemo(() => buildEditorFromPlans(ReactPlan, plan), [plan]);
+  const handle = useMemo(
+    () => buildEditorFromPlans(ReactProviderPlan, ReactPlan, plan),
+    [plan],
+  );
   useEffect(() => {
     // This is an awful trick to detect StrictMode so we don't dispose the
     // editor that we just created

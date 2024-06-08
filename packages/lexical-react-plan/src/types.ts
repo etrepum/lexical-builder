@@ -103,9 +103,9 @@ export interface ReactOutputs {
    */
   Component: EditorComponentType;
   /**
-   * This function is equivalent to useLexicalComposerContext() from @lexical/react/LexicalComposerContext.
+   * This is equivalent to useLexicalComposerContext() from @lexical/react/LexicalComposerContext.
    */
-  getContext: () => LexicalComposerContextWithEditor;
+  context: LexicalComposerContextWithEditor;
 }
 
 export type ErrorBoundaryProps = {

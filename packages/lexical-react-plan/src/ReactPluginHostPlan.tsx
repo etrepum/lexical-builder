@@ -20,6 +20,7 @@ import { createRoot, Root } from "react-dom/client";
 import { configPlan, definePlan } from "@etrepum/lexical-builder";
 import { ReactPlan } from "./ReactPlan";
 import invariant from "./shared/invariant";
+import { ReactProviderPlan } from "./ReactProviderPlan";
 
 export interface HostMountCommandArg {
   root: Root;
@@ -74,6 +75,7 @@ export const REACT_MOUNT_PLUGIN_COMMAND = createCommand<MountPluginCommandArg>(
 export const ReactPluginHostPlan = definePlan({
   config: {},
   dependencies: [
+    ReactProviderPlan,
     configPlan(ReactPlan, {
       contentEditable: null,
     }),

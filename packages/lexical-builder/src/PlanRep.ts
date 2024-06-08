@@ -13,7 +13,6 @@ import type {
   LexicalPlanDependency,
   LexicalPlanOutput,
 } from "./types";
-import type { LexicalPlanRegistry } from "@etrepum/lexical-builder";
 
 import invariant from "./shared/invariant";
 
@@ -44,19 +43,18 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
     const cleanup = this.plan.register(editor, this.getConfig(), {
       getPeer: this.getPeer.bind(this),
       getDependency: this.getDependency.bind(this),
+      getDirectDependentNames: this.getDirectDependentNames.bind(this),
       signal,
     });
     this._output = cleanup.output as LexicalPlanOutput<Plan>;
     return cleanup;
   }
-  getPeer<Name extends keyof LexicalPlanRegistry>(
-    name: string,
-  ): undefined | LexicalPlanDependency<LexicalPlanRegistry[Name]> {
+  getPeer<PeerPlan extends AnyLexicalPlan = never>(
+    name: PeerPlan["name"],
+  ): undefined | LexicalPlanDependency<PeerPlan> {
     const rep = this.builder.planNameMap.get(name);
     return rep
-      ? (rep.getPlanDependency() as LexicalPlanDependency<
-          LexicalPlanRegistry[Name]
-        >)
+      ? (rep.getPlanDependency() as LexicalPlanDependency<PeerPlan>)
       : undefined;
   }
   getDependency<Dependency extends AnyLexicalPlan>(
@@ -70,6 +68,13 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
       dep.name,
     );
     return rep.getPlanDependency();
+  }
+
+  getDirectDependentNames(): string[] {
+    return Array.from(
+      this.builder.reverseEdges.get(this.plan) || [],
+      (plan) => plan.name,
+    );
   }
 
   getPlanDependency(): LexicalPlanDependency<Plan> {

@@ -7,7 +7,7 @@
  */
 
 import type { CreateEditorArgs, EditorState, LexicalEditor } from "lexical";
-import type { LexicalPlanRegistry } from "@etrepum/lexical-builder";
+import type { PeerDependencyBrand } from "./definePlan";
 
 /**
  * Any concrete {@link LexicalPlan}
@@ -30,6 +30,11 @@ export type RootPlanArgument<Output = any> = Omit<
   "config" | "name"
 >;
 
+export type NormalizedPeerDependency<Plan extends AnyLexicalPlan> = [
+  Plan["name"],
+  Partial<LexicalPlanConfig<Plan>> | undefined,
+] & { [PeerDependencyBrand]: Plan };
+
 /**
  * A tuple of [plan, configOverride, ...configOverrides]
  */
@@ -50,9 +55,9 @@ export interface RegisterState {
    * Get the result of a peerDependency by name, if it exists
    * (must be a peerDependency of this plan)
    */
-  getPeer<Name extends keyof LexicalPlanRegistry>(
-    name: string,
-  ): undefined | LexicalPlanDependency<LexicalPlanRegistry[Name]>;
+  getPeer<Plan extends AnyLexicalPlan = never>(
+    name: Plan["name"],
+  ): undefined | LexicalPlanDependency<Plan>;
   /**
    * Get the configuration of a dependency by plan
    * (must be a direct dependency of this plan)
@@ -60,6 +65,11 @@ export interface RegisterState {
   getDependency<Dependency extends AnyLexicalPlan>(
     dep: Dependency,
   ): LexicalPlanDependency<Dependency>;
+  /**
+   * Get the names of any direct dependents of this
+   * Plan, typically only used for error messages.
+   */
+  getDirectDependentNames(): string[];
 }
 
 /**
@@ -101,9 +111,7 @@ export interface LexicalPlan<
    * Other Plans, by name, that this Plan can optionally depend on or
    * configure, if they are directly depended on by another Plan
    */
-  peerDependencies?: {
-    [k in keyof LexicalPlanRegistry]?: Partial<LexicalPeerConfig<k>>;
-  };
+  peerDependencies?: NormalizedPeerDependency<AnyLexicalPlan>[];
 
   /**
    * @internal Disable root element events (for internal Meta use)
@@ -204,31 +212,6 @@ export interface LexicalPlan<
 
 export type RegisterCleanup<Output> = (() => void) &
   (unknown extends Output ? { output?: Output } : { output: Output });
-
-/**
- * Get the Config type of a peer Plan from {@link LexicalPlanRegistry} by
- * name, or the empty {@link PlanConfigBase} if it is not globally registered.
- */
-export type LexicalPeerConfig<Name extends keyof LexicalPlanRegistry | string> =
-  LexicalPeerPlan<Name>["config"];
-
-/**
- * Get the Plan type of a peer Plan from {@link LexicalPlanRegistry} by
- * name, or an "default" Plan type if it is not globally registered.
- */
-export type LexicalPeerPlan<Name extends keyof LexicalPlanRegistry | string> = [
-  Name,
-] extends [keyof LexicalPlanRegistry]
-  ? LexicalPlanRegistry[Name]
-  : LexicalPlan<PlanConfigBase, Name, unknown>;
-
-/**
- * Get the Config type of a peer Plan from {@link LexicalPlanRegistry} by
- * name, or the empty {@link PlanConfigBase} if it is not globally registered.
- */
-export type LexicalPeerDependency<
-  Name extends keyof LexicalPlanRegistry | string,
-> = LexicalPlanDependency<LexicalPeerPlan<Name>>;
 
 /**
  * Extract the Config type from a Plan

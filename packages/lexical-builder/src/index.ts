@@ -29,15 +29,13 @@ export {
   type LexicalPlanName,
   type LexicalPlanOutput,
   type LexicalPlanDependency,
-  type LexicalPeerConfig,
-  type LexicalPeerDependency,
-  type LexicalPeerPlan,
   type RootPlan,
   type RootPlanArgument,
   type NormalizedLexicalPlanArgument,
   type PlanConfigBase,
   type RegisterState,
   type RegisterCleanup,
+  type NormalizedPeerDependency,
 } from "./types";
 export { safeCast } from "./safeCast";
 export { shallowMergeConfig } from "./shallowMergeConfig";
@@ -55,22 +53,3 @@ export { DragonPlan } from "./DragonPlan";
 export { type HistoryConfig, HistoryPlan } from "./HistoryPlan";
 export { PlainTextPlan } from "./PlainTextPlan";
 export { RichTextPlan } from "./RichTextPlan";
-/**
- * An open interface for Name -> Config mappings. If you are defining a
- * plan with non-empty config and it may be used as a peerDependency then
- * you should extend this as follows:
- *
- * @example Extending LexicalPlanRegistry
- * ```ts
- * export const SomePlan = definePlan({
- *   name: "@some/plan",
- *   config: { className: "default" }
- * });
- * declare module '@etrepum/lexical-builder' {
- *   interface LexicalPlanRegistry {
- *     [SomePlan.name]: typeof SomePlan;
- *   }
- * }
- * ```
- */
-export interface LexicalPlanRegistry {}

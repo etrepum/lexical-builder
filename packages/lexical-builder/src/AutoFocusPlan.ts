@@ -9,13 +9,6 @@
 import { definePlan } from "./definePlan";
 import { safeCast } from "./safeCast";
 
-import type {} from "@etrepum/lexical-builder";
-declare module "@etrepum/lexical-builder" {
-  interface LexicalPlanRegistry {
-    [AutoFocusPlan.name]: typeof AutoFocusPlan;
-  }
-}
-
 export interface AutoFocusConfig {
   /**
    * Where to move the selection when the editor is focused and there is no

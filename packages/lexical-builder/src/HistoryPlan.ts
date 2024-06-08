@@ -14,13 +14,6 @@ import {
 import { definePlan } from "./definePlan";
 import { safeCast } from "./safeCast";
 
-import type {} from "@etrepum/lexical-builder";
-declare module "@etrepum/lexical-builder" {
-  interface LexicalPlanRegistry {
-    [HistoryPlan.name]: typeof HistoryPlan;
-  }
-}
-
 export interface HistoryConfig {
   /**
    * The time (in milliseconds) the editor should delay generating a new history stack,

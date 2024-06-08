@@ -7,8 +7,11 @@
  */
 
 import type {
+  AnyLexicalPlan,
   LexicalPlan,
+  LexicalPlanConfig,
   NormalizedLexicalPlanArgument,
+  NormalizedPeerDependency,
   PlanConfigBase,
   RegisterCleanup,
   RootPlan,
@@ -121,4 +124,16 @@ export function provideOutput<Output>(
   cleanup?: () => void,
 ): RegisterCleanup<Output> {
   return Object.assign(() => cleanup && cleanup(), { output } as const);
+}
+
+/** @internal */
+export const PeerDependencyBrand: unique symbol = Symbol.for(
+  "@etrepum/lexical-builder/PeerDependency",
+);
+
+export function declarePeerDependency<Plan extends AnyLexicalPlan = never>(
+  name: Plan["name"],
+  config?: Partial<LexicalPlanConfig<Plan>>,
+): NormalizedPeerDependency<Plan> {
+  return [name, config] as NormalizedPeerDependency<Plan>;
 }

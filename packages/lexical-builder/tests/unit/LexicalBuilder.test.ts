@@ -33,4 +33,15 @@ describe("LexicalBuilder", () => {
     expect(planRep.configs.size).toBe(1);
     expect(planRep.getConfig()).toEqual({ a: 1, b: null });
   });
+  it("handles circular dependencies", () => {
+    const PlanA = definePlan({ name: "A", config: {}, dependencies: [] });
+    const PlanB = definePlan({ name: "B", config: {}, dependencies: [PlanA] });
+    const PlanC = definePlan({ name: "C", config: {}, dependencies: [PlanB] });
+    // This is silly and hard to do but why not prevent it
+    PlanA.dependencies?.push(PlanC);
+    const builder = new LexicalBuilder();
+    expect(() => builder.addPlan(PlanA)).toThrowError(
+      "LexicalBuilder: Circular dependency detected for Plan A from B",
+    );
+  });
 });

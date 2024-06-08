@@ -1,5 +1,5 @@
 import { $getEditor, LexicalEditor } from "lexical";
-import { LexicalPeerDependency } from "./types";
+import { AnyLexicalPlan, LexicalPlanDependency } from "./types";
 import { LexicalBuilder } from "./LexicalBuilder";
 import invariant from "./shared/invariant";
 import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
@@ -13,14 +13,23 @@ import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
  * config around. Use this version if you do not have a concrete reference to
  * the Plan for some reason (e.g. it is an optional peer dependency).
  *
+ * Both the explicit Plan type and the name are required.
+ *
+ *  @example
+ * ```tsx
+ * getPeerDependencyFromEditor<typeof import("@some/plan").SomePlan>(editor, "@some/plan");
+ * ```
+
  * @param editor The editor that may have been built using plan
  * @param planName The name of the Plan
  * @returns The config and output of the Plan or undefined
  */
-export function getPeerDependencyFromEditor<Name extends string>(
+export function getPeerDependencyFromEditor<
+  Plan extends AnyLexicalPlan = never,
+>(
   editor: LexicalEditor,
-  planName: Name,
-): LexicalPeerDependency<Name> | undefined {
+  planName: Plan["name"],
+): LexicalPlanDependency<Plan> | undefined {
   const builder = LexicalBuilder.fromEditor(editor);
   invariant(
     builder !== undefined,
@@ -29,7 +38,7 @@ export function getPeerDependencyFromEditor<Name extends string>(
   );
   const peer = builder.planNameMap.get(planName);
   return peer
-    ? (peer.getPlanDependency() as LexicalPeerDependency<Name>)
+    ? (peer.getPlanDependency() as LexicalPlanDependency<Plan>)
     : undefined;
 }
 
@@ -37,16 +46,23 @@ export function getPeerDependencyFromEditor<Name extends string>(
  * Get the finalized config and output of a Plan that was used to build the
  * editor by name.
  *
+ * Both the explicit Plan type and the name are required.
+ *
  * This can be used from the implementation of a LexicalNode or in other
  * situation where you have an editor reference but it's not easy to pass the
  * config around. Use this version if you do not have a concrete reference to
  * the Plan for some reason (e.g. it is an optional peer dependency).
  *
+ * @example
+ * ```tsx
+ * $getPeerDependency<typeof import("@some/plan").SomePlan>("@some/plan")
+ * ```
+ *
  * @param planName The name of the Plan
  * @returns The config and output of the Plan or undefined
  */
-export function $getPeerDependency<Name extends string>(
-  planName: Name,
-): LexicalPeerDependency<Name> | undefined {
+export function $getPeerDependency<Plan extends AnyLexicalPlan = never>(
+  planName: Plan["name"],
+): LexicalPlanDependency<Plan> | undefined {
   return getPeerDependencyFromEditor($getEditor(), planName);
 }

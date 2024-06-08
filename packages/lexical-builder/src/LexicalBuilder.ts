@@ -116,6 +116,8 @@ export class LexicalBuilder {
   phases: Map<AnyLexicalPlan, PlanRep<AnyLexicalPlan>>[];
   planMap: Map<AnyLexicalPlan, [number, PlanRep<AnyLexicalPlan>]>;
   planNameMap: Map<string, PlanRep<AnyLexicalPlan>>;
+  reverseEdges: Map<AnyLexicalPlan, Set<AnyLexicalPlan>>;
+  addStack: Set<AnyLexicalPlan>;
   conflicts: Map<string, string>;
 
   constructor() {
@@ -124,6 +126,8 @@ export class LexicalBuilder {
     this.planMap = new Map();
     this.planNameMap = new Map();
     this.conflicts = new Map();
+    this.reverseEdges = new Map();
+    this.addStack = new Set();
   }
 
   /** Look up the editor that was created by this LexicalBuilder or undefined */
@@ -160,7 +164,7 @@ export class LexicalBuilder {
     }
   }
 
-  addPlan(arg: AnyLexicalPlanArgument): number {
+  addPlan(arg: AnyLexicalPlanArgument, parent?: AnyLexicalPlan): number {
     let plan: AnyLexicalPlan;
     let configs: unknown[];
     if (Array.isArray(arg)) {
@@ -168,6 +172,15 @@ export class LexicalBuilder {
     } else {
       plan = arg;
       configs = [];
+    }
+    // Track incoming dependencies
+    if (parent) {
+      let edgeSet = this.reverseEdges.get(plan);
+      if (!edgeSet) {
+        edgeSet = new Set();
+        this.reverseEdges.set(plan, edgeSet);
+      }
+      edgeSet.add(parent);
     }
     let [phase, planRep] = this.planMap.get(plan) || [0, undefined];
     if (!planRep) {
@@ -189,9 +202,16 @@ export class LexicalBuilder {
         );
         this.conflicts.set(name, plan.name);
       }
+      invariant(
+        !this.addStack.has(plan),
+        "LexicalBuilder: Circular dependency detected for Plan %s from %s",
+        plan.name,
+        parent?.name || "[unknown]",
+      );
+      this.addStack.add(plan);
       // TODO detect circular dependencies
       for (const dep of plan.dependencies || []) {
-        phase = Math.max(phase, 1 + this.addPlan(dep));
+        phase = Math.max(phase, 1 + this.addPlan(dep, plan));
       }
       for (const [depName, cfg] of Object.entries(
         plan.peerDependencies || {},
@@ -203,6 +223,7 @@ export class LexicalBuilder {
             1 +
               this.addPlan(
                 configPlan(dep.plan, cfg as LexicalPlanConfig<typeof dep.plan>),
+                plan,
               ),
           );
         }
@@ -229,6 +250,7 @@ export class LexicalBuilder {
         String(phase),
       );
       currentPhaseMap.set(plan, planRep);
+      this.addStack.delete(plan);
     }
     for (const config of configs) {
       planRep.configs.add(config as Partial<LexicalPlanConfig<AnyLexicalPlan>>);
