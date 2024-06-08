@@ -1,3 +1,11 @@
+## v0.0.16 (2024-06-07
+
+2024-06-07)
+
+- Merge pull request #17 from etrepum/simplify-root-plan Bob Ippolito
+- Simplify root plan Bob Ippolito
+- Merge pull request #16 from etrepum/0.0.15release Bob Ippolito
+
 ## v0.0.15 (2024-06-06
 
 2024-06-06)
