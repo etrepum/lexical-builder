@@ -4,7 +4,7 @@ import {
   type LexicalPlanDependency,
 } from "@etrepum/lexical-builder";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { ComponentProps, memo, useMemo } from "react";
+import { ComponentProps } from "react";
 
 export function usePlanDependency<Plan extends AnyLexicalPlan>(
   plan: Plan,
@@ -22,7 +22,7 @@ export function usePlanDependency<Plan extends AnyLexicalPlan>(
 export function usePlanComponent<Plan extends AnyLexicalPlan>(
   plan: Plan,
 ): LexicalPlanDependency<Plan>["output"]["Component"] {
-  return useMemo(() => memo(usePlanDependency(plan).output.Component), [plan]);
+  return usePlanDependency(plan).output.Component;
 }
 
 /**

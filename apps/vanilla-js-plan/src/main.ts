@@ -15,6 +15,7 @@ import {
   RichTextPlan,
 } from "@etrepum/lexical-builder";
 import {
+  mountReactPlanComponent,
   mountReactPluginComponent,
   mountReactPluginHost,
   ReactPluginHostPlan,
@@ -24,6 +25,7 @@ import { LexicalEditor } from "lexical";
 
 import { $prepopulatedRichText } from "./$prepopulatedRichText";
 import { EmojiPlan } from "@etrepum/lexical-emoji-plan";
+import { BuilderGraphPlan } from "@etrepum/lexical-builder-devtools-core";
 
 const editorHandle = buildEditorFromPlans({
   $initialEditorState: $prepopulatedRichText,
@@ -37,6 +39,7 @@ const editorHandle = buildEditorFromPlans({
       emojiBaseUrl: "/assets/emoji",
     }),
     ReactPluginHostPlan,
+    BuilderGraphPlan,
   ],
   namespace: "Vanilla JS Plan Demo",
   register: (editor: LexicalEditor) => {
@@ -56,6 +59,12 @@ const editorHandle = buildEditorFromPlans({
         treeTypeButtonClassName: "debug-treetype-button",
         viewClassName: "tree-view-output",
       },
+    });
+    mountReactPlanComponent(editor, {
+      plan: BuilderGraphPlan,
+      domNode: document.getElementById("lexical-builder-graph"),
+      key: "builder",
+      props: {},
     });
     return () => {
       el.remove();

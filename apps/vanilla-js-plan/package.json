@@ -11,11 +11,12 @@
   },
   "dependencies": {
     "@etrepum/lexical-builder": "*",
+    "@etrepum/lexical-builder-devtools-core": "^0.0.15",
     "@etrepum/lexical-emoji-plan": "*",
     "@etrepum/lexical-react-plan": "*",
-    "@lexical/react": "^0.16.0",
-    "@lexical/utils": "^0.16.0",
-    "lexical": "0.16.0",
+    "@lexical/react": "*",
+    "@lexical/utils": "*",
+    "lexical": "*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

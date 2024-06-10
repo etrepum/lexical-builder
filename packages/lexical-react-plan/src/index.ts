@@ -32,6 +32,7 @@ export {
   mountReactPluginComponent,
   mountReactPluginElement,
   mountReactPluginHost,
+  mountReactPlanComponent,
   REACT_MOUNT_PLUGIN_COMMAND,
   REACT_PLUGIN_HOST_MOUNT_COMMAND,
   ReactPluginHostPlan,

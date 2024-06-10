@@ -7,6 +7,7 @@
  */
 
 import {
+  declarePeerDependency,
   definePlan,
   provideOutput,
   shallowMergeConfig,
@@ -57,10 +58,13 @@ export const ReactPlan = definePlan({
     return config;
   },
   name: "@etrepum/lexical-builder/ReactPlan",
+  peerDependencies: [
+    // We are not trying to avoid the import, just the direct dependency,
+    // so using the plan directly is fine.
+    declarePeerDependency<typeof ReactProviderPlan>(ReactProviderPlan.name),
+  ],
   register(editor, config, state) {
     invariant(
-      // We are not trying to avoid the import, just the direct dependency,
-      // so using the plan directly is fine.
       state.getPeer<typeof ReactProviderPlan>(ReactProviderPlan.name) !==
         undefined,
       "No ReactProviderPlan detected. You must use ReactPluginHostPlan or LexicalPlanComposer to host React plans. The following plans depend on ReactPlan: %s",
