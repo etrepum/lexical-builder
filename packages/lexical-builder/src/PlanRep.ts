@@ -29,6 +29,7 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
   _config?: LexicalPlanConfig<Plan>;
   _dependency?: LexicalPlanDependency<Plan>;
   _output?: LexicalPlanOutput<Plan>;
+  _peerNameSet?: Set<string>;
   plan: Plan;
   constructor(builder: LexicalBuilder, plan: Plan) {
     this.builder = builder;
@@ -44,6 +45,7 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
       getPeer: this.getPeer.bind(this),
       getDependency: this.getDependency.bind(this),
       getDirectDependentNames: this.getDirectDependentNames.bind(this),
+      getPeerNameSet: this.getPeerNameSet.bind(this),
       signal,
     });
     this._output = cleanup.output as LexicalPlanOutput<Plan>;
@@ -70,11 +72,20 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
     return rep.getPlanDependency();
   }
 
-  getDirectDependentNames(): string[] {
+  getDirectDependentNames() {
     return Array.from(
       this.builder.reverseEdges.get(this.plan) || [],
       (plan) => plan.name,
     );
+  }
+
+  getPeerNameSet() {
+    let s = this._peerNameSet;
+    if (!s) {
+      s = new Set((this.plan.peerDependencies || []).map(([name]) => name));
+      this._peerNameSet = s;
+    }
+    return s;
   }
 
   getPlanDependency(): LexicalPlanDependency<Plan> {

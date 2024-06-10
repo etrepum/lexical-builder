@@ -70,6 +70,12 @@ export interface RegisterState {
    * Plan, typically only used for error messages.
    */
   getDirectDependentNames(): string[];
+  /**
+   * Get the names of all peer dependencies of this
+   * Plan, even if they do not exist in the builder,
+   * typically only used for devtools.
+   */
+  getPeerNameSet(): Set<string>;
 }
 
 /**

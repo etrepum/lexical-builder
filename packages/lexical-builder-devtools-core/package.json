@@ -1,11 +1,11 @@
 {
-  "name": "@etrepum/lexical-react-plan",
-  "description": "[EXPERIMENTAL] Lexical Builder React plan",
+  "name": "@etrepum/lexical-builder-devtools-core",
+  "description": "[EXPERIMENTAL] Lexical Builder Devtools",
   "type": "module",
   "keywords": [
     "lexical",
     "lexical-builder",
-    "react",
+    "devtools",
     "plug-in",
     "plan"
   ],
@@ -15,19 +15,24 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "version": "0.0.16",
+  "version": "0.0.15",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/etrepum/lexical-builder.git",
-    "directory": "packages/lexical-react-plan"
+    "directory": "packages/lexical-builder-devtools-core"
   },
   "bugs": {
     "url": "https://github.com/etrepum/lexical-builder/issues"
   },
   "homepage": "https://github.com/etrepum/lexical-builder",
   "dependencies": {
-    "@etrepum/lexical-builder": "*"
+    "@docusaurus/theme-mermaid": "^3.4.0",
+    "@etrepum/lexical-builder": "*",
+    "@etrepum/lexical-react-plan": "*",
+    "js-base64": "^3.7.7",
+    "mermaid": "^10.9.1",
+    "pako": "^2.1.0"
   },
   "peerDependencies": {
     "@lexical/react": ">=0.16.0-0",
@@ -42,6 +47,7 @@
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
+    "@types/pako": "^2.0.3",
     "jsdom": "^24.1.0",
     "tslib": "^2.6.2",
     "typescript": "^5.4.5",

@@ -12,12 +12,18 @@ import {
   createCommand,
   LexicalEditor,
 } from "lexical";
-import { Suspense, useEffect, useState } from "react";
+import { ComponentProps, Suspense, useEffect, useState } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { createRoot, Root } from "react-dom/client";
 
-import { configPlan, definePlan } from "@etrepum/lexical-builder";
+import {
+  AnyLexicalPlan,
+  configPlan,
+  definePlan,
+  getPlanDependencyFromEditor,
+  LexicalPlanDependency,
+} from "@etrepum/lexical-builder";
 import { ReactPlan } from "./ReactPlan";
 import invariant from "./shared/invariant";
 import { ReactProviderPlan } from "./ReactProviderPlan";
@@ -32,6 +38,27 @@ export interface MountPluginCommandArg {
   key: string;
   element: JSX.Element | null;
   domNode?: Container | null;
+}
+
+export function mountReactPlanComponent<
+  Plan extends AnyLexicalPlan,
+  P extends ComponentProps<LexicalPlanDependency<Plan>["output"]["Component"]>,
+>(
+  editor: LexicalEditor,
+  opts: {
+    plan: null | Plan;
+    props: (P & React.Attributes) | null;
+  } & Omit<MountPluginCommandArg, "element">,
+) {
+  const { props, plan, ...rest } = opts;
+  const Component =
+    plan && props
+      ? getPlanDependencyFromEditor(editor, plan).output.Component
+      : null;
+  return mountReactPluginElement(editor, {
+    ...rest,
+    element: Component && <Component {...props} />,
+  });
 }
 
 export function mountReactPluginComponent<

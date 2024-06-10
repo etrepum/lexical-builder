@@ -12,6 +12,7 @@ export {
   definePlan,
   defineRootPlan,
   provideOutput,
+  declarePeerDependency,
 } from "./definePlan";
 export {
   LexicalBuilder,

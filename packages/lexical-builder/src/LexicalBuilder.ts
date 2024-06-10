@@ -209,20 +209,20 @@ export class LexicalBuilder {
         parent?.name || "[unknown]",
       );
       this.addStack.add(plan);
-      // TODO detect circular dependencies
       for (const dep of plan.dependencies || []) {
         phase = Math.max(phase, 1 + this.addPlan(dep, plan));
       }
-      for (const [depName, cfg] of Object.entries(
-        plan.peerDependencies || {},
-      )) {
+      for (const [depName, cfg] of plan.peerDependencies || []) {
         const dep = this.planNameMap.get(depName);
         if (dep) {
           phase = Math.max(
             phase,
             1 +
               this.addPlan(
-                configPlan(dep.plan, cfg as LexicalPlanConfig<typeof dep.plan>),
+                configPlan(
+                  dep.plan,
+                  (cfg || {}) as LexicalPlanConfig<typeof dep.plan>,
+                ),
                 plan,
               ),
           );
