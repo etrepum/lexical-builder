@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@etrepum/lexical-builder": "*",
-    "@etrepum/lexical-builder-devtools-core": "^0.0.15",
+    "@etrepum/lexical-builder-devtools-core": "*",
     "@etrepum/lexical-emoji-plan": "*",
     "@etrepum/lexical-react-plan": "*",
     "@lexical/react": "*",
