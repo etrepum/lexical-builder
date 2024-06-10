@@ -1,3 +1,10 @@
+## v0.0.17 (2024-06-10)
+
+- npm run update-packages Bob Ippolito
+- Merge pull request #20 from etrepum/devtools-core Bob Ippolito
+- Add a visualization of the dependency graph Bob Ippolito
+- Merge pull request #19 from etrepum/0.0.16release Bob Ippolito
+
 ## v0.0.16 (2024-06-07
 
 2024-06-07)
