@@ -1,5 +1,7 @@
 ---
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Migration Guide
 
@@ -12,13 +14,16 @@ the result will be simpler and more composable if you do!
 
 ## Vanilla JS App
 
-Before:
+
+<Tabs>
+<TabItem value="before" label="Before">
 
 ```ts
 import { registerDragonSupport } from "@lexical/dragon";
 import { createEmptyHistoryState, registerHistory } from "@lexical/history";
 import { HeadingNode, QuoteNode, registerRichText } from "@lexical/rich-text";
 import { mergeRegister } from "@lexical/utils";
+// highlight-next-line
 import { createEditor } from "lexical";
 import $prepopulatedRichText from "./$prepopulatedRichText";
 
@@ -27,22 +32,21 @@ const stateRef = document.getElementById(
   "lexical-state",
 ) as HTMLTextAreaElement;
 
-const initialConfig = {
+// highlight-next-line
+const editor = createEditor({
   namespace: "Vanilla JS Demo",
   // Register nodes specific for @lexical/rich-text
   nodes: [HeadingNode, QuoteNode],
+  // highlight-start
   onError: (error: Error) => {
     throw error;
   },
-  theme: {
-    // Adding styling to Quote node, see styles.css
-    quote: "PlaygroundEditorTheme__quote",
-  },
-};
-const editor = createEditor(initialConfig);
+  // highlight-end
+  theme: {quote: "PlaygroundEditorTheme__quote"},
+});
 editor.setRootElement(editorRef);
 
-// Registring Plugins
+// Registering Plugins
 mergeRegister(
   registerRichText(editor),
   registerDragonSupport(editor),
@@ -52,13 +56,15 @@ mergeRegister(
 editor.update(prepopulatedRichText, { tag: "history-merge" });
 ```
 
-After (minimal changes):
+</TabItem>
+<TabItem value="minimal" label="After (minimal changes)">
 
 ```ts
 import { registerDragonSupport } from "@lexical/dragon";
 import { createEmptyHistoryState, registerHistory } from "@lexical/history";
 import { HeadingNode, QuoteNode, registerRichText } from "@lexical/rich-text";
 import { mergeRegister } from "@lexical/utils";
+// highlight-next-line
 import { buildEditorFromPlans } from "@etrepum/lexical-builder";
 import $prepopulatedRichText from "./$prepopulatedRichText";
 
@@ -67,18 +73,18 @@ const stateRef = document.getElementById(
   "lexical-state",
 ) as HTMLTextAreaElement;
 
-const editor = buildEditorFromPlans({
+// highlight-next-line
+const {editor} = buildEditorFromPlans({
   namespace: "Vanilla JS Demo (with Lexical Builder)",
   // Register nodes specific for @lexical/rich-text
   nodes: [HeadingNode, QuoteNode],
-  theme: {
-    // Adding styling to Quote node, see styles.css
-    quote: "PlaygroundEditorTheme__quote",
-  },
+  // highlight-next-line
+  // onError boilerplate removed
+  theme: {quote: "PlaygroundEditorTheme__quote"},
 });
 editor.setRootElement(editorRef);
 
-// Registring Plugins
+// Registering Plugins
 mergeRegister(
   registerRichText(editor),
   registerDragonSupport(editor),
@@ -88,7 +94,8 @@ mergeRegister(
 editor.update($prepopulatedRichText, { tag: "history-merge" });
 ```
 
-After (all-in):
+</TabItem>
+<TabItem value="all-in" label="After (all-in)">
 
 ```ts
 import {
@@ -99,29 +106,40 @@ import {
 } from "@etrepum/lexical-builder";
 import prepopulatedRichText from "./prepopulatedRichText";
 
-const editor = buildEditorFromPlans({
+const {editor} = buildEditorFromPlans({
+  // highlight-start
+  // This works similarly to LexicalComposer editorState
   $initialEditorState: $prepopulatedRichText,
+  // highlight-end
   namespace: "Vanilla JS Demo (all-in with Lexical Builder)",
+  // highlight-start
+  // RichTextPlan has a nodes property to add QuoteNode and HeadingNode
+  // All three plans have register properties to add behavior to the editor,
+  // with defaults for all of the History configuration
   dependencies: [RichTextPlan, DragonPlan, HistoryPlan],
-  theme: {
-    // Adding styling to Quote node, see styles.css
-    quote: "PlaygroundEditorTheme__quote",
-  },
+  // highlight-end
+  theme: {quote: "PlaygroundEditorTheme__quote"},
 });
 editor.setRootElement(editorRef);
 ```
 
+</TabItem>
+</Tabs>
+
 ## React App
 
-Before:
+<Tabs>
+<TabItem value="before" label="Before">
 
 ```tsx
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+// highlight-start
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+// highlight-end
 
 import ExampleTheme from "./ExampleTheme";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
@@ -131,6 +149,7 @@ function Placeholder() {
   return <div className="editor-placeholder">Enter some rich text...</div>;
 }
 
+// highlight-start
 const editorConfig = {
   namespace: "React.js Demo",
   nodes: [],
@@ -141,13 +160,16 @@ const editorConfig = {
   // The editor theme
   theme: ExampleTheme,
 };
+// highlight-end
 
 export default function App() {
   return (
+    // highlight-next-line
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container">
         <ToolbarPlugin />
         <div className="editor-inner">
+          {/* highlight-start */}
           <RichTextPlugin
             contentEditable={<ContentEditable className="editor-input" />}
             placeholder={<Placeholder />}
@@ -155,23 +177,25 @@ export default function App() {
           />
           <HistoryPlugin />
           <AutoFocusPlugin />
+          {/* highlight-end */}
           <TreeViewPlugin />
         </div>
       </div>
+    {/* highlight-next-line */}
     </LexicalComposer>
   );
 }
 ```
 
-After:
+</TabItem>
+<TabItem value="after" label="After">
 
 ```tsx
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+// highlight-start
+import { AutoFocusPlan, HistoryPlan, RichTextPlan } from "@etrepum/lexical-builder";
 import { LexicalPlanComposer } from "@etrepum/lexical-react-plan";
+// highlight-end
 
 import ExampleTheme from "./ExampleTheme";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
@@ -181,6 +205,7 @@ function Placeholder() {
   return <div className="editor-placeholder">Enter some rich text...</div>;
 }
 
+// highlight-start
 const editorPlan = definePlan({
   namespace: "React.js Plan Demo",
   dependencies: [
@@ -188,6 +213,7 @@ const editorPlan = definePlan({
     RichTextPlan,
     HistoryPlan,
     configPlan(ReactPlan, {
+      // We specify our own layout for the editor's children
       contentEditable: null,
       placeholder: null,
     }),
@@ -195,28 +221,38 @@ const editorPlan = definePlan({
   // The editor theme
   theme: ExampleTheme,
 });
+// highlight-end
 
 export default function App() {
   return (
+    // highlight-next-line
     <LexicalPlanComposer plan={editorPlan}>
       <div className="editor-container">
         <ToolbarPlugin />
         <div className="editor-inner">
+          {/* highlight-start */}
           <ContentEditable className="editor-input" />
           <Placeholder />
+          {/* highlight-end */}
           <TreeViewPlugin />
         </div>
       </div>
-    </LexicalComposer>
+    {/* highlight-next-line */}
+    </LexicalPlanComposer>
   );
 }
 ```
 
+</TabItem>
+</Tabs>
+
 ## React Plug-in (without UI)
 
-Before:
+<Tabs>
+<TabItem value="before" label="Before">
 
 ```tsx
+// highlight-start
 /**
  * USAGE:
  * 1. Add KeywordNode to your initialConfig nodes Array.
@@ -226,6 +262,7 @@ Before:
  * 3. Add CSS somewhere for '.keyword'.
  *    If you don't like that selector, too bad.
  */
+// highlight-end
 import type { EditorConfig, LexicalNode, SerializedTextNode } from "lexical";
 import { TextNode } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -333,22 +370,27 @@ export function KeywordsPlugin(): JSX.Element | null {
 }
 ```
 
-After (minimal & backwards compatible):
+</TabItem>
+<TabItem value="minimal" label="After (minimal & backwards compatible)">
 
 ```tsx
+// highlight-start
 /**
  * USAGE:
  * 1. Add KeywordsPlan as a dependency to your LexicalPlanComposer root plan
  * 2. Add CSS somewhere for '.keyword'.
  *    If you don't like that selector, too bad.
  */
+// highlight-end
 import type { EditorConfig, LexicalNode, SerializedTextNode } from "lexical";
 import { TextNode } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useLexicalTextEntity } from "@lexical/react/useLexicalTextEntity";
 import { useCallback, useEffect } from "react";
+// highlight-start
 import { ReactPlan } from "@etrepum/lexical-react-plan";
 import { definePlan, configPlan } from "@etrepum/lexical-builder";
+// highlight-end
 
 export type SerializedKeywordNode = SerializedTextNode;
 
@@ -450,17 +492,21 @@ export function KeywordsPlugin(): JSX.Element | null {
   return null;
 }
 
+// highlight-start
 // We only need to add metadata so that you can easily use this plan!
 export const KeywordsPlan = definePlan({
   name: "@etrepum/lexical-builder-keywords",
   nodes: [KeywordNode],
   dependencies: [configPlan(ReactPlan, { decorators: [<KeywordsPlugin />] })],
 });
+// highlight-end
 ```
 
-After (all-in):
+</TabItem>
+<TabItem value="all-in" label="After (all-in)">
 
 ```tsx
+// highlight-start
 /**
  * USAGE:
  * 1. Add KeywordsPlan as a dependency to your LexicalPlanComposer root plan
@@ -469,13 +515,25 @@ After (all-in):
  *    If you don't like that selector, use
  *    `configPlan(KeywordsPlan, {className: 'something-else'})`
  */
+// highlight-end
 import type { EditorConfig, LexicalNode, SerializedTextNode } from "lexical";
 import { TextNode } from "lexical";
 import { registerLexicalTextEntity } from "@lexical/text";
 import { useCallback, useEffect } from "react";
+// highlight-next-line
 import { definePlan, configPlan, safeCast } from "@etrepum/lexical-builder";
 
 export type SerializedKeywordNode = SerializedTextNode;
+
+// highlight-start
+// Provide any type-safe configuration, that a Node can use in its
+// implementation, without trying to shoehorn it into the theme!
+export interface KeywordsConfig {
+  /** The className to use for KeywordNode, default is "keyword" */
+  className: string;
+}
+// highlight-end
+
 
 export class KeywordNode extends TextNode {
   static getType(): string {
@@ -506,8 +564,10 @@ export class KeywordNode extends TextNode {
   createDOM(config: EditorConfig): HTMLElement {
     const dom = super.createDOM(config);
     dom.style.cursor = "default";
+    // highlight-start
     // This lets us configure the class name!
     dom.className = $getPlanDependency(KeywordsPlan).config.className;
+    // highlight-end
     return dom;
   }
 
@@ -539,8 +599,9 @@ function $convertToKeywordNode(textNode: TextNode) {
   return $createKeywordNode(textNode.getTextContent());
 }
 
+// highlight-start
 // We only need to add metadata so that you can easily use this plan!
-// Oh wait, we don't even need React anymore!
+// Oh wait, we don't even have a React dependency anymore!
 export const KeywordsPlan = definePlan({
   name: "@etrepum/lexical-builder-keywords",
   nodes: [KeywordNode],
@@ -554,4 +615,8 @@ export const KeywordsPlan = definePlan({
     );
   },
 });
+// highlight-end
 ```
+
+</TabItem>
+</Tabs>
