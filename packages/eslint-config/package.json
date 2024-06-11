@@ -1,6 +1,6 @@
 {
   "name": "@repo/eslint-config",
-  "version": "0.0.17",
+  "version": "0.0.18-nightly.20240611.0",
   "private": true,
   "files": [
     "library.js",

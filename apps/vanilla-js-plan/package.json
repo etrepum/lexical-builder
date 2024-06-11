@@ -1,7 +1,7 @@
 {
   "name": "@etrepum/vanilla-js-plan-example",
   "private": true,
-  "version": "0.0.17",
+  "version": "0.0.18-nightly.20240611.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
