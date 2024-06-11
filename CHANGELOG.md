@@ -1,3 +1,7 @@
+## v0.0.18 (2024-06-10)
+
+- Merge pull request #21 from etrepum/0.0.17release Bob Ippolito
+
 ## v0.0.17 (2024-06-10)
 
 - npm run update-packages Bob Ippolito
