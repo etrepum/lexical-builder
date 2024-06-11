@@ -8,7 +8,7 @@ on:
       increment:
         description: "Version Increment"
         required: true
-        default: "prerelease"
+        default: "patch"
         type: choice
         options:
           - prerelease
