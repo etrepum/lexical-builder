@@ -59,3 +59,17 @@ to provide their own integrations in a similar way. Supporting
 supported, or planned to be supported, because I am pretty sure that
 you can use mutation listeners for the same purpose. Perhaps the
 decorate method could even be deprecated at some point!
+
+## How will this interact with Lexical Dev Tools?
+
+All of the Builder metadata is present at runtime, but we would need
+to have some well known place to store the LexicalBuilder instance
+(perhaps `__lexicalBuilder` on the rootElement) so that the dev tools
+could access it. There are many things that could be done, here are
+a few examples:
+
+* Show a diagram of the Plan tree
+* Track which config came from which Plan (e.g. which node, which theme
+  property, etc.)
+* Track which commands/listeners/etc. were registered by which Plans
+  (would require editor instrumentation)
