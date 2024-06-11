@@ -1,3 +1,11 @@
+## v0.0.21 (2024-06-11)
+
+- default to patch Bob Ippolito
+- more docs Bob Ippolito
+- more docs Bob Ippolito
+- Update docs Bob Ippolito
+- Merge pull request #24 from etrepum/0.0.20release Bob Ippolito
+
 ## v0.0.20 (2024-06-10
 
 2024-06-11)
