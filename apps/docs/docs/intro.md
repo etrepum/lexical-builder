@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# @etrepum/lexical-builder intro
+# Intro
 
 **EXPERIMENTAL** A high-level way to manage Lexical config and plug-ins for any framework
 

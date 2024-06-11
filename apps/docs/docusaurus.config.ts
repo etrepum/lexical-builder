@@ -95,6 +95,14 @@ const config: Config = {
               label: "Intro",
               to: "/docs/intro",
             },
+            {
+              label: "Migration Guide",
+              to: "/docs/migration",
+            },
+            {
+              label: "FAQ",
+              to: "/docs/faq",
+            },
           ],
         },
         {

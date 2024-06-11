@@ -1,4 +1,5 @@
 ---
+sidebar_position: 2
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -371,10 +372,12 @@ export function KeywordsPlugin(): JSX.Element | null {
 ```
 
 </TabItem>
-<TabItem value="minimal" label="After (minimal & backwards compatible)">
+<TabItem value="minimal" label="After (minimal)">
 
 ```tsx
 // highlight-start
+// Use this strategy for a minimal changes and to expose a backwards
+// compatible interface to support editors not using Lexical Builder
 /**
  * USAGE:
  * 1. Add KeywordsPlan as a dependency to your LexicalPlanComposer root plan
@@ -503,10 +506,11 @@ export const KeywordsPlan = definePlan({
 ```
 
 </TabItem>
-<TabItem value="all-in" label="After (configurable without React dependency!)">
+<TabItem value="all-in" label="After (all-in)">
 
 ```tsx
 // highlight-start
+// Use this strategy if you are dropping legacy support
 /**
  * USAGE:
  * 1. Add KeywordsPlan as a dependency to your LexicalPlanComposer root plan
