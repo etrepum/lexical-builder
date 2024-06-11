@@ -4,11 +4,11 @@ import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
   title: "@etrepum/lexical-builder",
-  tagline: "EXPERIMENTAL",
+  tagline: "A new vision for Lexical Plugins",
   // favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: "https://lexical-builder-docs.etrepum.com",
+  url: "https://lexical-builder.pages.dev",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/",
