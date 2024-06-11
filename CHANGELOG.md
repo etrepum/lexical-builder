@@ -1,3 +1,9 @@
+## v0.0.20 (2024-06-10
+
+2024-06-11)
+
+- v0.0.19 Lexical Builder GitHub Actions Bot
+
 ## v0.0.19 (2024-06-10)
 
 - Merge pull request #22 from etrepum/0.0.18release Bob Ippolito
