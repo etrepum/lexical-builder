@@ -4,7 +4,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
   title: "@etrepum/lexical-builder",
-  tagline: "A new vision for Lexical Plugins",
+  tagline: "A Unified Model for Extending Lexical",
   // favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -28,8 +28,20 @@ const config: Config = {
     mermaid: true,
   },
   themes: ["@docusaurus/theme-mermaid"],
-  plugins: ["docusaurus-plugin-typedoc"],
-
+  plugins: [
+    "docusaurus-plugin-typedoc",
+    async function tailwindPlugin(context, options) {
+      return {
+        name: "docusaurus-tailwindcss",
+        configurePostCss(postcssOptions) {
+          // Appends TailwindCSS and AutoPrefixer.
+          postcssOptions.plugins.push(require("tailwindcss"));
+          postcssOptions.plugins.push(require("autoprefixer"));
+          return postcssOptions;
+        },
+      };
+    },
+  ],
   presets: [
     [
       "classic",
@@ -38,7 +50,7 @@ const config: Config = {
           sidebarPath: "./sidebars.ts",
         },
         theme: {
-          customCss: "./src/css/custom.css",
+          customCss: ["./src/css/tailwind.css", "./src/css/custom.css"],
         },
       } satisfies Preset.Options,
     ],
