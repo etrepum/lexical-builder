@@ -11,10 +11,10 @@
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "dev": "vite",
-    "test": "vitest run",
+    "test": "vitest run --typecheck",
     "test:watch": "vitest"
   },
-  "version": "0.0.21",
+  "version": "0.0.22",
   "license": "MIT",
   "repository": {
     "type": "git",
