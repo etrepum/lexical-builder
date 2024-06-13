@@ -20,12 +20,14 @@
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "@turbo/gen": "^2.0.3",
     "child-process-promise": "^2.2.1",
     "eslint": "^8.57.0",
     "glob": "^10.4.1",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.5",
     "minimist": "^1.2.8",
+    "plop": "^4.0.1",
     "prettier": "^3.2.5",
     "semver": "^7.6.2",
     "turbo": "latest"
