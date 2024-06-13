@@ -1,5 +1,7 @@
 # @etrepum/lexical-builder
 
+https://lexical-builder.pages.dev/
+
 [EXPERIMENTAL] A high-level way to manage Lexical configuration and plug-ins
 for any framework
 
