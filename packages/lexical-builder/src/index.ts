@@ -13,7 +13,7 @@ export {
   defineRootPlan,
   provideOutput,
   declarePeerDependency,
-} from "./definePlan";
+} from "@etrepum/lexical-builder-core";
 export {
   LexicalBuilder,
   buildEditorFromPlans,
@@ -37,9 +37,9 @@ export {
   type RegisterState,
   type RegisterCleanup,
   type NormalizedPeerDependency,
-} from "./types";
-export { safeCast } from "./safeCast";
-export { shallowMergeConfig } from "./shallowMergeConfig";
+} from "@etrepum/lexical-builder-core";
+export { safeCast } from "@etrepum/lexical-builder-core";
+export { shallowMergeConfig } from "@etrepum/lexical-builder-core";
 export {
   $getPlanDependency,
   getPlanDependencyFromEditor,

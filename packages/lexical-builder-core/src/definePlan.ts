@@ -119,6 +119,51 @@ export function configPlan<
   return args;
 }
 
+/**
+ * Provide output from the register function of a Plan
+ *
+ * @returns A cleanup function
+ *
+ * @example Provide output with no other cleanup
+ * ```ts
+ * // This is entirely optional and would be inferred correctly, but
+ * // it can be useful for documentation!
+ * export interface RegisteredAtOutput {
+ *   registered_at: number;
+ * }
+ * export const RegisteredAtPlan = definePlan({
+ *   name: "RegisteredAt",
+ *   config: {},
+ *   register(editor) {
+ *     return provideOutput<RegisteredAtOutput>({ registered_at: Date.now() });
+ *   },
+ * });
+ * ```
+ *
+ * @example Provide output with other cleanup
+ * ```ts
+ * export interface UniqueCommandOutput {
+ *   command: LexicalCommand<unknown>;
+ * }
+ * export const UniqueCommandPlan = definePlan({
+ *   name: 'UniqueCommand',
+ *   config: {},
+ *   register(editor) {
+ *     const output: UniqueCommnadOutput = {command: createCommand('UNIQUE_COMMAND')};
+ *     const cleanup = registerCommand(
+ *       command,
+ *       (_payload) => {
+ *         console.log('Unique command received!');
+ *         return true;
+ *       }
+ *       COMMAND_PRIORITY_EDITOR
+ *     );
+ *     return provideOutput(output, cleanup);
+ *   },
+ * });
+ * ```
+ *
+ */
 export function provideOutput<Output>(
   output: Output,
   cleanup?: () => void,
@@ -131,6 +176,27 @@ export const PeerDependencyBrand: unique symbol = Symbol.for(
   "@etrepum/lexical-builder/PeerDependency",
 );
 
+/**
+ * Used to declare a peer dependency of a plan in a type-safe way,
+ * requires the type parameter. The most common use case for peer dependencies
+ * is to avoid a direct import dependency, so you would want to use a
+ * type import or the import type (shown in below examples).
+ *
+ * @param name The plan's name
+ * @param config An optional config override
+ * @returns NormalizedPeerDependency
+ *
+ * @example
+ * ```ts
+ * export const PeerPlan = definePlan({
+ *   name: 'PeerPlan',
+ *   config: {},
+ *   peerDependencies: [
+ *     declarePeerDependency<typeof import("foo").FooPlan>("foo"),
+ *     declarePeerDependency<typeof import("bar").BarPlan>("bar", {config: "bar"}),
+ *   ],
+ * });
+ */
 export function declarePeerDependency<Plan extends AnyLexicalPlan = never>(
   name: Plan["name"],
   config?: Partial<LexicalPlanConfig<Plan>>,

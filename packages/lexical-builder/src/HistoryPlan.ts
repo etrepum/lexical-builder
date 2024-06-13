@@ -11,8 +11,8 @@ import {
   registerHistory,
 } from "@lexical/history";
 
-import { definePlan } from "./definePlan";
-import { safeCast } from "./safeCast";
+import { definePlan } from "@etrepum/lexical-builder-core";
+import { safeCast } from "@etrepum/lexical-builder-core";
 
 export interface HistoryConfig {
   /**

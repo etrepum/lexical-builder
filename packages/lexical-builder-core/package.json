@@ -1,20 +1,17 @@
 {
-  "name": "@etrepum/lexical-builder",
-  "description": "[EXPERIMENTAL] A high-level way to manage Lexical config and plug-ins for any framework",
+  "name": "@etrepum/lexical-builder-core",
+  "description": "[EXPERIMENTAL] Lexical Builder @etrepum/lexical-builder-core",
   "type": "module",
   "keywords": [
     "lexical",
-    "editor",
-    "builder",
     "lexical-builder",
-    "configuration",
-    "plugin",
-    "plug-in"
+    "plug-in",
+    "plan"
   ],
   "scripts": {
     "build": "tsc --noEmit && vite build",
-    "dev": "vite build -w",
-    "test": "vitest run",
+    "dev": "vite",
+    "test": "vitest run --typecheck",
     "test:watch": "vitest"
   },
   "version": "0.0.22",
@@ -22,34 +19,26 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/etrepum/lexical-builder.git",
-    "directory": "packages/lexical-builder"
+    "directory": "packages/lexical-builder-core"
   },
   "bugs": {
     "url": "https://github.com/etrepum/lexical-builder/issues"
   },
   "homepage": "https://github.com/etrepum/lexical-builder",
-  "dependencies": {
-    "@etrepum/lexical-builder-core": "*"
-  },
+  "dependencies": {},
   "peerDependencies": {
-    "@lexical/dragon": ">=0.16.0-0",
-    "@lexical/history": ">=0.16.0-0",
-    "@lexical/plain-text": ">=0.16.0-0",
-    "@lexical/rich-text": ">=0.16.0-0",
-    "@lexical/text": ">=0.16.0-0",
-    "@lexical/utils": ">=0.16.0-0",
     "lexical": ">=0.16.0-0"
   },
   "sideEffects": false,
   "devDependencies": {
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^6.4.5",
-    "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
     "jsdom": "^24.1.0",
     "tslib": "^2.6.2",
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
+    "vite-plugin-dts": "^3.9.1",
     "vite-plugin-package-version": "^1.1.0",
     "vitest": "^1.6.0"
   },

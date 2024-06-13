@@ -6,7 +6,7 @@
  *
  */
 
-import type { InitialEditorStateType } from "./types";
+import type { InitialEditorStateType } from "@etrepum/lexical-builder-core";
 
 import { $createParagraphNode, $getRoot, type LexicalEditor } from "lexical";
 

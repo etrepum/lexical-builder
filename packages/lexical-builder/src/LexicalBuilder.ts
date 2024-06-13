@@ -11,7 +11,7 @@ import type {
   EditorHandle,
   LexicalPlanConfig,
   RootPlanArgument,
-} from "./types";
+} from "@etrepum/lexical-builder-core";
 
 import {
   LexicalEditor,
@@ -28,7 +28,7 @@ import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
 import { initializeEditor } from "./initializeEditor";
 import { PlanRep } from "./PlanRep";
 import { mergeRegister } from "@lexical/utils";
-import { configPlan, defineRootPlan } from "./definePlan";
+import { configPlan, defineRootPlan } from "@etrepum/lexical-builder-core";
 
 const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
 

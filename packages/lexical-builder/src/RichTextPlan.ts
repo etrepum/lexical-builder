@@ -8,7 +8,7 @@
 
 import { HeadingNode, QuoteNode, registerRichText } from "@lexical/rich-text";
 
-import { definePlan } from "./definePlan";
+import { definePlan } from "@etrepum/lexical-builder-core";
 
 /**
  * A plan to register @lexical/rich-text behavior and nodes

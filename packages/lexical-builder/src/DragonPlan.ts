@@ -8,7 +8,7 @@
 
 import { registerDragonSupport } from "@lexical/dragon";
 
-import { definePlan } from "./definePlan";
+import { definePlan } from "@etrepum/lexical-builder-core";
 
 /**
  * Add Dragon speech to text input support to the editor, via the

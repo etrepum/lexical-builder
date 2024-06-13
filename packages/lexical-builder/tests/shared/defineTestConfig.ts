@@ -28,6 +28,7 @@ export async function defineTestConfig(
 ): Promise<UserConfig> {
   const pkg = readPackageJson(base);
   const hasReact = "@vitejs/plugin-react" in (pkg.devDependencies ?? {});
+  const hasDom = "@testing-library/jest-dom" in (pkg.devDependencies ?? {});
   return {
     plugins: [
       ...(hasReact ? [(await import("@vitejs/plugin-react")).default()] : []),
@@ -35,7 +36,9 @@ export async function defineTestConfig(
     test: {
       environment: "jsdom",
       setupFiles: [
-        fileURLToPath(new URL("./setupJestDom.ts", import.meta.url)),
+        ...(hasDom
+          ? [fileURLToPath(new URL("./setupJestDom.ts", import.meta.url))]
+          : []),
         ...(hasReact
           ? [fileURLToPath(new URL("./setupReact.ts", import.meta.url))]
           : []),
