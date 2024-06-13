@@ -12,11 +12,11 @@ import type {
   LexicalPlanConfig,
   LexicalPlanDependency,
   LexicalPlanOutput,
-} from "./types";
+} from "@etrepum/lexical-builder-core";
 
 import invariant from "./shared/invariant";
 
-import { shallowMergeConfig } from "./shallowMergeConfig";
+import { shallowMergeConfig } from "@etrepum/lexical-builder-core";
 import type { LexicalEditor } from "lexical";
 
 const noop = () => {};

@@ -6,8 +6,7 @@
  *
  */
 
-import { definePlan } from "./definePlan";
-import { safeCast } from "./safeCast";
+import { definePlan, safeCast } from "@etrepum/lexical-builder-core";
 
 export interface AutoFocusConfig {
   /**

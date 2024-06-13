@@ -1,5 +1,8 @@
 import { $getEditor, LexicalEditor } from "lexical";
-import { AnyLexicalPlan, LexicalPlanDependency } from "./types";
+import {
+  AnyLexicalPlan,
+  LexicalPlanDependency,
+} from "@etrepum/lexical-builder-core";
 import { LexicalBuilder } from "./LexicalBuilder";
 import invariant from "./shared/invariant";
 import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
