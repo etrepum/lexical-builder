@@ -1,3 +1,10 @@
+## v0.0.22 (2024-06-12)
+
+- Merge pull request #26 from etrepum/plop Bob Ippolito
+- turbo plop templates Bob Ippolito
+- highlight colors Bob Ippolito
+- Merge pull request #25 from etrepum/0.0.21release Bob Ippolito
+
 ## v0.0.21 (2024-06-11)
 
 - default to patch Bob Ippolito
