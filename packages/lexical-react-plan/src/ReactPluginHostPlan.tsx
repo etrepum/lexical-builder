@@ -15,7 +15,7 @@ import {
 import { Suspense, useEffect, useState } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { createRoot, Root } from "react-dom/client";
+import { createRoot, Root, type Container } from "react-dom/client";
 
 import {
   AnyLexicalPlan,
@@ -28,13 +28,11 @@ import {
 import { ReactPlan } from "./ReactPlan";
 import invariant from "./shared/invariant";
 import { ReactProviderPlan } from "./ReactProviderPlan";
-import { DecoratorComponentProps, ErrorBoundaryType } from "./types";
+import { DecoratorComponentProps } from "./types";
 
 export interface HostMountCommandArg {
   root: Root;
 }
-
-export type Container = Element | DocumentFragment;
 
 export interface MountPluginCommandArg {
   key: string;
@@ -84,23 +82,28 @@ export function mountReactPluginElement(
   editor: LexicalEditor,
   opts: MountPluginCommandArg,
 ) {
-  editor.dispatchCommand(REACT_MOUNT_PLUGIN_COMMAND, opts);
+  getPlanDependencyFromEditor(
+    editor,
+    ReactPluginHostPlan,
+  ).output.mountReactPlugin(opts);
 }
 
 export function mountReactPluginHost(
   editor: LexicalEditor,
   container: Container,
 ) {
-  editor.dispatchCommand(REACT_PLUGIN_HOST_MOUNT_COMMAND, {
-    root: createRoot(container),
-  });
+  getPlanDependencyFromEditor(
+    editor,
+    ReactPluginHostPlan,
+  ).output.mountReactPluginHost(container);
 }
 
-export const REACT_PLUGIN_HOST_MOUNT_COMMAND =
-  createCommand<HostMountCommandArg>("REACT_PLUGIN_HOST_MOUNT_COMMAND");
-export const REACT_MOUNT_PLUGIN_COMMAND = createCommand<MountPluginCommandArg>(
-  "REACT_MOUNT_PLUGIN_COMMAND",
-);
+export const REACT_PLUGIN_HOST_MOUNT_ROOT_COMMAND =
+  createCommand<HostMountCommandArg>("REACT_PLUGIN_HOST_MOUNT_ROOT_COMMAND");
+export const REACT_PLUGIN_HOST_MOUNT_PLUGIN_COMMAND =
+  createCommand<MountPluginCommandArg>(
+    "REACT_PLUGIN_HOST_MOUNT_PLUGIN_COMMAND",
+  );
 
 function PluginHostDecorator({
   context: [editor],
@@ -111,7 +114,7 @@ function PluginHostDecorator({
   const [children, setChildren] = useState(renderMountedPlugins);
   useEffect(() => {
     return editor.registerCommand(
-      REACT_MOUNT_PLUGIN_COMMAND,
+      REACT_PLUGIN_HOST_MOUNT_PLUGIN_COMMAND,
       () => {
         // This runs after the one that updates the map
         setChildren(renderMountedPlugins);
@@ -123,6 +126,18 @@ function PluginHostDecorator({
   return children;
 }
 
+/**
+ * This plan provides a React host for editors that are not built
+ * with LexicalPlanComposer (e.g. you are using Vanilla JS or some
+ * other framework).
+ *
+ * You must use {@link mountReactPluginHost} for any React content to work.
+ * Afterwards, you may use {@link mountReactPlanComponent} to
+ * render UI for a specific React Plan.
+ * {@link mountReactPluginComponent} and
+ * {@link mountReactPluginElement} can be used to render
+ * legacy React plug-ins (or any React content).
+ */
 export const ReactPluginHostPlan = definePlan({
   dependencies: [
     ReactProviderPlan,
@@ -157,7 +172,17 @@ export const ReactPluginHostPlan = definePlan({
       return children.length > 0 ? <>{children}</> : null;
     }
     return provideOutput(
-      { renderMountedPlugins },
+      {
+        renderMountedPlugins,
+        // Using outputs to wrap commands will give us better error messages
+        // if the mount functions are called on an editor without this plan
+        mountReactPluginHost: (container: Container) =>
+          editor.dispatchCommand(REACT_PLUGIN_HOST_MOUNT_ROOT_COMMAND, {
+            root: createRoot(container),
+          }),
+        mountReactPlugin: (arg: MountPluginCommandArg) =>
+          editor.dispatchCommand(REACT_PLUGIN_HOST_MOUNT_PLUGIN_COMMAND, arg),
+      },
       mergeRegister(
         () => {
           if (root) {
@@ -166,7 +191,7 @@ export const ReactPluginHostPlan = definePlan({
           mountedPlugins.clear();
         },
         editor.registerCommand(
-          REACT_MOUNT_PLUGIN_COMMAND,
+          REACT_PLUGIN_HOST_MOUNT_PLUGIN_COMMAND,
           (arg) => {
             // This runs before the PluginHost version
             mountedPlugins.set(arg.key, arg);
@@ -175,14 +200,16 @@ export const ReactPluginHostPlan = definePlan({
           COMMAND_PRIORITY_CRITICAL,
         ),
         editor.registerCommand(
-          REACT_PLUGIN_HOST_MOUNT_COMMAND,
+          REACT_PLUGIN_HOST_MOUNT_ROOT_COMMAND,
           (arg) => {
             invariant(
               root === undefined,
               "ReactPluginHostPlan: Root is already mounted",
             );
             root = arg.root;
-            root.render(<Component contentEditable={null} />);
+            root.render(
+              <Component contentEditable={null} placeholder={null} />,
+            );
             return true;
           },
           COMMAND_PRIORITY_EDITOR,

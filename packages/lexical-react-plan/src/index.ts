@@ -28,13 +28,12 @@ export {
 export {
   type HostMountCommandArg,
   type MountPluginCommandArg,
-  type Container,
   mountReactPluginComponent,
   mountReactPluginElement,
   mountReactPluginHost,
   mountReactPlanComponent,
-  REACT_MOUNT_PLUGIN_COMMAND,
-  REACT_PLUGIN_HOST_MOUNT_COMMAND,
+  REACT_PLUGIN_HOST_MOUNT_ROOT_COMMAND,
+  REACT_PLUGIN_HOST_MOUNT_PLUGIN_COMMAND,
   ReactPluginHostPlan,
 } from "./ReactPluginHostPlan";
 export { DefaultEditorChildrenComponent } from "./DefaultEditorChildrenComponent";
