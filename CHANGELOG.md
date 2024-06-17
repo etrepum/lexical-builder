@@ -1,3 +1,9 @@
+## v0.0.24 (2024-06-16)
+
+- Merge pull request #30 from etrepum/init Bob Ippolito
+- init refactor Bob Ippolito
+- Merge pull request #29 from etrepum/0.0.23release Bob Ippolito
+
 ## v0.0.23 (2024-06-12
 
 2024-06-12
