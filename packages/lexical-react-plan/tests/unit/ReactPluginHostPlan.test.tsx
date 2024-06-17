@@ -64,6 +64,7 @@ describe("ReactPluginHostPlan", () => {
 
       document.body.append(rootDom, pluginHostDom, treeDom);
       editorHandle = buildEditorFromPlans({
+        name: "[root]",
         $initialEditorState: $prepopulatedRichText,
         dependencies: [
           DragonPlan,

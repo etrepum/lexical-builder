@@ -15,7 +15,6 @@ import { definePlan } from "@etrepum/lexical-builder-core";
  * @lexical/dragon module.
  */
 export const DragonPlan = definePlan({
-  config: {},
   name: "@lexical/dragon",
   register: registerDragonSupport,
 });

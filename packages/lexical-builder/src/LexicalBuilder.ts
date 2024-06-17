@@ -9,8 +9,8 @@ import type {
   AnyLexicalPlan,
   AnyLexicalPlanArgument,
   EditorHandle,
+  InitialEditorConfig,
   LexicalPlanConfig,
-  RootPlanArgument,
 } from "@etrepum/lexical-builder-core";
 
 import {
@@ -28,7 +28,7 @@ import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
 import { initializeEditor } from "./initializeEditor";
 import { PlanRep } from "./PlanRep";
 import { mergeRegister } from "@lexical/utils";
-import { configPlan, defineRootPlan } from "@etrepum/lexical-builder-core";
+import { configPlan, definePlan } from "@etrepum/lexical-builder-core";
 
 const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
 
@@ -43,7 +43,8 @@ const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
  * @example A single root plan with multiple dependencies
  * ```ts
  * const editorHandle = buildEditorFromPlans(
- *   defineRootPlan({
+ *   definePlan({
+ *     name: "[root]",
  *     dependencies: [
  *       RichTextPlan,
  *       configPlan(EmojiPlan, { emojiBaseUrl: "/assets/emoji" }),
@@ -64,22 +65,15 @@ const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
  * ```
  */
 export function buildEditorFromPlans(
-  plan: AnyLexicalPlanArgument | RootPlanArgument,
-  ...plans: (AnyLexicalPlanArgument | RootPlanArgument)[]
+  plan: AnyLexicalPlanArgument,
+  ...plans: AnyLexicalPlanArgument[]
 ): EditorHandle {
   const builder = new LexicalBuilder();
-  builder.addPlan(coerceToPlanArgument(plan));
+  builder.addPlan(plan);
   for (const otherPlan of plans) {
-    builder.addPlan(coerceToPlanArgument(otherPlan));
+    builder.addPlan(otherPlan);
   }
   return builder.buildEditor();
-}
-
-/** @internal */
-export function coerceToPlanArgument(
-  plan: AnyLexicalPlanArgument | RootPlanArgument,
-): AnyLexicalPlanArgument {
-  return "name" in plan || Array.isArray(plan) ? plan : defineRootPlan(plan);
 }
 
 /** @internal */
@@ -136,8 +130,9 @@ export class LexicalBuilder {
   }
 
   buildEditor(): EditorHandle {
+    const controller = new AbortController();
     const { $initialEditorState, onError, ...editorConfig } =
-      this.buildCreateEditorArgs();
+      this.buildCreateEditorArgs(controller.signal);
     const editor = createEditor({
       ...editorConfig,
       ...(onError ? { onError: (err) => onError(err, editor) } : {}),
@@ -149,7 +144,7 @@ export class LexicalBuilder {
       mergeRegister(
         () => buildersForEditors.delete(editor),
         () => editor.setRootElement(null),
-        this.registerEditor(editor),
+        this.registerEditor(editor, controller),
       ),
     );
   }
@@ -173,6 +168,11 @@ export class LexicalBuilder {
       plan = arg;
       configs = [];
     }
+    invariant(
+      typeof plan.name === "string",
+      "LexicalBuilder: plan name must be string, not %s",
+      typeof plan.name,
+    );
     // Track incoming dependencies
     if (parent) {
       let edgeSet = this.reverseEdges.get(plan);
@@ -264,11 +264,14 @@ export class LexicalBuilder {
     }
   }
 
-  registerEditor(editor: LexicalEditor): () => void {
+  registerEditor(
+    editor: LexicalEditor,
+    controller: AbortController,
+  ): () => void {
     const cleanups: (() => void)[] = [];
-    const controller = new AbortController();
+    const signal = controller.signal;
     for (const planRep of this.sortedPlanReps()) {
-      cleanups.push(planRep.register(editor, controller.signal));
+      cleanups.push(planRep.register(editor, signal));
     }
     return () => {
       for (let i = cleanups.length - 1; i >= 0; i--) {
@@ -285,15 +288,8 @@ export class LexicalBuilder {
     };
   }
 
-  buildCreateEditorArgs() {
-    const config: Pick<
-      CreateEditorArgs,
-      "nodes" | "html" | "theme" | "disableEvents" | "editable" | "namespace"
-    > &
-      Pick<AnyLexicalPlan, "$initialEditorState" | "onError"> = {
-      // Prefer throwing errors rather than console.error by default
-      onError: defaultOnError,
-    };
+  buildCreateEditorArgs(signal: AbortSignal) {
+    const config: InitialEditorConfig = {};
     const nodes = new Set<NonNullable<CreateEditorArgs["nodes"]>[number]>();
     const replacedNodes = new Map<
       KlassConstructor<typeof LexicalNode>,
@@ -302,7 +298,8 @@ export class LexicalBuilder {
     const htmlExport: NonNullable<HTMLConfig["export"]> = new Map();
     const htmlImport: NonNullable<HTMLConfig["import"]> = {};
     const theme: EditorThemeClasses = {};
-    for (const planRep of this.sortedPlanReps()) {
+    const planReps = [...this.sortedPlanReps()];
+    for (const planRep of planReps) {
       const { plan } = planRep;
       if (plan.onError !== undefined) {
         config.onError = plan.onError;
@@ -367,6 +364,12 @@ export class LexicalBuilder {
       if (hasExport) {
         config.html.export = htmlExport;
       }
+    }
+    for (const planRep of planReps) {
+      planRep.init(config, signal);
+    }
+    if (!config.onError) {
+      config.onError = defaultOnError;
     }
     return config;
   }

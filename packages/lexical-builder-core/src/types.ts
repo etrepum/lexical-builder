@@ -7,57 +7,62 @@
  */
 
 import type { CreateEditorArgs, EditorState, LexicalEditor } from "lexical";
-import type { PeerDependencyBrand } from "./definePlan";
+import type {
+  LexicalPlanInternal,
+  peerDependencySymbol,
+  configTypeSymbol,
+  outputTypeSymbol,
+  initTypeSymbol,
+} from "./internal";
 
 /**
  * Any concrete {@link LexicalPlan}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyLexicalPlan = LexicalPlan<any, string, any>;
+export type AnyLexicalPlan = LexicalPlan<any, string, any, any>;
 /**
  * Any {@link LexicalPlan} or {@link NormalizedLexicalPlanArgument}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyLexicalPlanArgument = LexicalPlanArgument<any, string, any>;
+export type AnyLexicalPlanArgument = LexicalPlanArgument<any, string, any, any>;
 /**
  * The default plan configuration of an empty object
  */
 export type PlanConfigBase = Record<never, never>;
 
-export type RootPlan<Output> = LexicalPlan<PlanConfigBase, "[root]", Output>;
-export type RootPlanArgument<Output = any> = Omit<
-  RootPlan<Output>,
-  "config" | "name"
->;
-
 export type NormalizedPeerDependency<Plan extends AnyLexicalPlan> = [
   Plan["name"],
   Partial<LexicalPlanConfig<Plan>> | undefined,
-] & { [PeerDependencyBrand]: Plan };
+] & { readonly [peerDependencySymbol]: Plan };
 
 /**
  * A tuple of [plan, configOverride, ...configOverrides]
  */
 export type NormalizedLexicalPlanArgument<
-  Config extends PlanConfigBase,
-  Name extends string,
-  Output extends unknown,
-> = [LexicalPlan<Config, Name, Output>, Partial<Config>, ...Partial<Config>[]];
+  in out Config extends PlanConfigBase,
+  out Name extends string,
+  in out Output extends unknown,
+  in out Init extends unknown,
+> = [
+  LexicalPlan<Config, Name, Output, Init>,
+  Partial<Config>,
+  ...Partial<Config>[],
+];
 
 /**
  * An object that the register method can use to detect unmount and access the
  * configuration for plan dependencies
  */
-export interface RegisterState {
+export interface RegisterState<Init> {
   /** An AbortSignal that is aborted when the EditorHandle is disposed */
   signal: AbortSignal;
   /**
    * Get the result of a peerDependency by name, if it exists
    * (must be a peerDependency of this plan)
    */
-  getPeer<Plan extends AnyLexicalPlan = never>(
-    name: Plan["name"],
-  ): undefined | LexicalPlanDependency<Plan>;
+  getPeer<Dependency extends AnyLexicalPlan = never>(
+    name: Dependency["name"],
+  ): undefined | LexicalPlanDependency<Dependency>;
   /**
    * Get the configuration of a dependency by plan
    * (must be a direct dependency of this plan)
@@ -76,6 +81,10 @@ export interface RegisterState {
    * typically only used for devtools.
    */
   getPeerNameSet(): Set<string>;
+  /**
+   * The result of the init function
+   */
+  getInitResult(): Init;
 }
 
 /**
@@ -85,14 +94,18 @@ export type LexicalPlanArgument<
   Config extends PlanConfigBase,
   Name extends string,
   Output extends unknown,
+  Init extends unknown,
 > =
-  | LexicalPlan<Config, Name, Output>
-  | NormalizedLexicalPlanArgument<Config, Name, Output>;
+  | LexicalPlan<Config, Name, Output, Init>
+  | NormalizedLexicalPlanArgument<Config, Name, Output, Init>;
 
-export interface LexicalPlanDependency<Dependency extends AnyLexicalPlan> {
+export interface LexicalPlanDependency<out Dependency extends AnyLexicalPlan> {
   config: LexicalPlanConfig<Dependency>;
   output: LexicalPlanOutput<Dependency>;
 }
+
+export type RegisterCleanup<Output> = (() => void) &
+  (unknown extends Output ? { output?: Output } : { output: Output });
 
 /**
  * A Plan is a composable unit of LexicalEditor configuration
@@ -103,12 +116,14 @@ export interface LexicalPlanDependency<Dependency extends AnyLexicalPlan> {
  * plans through its config.
  */
 export interface LexicalPlan<
-  Config extends PlanConfigBase = PlanConfigBase,
-  Name extends string = string,
-  Output extends unknown = unknown,
-> {
+  in out Config extends PlanConfigBase = PlanConfigBase,
+  out Name extends string = string,
+  in out Output extends unknown = unknown,
+  in out Init extends unknown = unknown,
+> extends InitialEditorConfig,
+    LexicalPlanInternal<Config, Output, Init> {
   /** The name of the Plan, must be unique */
-  name: Name;
+  readonly name: Name;
   /** Plan names that must not be loaded with this Plan */
   conflictsWith?: string[];
   /** Other Plans that this Plan depends on, can also be used to configure them */
@@ -119,6 +134,138 @@ export interface LexicalPlan<
    */
   peerDependencies?: NormalizedPeerDependency<AnyLexicalPlan>[];
 
+  /**
+   * The default configuration specific to this Plan. This Config may be
+   * seen by this Plan, or any Plan that uses it as a dependency.
+   *
+   * The config may be mutated on register, this is particularly useful
+   * for vending functionality to other Plans that depend on this Plan.
+   */
+  config?: Config;
+
+  /**
+   * By default, Config is shallow merged `{...a, ...b}` with
+   * {@link shallowMergeConfig}, if your Plan requires other strategies
+   * (such as concatenating an Array) you can implement it here.
+   *
+   * @example Merging an array
+   * ```js
+   * const plan = definePlan({
+   *   // ...
+   *   mergeConfig(config, overrides) {
+   *     const merged = shallowMergeConfig(config, overrides);
+   *     if (Array.isArray(overrides.decorators)) {
+   *       merged.decorators = [...config.decorators, ...overrides.decorators];
+   *     }
+   *     return merged;
+   *   }
+   * });
+   * ```
+   *
+   * @param config The current configuration
+   * @param overrides The partial configuration to merge
+   * @returns The merged configuration
+   */
+  mergeConfig?: (config: Config, overrides: Partial<Config>) => Config;
+  /**
+   * Perform any necessary initialization before the editor is created,
+   * this runs after all configuration overrides for both the editor this
+   * this plan have been merged. May be used validate the editor
+   * configuration.
+   *
+   * @param editorConfig The in-progress editor configuration (mutable)
+   * @param config The merged configuration specific to this plan (mutable)
+   * @param state An object containing an AbortSignal that can be
+   *   used, and methods for accessing the merged configuration of
+   *   dependencies and peerDependencies
+   */
+  init?: (
+    editorConfig: InitialEditorConfig,
+    config: Config,
+    state: RegisterState<Init>,
+  ) => Init;
+  /**
+   * Add behavior to the editor (register transforms, listeners, etc.) after
+   * the Editor is created. The register function may also mutate the config
+   * in-place to expose data to other plans that use it as a dependency.
+   *
+   * @param editor The editor this Plan is being registered with
+   * @param config The merged configuration specific to this Plan
+   * @param state An object containing an AbortSignal that can be
+   *   used, and methods for accessing the merged configuration of
+   *   dependencies and peerDependencies
+   * @returns A clean-up function
+   */
+  register?: (
+    editor: LexicalEditor,
+    config: Config,
+    state: RegisterState<Init>,
+  ) => RegisterCleanup<Output>;
+}
+
+/**
+ * Extract the Config type from a Plan
+ */
+export type LexicalPlanConfig<Plan extends AnyLexicalPlan> = NonNullable<
+  Plan[configTypeSymbol]
+>;
+
+/**
+ * Extract the Name type from a Plan
+ */
+export type LexicalPlanName<Plan extends AnyLexicalPlan> = Plan["name"];
+
+/**
+ * Extract the Output type from a Plan
+ */
+export type LexicalPlanOutput<Plan extends AnyLexicalPlan> = NonNullable<
+  Plan[outputTypeSymbol]
+>;
+
+/**
+ * Extract the Init type from a Plan
+ */
+export type LexicalPlanInit<Plan extends AnyLexicalPlan> = NonNullable<
+  Plan[initTypeSymbol]
+>;
+
+/**
+ * A Plan that has an OutputComponent of the given type (e.g. React.ComponentType)
+ */
+export type OutputComponentPlan<ComponentType> = LexicalPlan<
+  any,
+  any,
+  { Component: ComponentType },
+  any
+>;
+
+/**
+ * A handle to the editor and its dispose function
+ */
+export interface EditorHandle extends Disposable {
+  /** The created editor */
+  editor: LexicalEditor;
+  /**
+   * Dispose the editor and perform all clean-up
+   * (also available as Symbol.dispose via Disposable)
+   */
+  dispose: () => void;
+}
+
+/**
+ * All of the possible ways to initialize $initialEditorState:
+ * - `null` an empty state, the default
+ * - `string` an EditorState serialized to JSON
+ * - `EditorState` an EditorState that has been deserialized already (not just parsed JSON)
+ * - `((editor: LexicalEditor) => void)` A function that is called with the editor for you to mutate it
+ */
+export type InitialEditorStateType =
+  | null
+  | string
+  | EditorState
+  | ((editor: LexicalEditor) => void);
+
+export interface InitialEditorConfig {
   /**
    * @internal Disable root element events (for internal Meta use)
    */
@@ -165,96 +312,4 @@ export interface LexicalPlan<
    * to update the editor (once).
    */
   $initialEditorState?: InitialEditorStateType;
-  /**
-   * The default configuration specific to this Plan. This Config may be
-   * seen by this Plan, or any Plan that uses it as a dependency.
-   *
-   * The config may be mutated on register, this is particularly useful
-   * for vending functionality to other Plans that depend on this Plan.
-   */
-  config: Config;
-  /**
-   * By default, Config is shallow merged `{...a, ...b}` with
-   * {@link shallowMergeConfig}, if your Plan requires other strategies
-   * (such as concatenating an Array) you can implement it here.
-   *
-   * @example Merging an array
-   * ```js
-   * const plan = definePlan({
-   *   // ...
-   *   mergeConfig(config, overrides) {
-   *     const merged = shallowMergeConfig(config, overrides);
-   *     if (Array.isArray(overrides.decorators)) {
-   *       merged.decorators = [...config.decorators, ...overrides.decorators];
-   *     }
-   *     return merged;
-   *   }
-   * });
-   * ```
-   *
-   * @param config The current configuration
-   * @param overrides The partial configuration to merge
-   * @returns The merged configuration
-   */
-  mergeConfig?: (config: Config, overrides: Partial<Config>) => Config;
-  /**
-   * Add behavior to the editor (register transforms, listeners, etc.) after
-   * the Editor is created. The register function may also mutate the config
-   * in-place to expose data to other plans that use it as a dependency.
-   *
-   * @param editor The editor this Plan is being registered with
-   * @param config The merged configuration specific to this Plan
-   * @param state An object containing an AbortSignal that can be
-   *   used, and methods for accessing the merged configuration of
-   *   dependencies and peerDependencies
-   * @returns A clean-up function
-   */
-  register?: (
-    editor: LexicalEditor,
-    config: Config,
-    state: RegisterState,
-  ) => RegisterCleanup<Output>;
 }
-
-export type RegisterCleanup<Output> = (() => void) &
-  (unknown extends Output ? { output?: Output } : { output: Output });
-
-/**
- * Extract the Config type from a Plan
- */
-export type LexicalPlanConfig<Plan extends AnyLexicalPlan> = Plan["config"];
-/**
- * Extract the Name type from a Plan
- */
-export type LexicalPlanName<Plan extends AnyLexicalPlan> = Plan["name"];
-
-export type LexicalPlanOutput<Plan> =
-  Plan extends LexicalPlan<infer _Config, infer _Name, infer Output>
-    ? Output
-    : unknown;
-
-/**
- * A handle to the editor and its dispose function
- */
-export interface EditorHandle extends Disposable {
-  /** The created editor */
-  editor: LexicalEditor;
-  /**
-   * Dispose the editor and perform all clean-up
-   * (also available as Symbol.dispose via Disposable)
-   */
-  dispose: () => void;
-}
-
-/**
- * All of the possible ways to initialize $initialEditorState:
- * - `null` an empty state, the default
- * - `string` an EditorState serialized to JSON
- * - `EditorState` an EditorState that has been deserialized already (not just parsed JSON)
- * - `((editor: LexicalEditor) => void)` A function that is called with the editor for you to mutate it
- */
-export type InitialEditorStateType =
-  | null
-  | string
-  | EditorState
-  | ((editor: LexicalEditor) => void);

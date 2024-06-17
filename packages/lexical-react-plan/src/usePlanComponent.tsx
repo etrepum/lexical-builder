@@ -1,4 +1,6 @@
 import {
+  LexicalPlanOutput,
+  OutputComponentPlan,
   getPlanDependencyFromEditor,
   type AnyLexicalPlan,
   type LexicalPlanDependency,
@@ -19,9 +21,11 @@ export function usePlanDependency<Plan extends AnyLexicalPlan>(
  * @param plan A plan with a Component property in the output
  * @returns `getPlanConfigFromEditor(useLexicalComposerContext()[0], plan).Component`
  */
-export function usePlanComponent<Plan extends AnyLexicalPlan>(
-  plan: Plan,
-): LexicalPlanDependency<Plan>["output"]["Component"] {
+export function usePlanComponent<
+  Props extends Record<never, never>,
+  OutputComponent extends React.ComponentType<Props>,
+  Plan extends OutputComponentPlan<OutputComponent>,
+>(plan: Plan): OutputComponent {
   return usePlanDependency(plan).output.Component;
 }
 
@@ -30,12 +34,17 @@ export function usePlanComponent<Plan extends AnyLexicalPlan>(
  * output Component.
  */
 export type UsePlanComponentProps<Plan extends AnyLexicalPlan> = {
-  /** The Plan */
-  "lexical:plan": Plan;
-} & /** The Props from the Plan output Component */ Omit<
-  ComponentProps<LexicalPlanDependency<Plan>["output"]["Component"]>,
-  "lexical:plan"
->;
+  /** The Plan */ "lexical:plan": Plan;
+} & ([LexicalPlanOutput<Plan>] extends [
+  {
+    Component: infer OutputComponentType extends React.ComponentType;
+  },
+]
+  ? /** The Props from the Plan output Component */ Omit<
+      ComponentProps<OutputComponentType>,
+      "lexical:plan"
+    >
+  : never);
 
 /**
  * A convenient way to get a Plan's output Component with {@link usePlanComponent}
@@ -59,7 +68,7 @@ export type UsePlanComponentProps<Plan extends AnyLexicalPlan> = {
 export function UsePlanComponent<Plan extends AnyLexicalPlan>({
   ["lexical:plan"]: plan,
   ...props
-}: UsePlanComponentProps<Plan>): JSX.Element {
-  const Component = usePlanComponent(plan);
+}: UsePlanComponentProps<Plan>) {
+  const Component = usePlanComponent(plan as Plan);
   return <Component {...props} />;
 }

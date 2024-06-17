@@ -28,6 +28,7 @@ import { EmojiPlan } from "@etrepum/lexical-emoji-plan";
 import { BuilderGraphPlan } from "@etrepum/lexical-builder-devtools-core";
 
 const editorHandle = buildEditorFromPlans({
+  name: "[root]",
   $initialEditorState: $prepopulatedRichText,
   dependencies: [
     DragonPlan,

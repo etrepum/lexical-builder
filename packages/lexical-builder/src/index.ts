@@ -10,15 +10,10 @@ export { PACKAGE_VERSION } from "./PACKAGE_VERSION";
 export {
   configPlan,
   definePlan,
-  defineRootPlan,
   provideOutput,
   declarePeerDependency,
 } from "@etrepum/lexical-builder-core";
-export {
-  LexicalBuilder,
-  buildEditorFromPlans,
-  coerceToPlanArgument,
-} from "./LexicalBuilder";
+export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
 export {
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
@@ -29,13 +24,12 @@ export {
   type LexicalPlanConfig,
   type LexicalPlanName,
   type LexicalPlanOutput,
+  type LexicalPlanInit,
+  type OutputComponentPlan,
   type LexicalPlanDependency,
-  type RootPlan,
-  type RootPlanArgument,
   type NormalizedLexicalPlanArgument,
   type PlanConfigBase,
   type RegisterState,
-  type RegisterCleanup,
   type NormalizedPeerDependency,
 } from "@etrepum/lexical-builder-core";
 export { safeCast } from "@etrepum/lexical-builder-core";

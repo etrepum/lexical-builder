@@ -6,7 +6,7 @@ sidebar_position: 1
 
 **EXPERIMENTAL** A high-level way to manage Lexical config and plug-ins for any framework
 
-The intent of this package is to become or inspire a de jure standard in Lexical for a
+The intent of this package is to become a de jure standard in Lexical for a
 next generation of plug-ins.
 
 [[RFC] Lexical Builder API](https://docs.google.com/document/d/1wQYb9Y-zVb_jGyQSHYQuPuGs5xGPHBST_3OOaLXG0s0/edit)

@@ -10,7 +10,7 @@ import { ReactPlan } from "./ReactPlan";
 
 export interface LexicalPlanComposerProps {
   /**
-   * Your root plan, typically defined with {@link defineRootPlan} or {@link definePlan}
+   * Your root plan, typically defined with {@link definePlan}
    */
   plan: AnyLexicalPlanArgument;
   /**
@@ -26,7 +26,8 @@ export interface LexicalPlanComposerProps {
  *
  * @example Module scoped plan
  * ```tsx
- * const plan = defineRootPlan({
+ * const plan = definePlan({
+ *   name: "[root]",
  *   dependencies: [DragonPlan, RichTextPlan, HistoryPlan, EmojiPlan]
  * });
  * function MyEditor({ children }) {
@@ -38,7 +39,8 @@ export interface LexicalPlanComposerProps {
  * ```tsx
  * function MyEditor({ emojiBaseUrl, children }) {
  *   const plan = useMemo(() => {
- *     return defineRootPlan({
+ *     return definePlan({
+ *       name: "[root]",
  *       dependencies: [
  *         DragonPlan,
  *         RichTextPlan,
@@ -56,7 +58,8 @@ export interface LexicalPlanComposerProps {
  * function MyBrokenEditor({ emojiBaseUrl }) {
  *   // This argument is not stable, the editor is re-created every render and
  *   // all state is lost!
- *   const plan = defineRootPlan({
+ *   const plan = definePlan({
+ *     name: "[root]",
  *     dependencies: [DragonPlan, RichTextPlan, HistoryPlan, EmojiPlan]
  *   });
  *   return (<LexicalPlanComposer plan={plan}>{children}</LexicalPlanComposer>);

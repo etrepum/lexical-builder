@@ -6,7 +6,6 @@ import {
 import { LexicalBuilder } from "./LexicalBuilder";
 import invariant from "./shared/invariant";
 import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
-import { PlanRep } from "./PlanRep";
 
 /**
  * Get the finalized config and output of a Plan that was used to build the editor.
