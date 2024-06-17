@@ -15,7 +15,6 @@ import { definePlan } from "@etrepum/lexical-builder-core";
  * ({@link HeadingNode}, {@link QuoteNode})
  */
 export const RichTextPlan = definePlan({
-  config: {},
   conflictsWith: ["@lexical/plain-text"],
   name: "@lexical/rich-text",
   nodes: [HeadingNode, QuoteNode],

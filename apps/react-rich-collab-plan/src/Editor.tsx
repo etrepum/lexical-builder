@@ -41,7 +41,6 @@ function EditorChildrenComponent({
 }
 
 export const EditorPlan = definePlan({
-  config: {},
   dependencies: [
     DragonPlan,
     RichTextPlan,

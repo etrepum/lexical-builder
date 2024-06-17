@@ -14,8 +14,6 @@ import type {
   NormalizedPeerDependency,
   PlanConfigBase,
   RegisterCleanup,
-  RootPlan,
-  RootPlanArgument,
 } from "./types";
 
 /**
@@ -31,8 +29,6 @@ import type {
  * export const MyPlan = definePlan({
  *   // Plan names must be unique in an editor
  *   name: "my",
- *   // Config must be an object, but an empty object is fine
- *   config: {},
  *   nodes: [MyNode],
  * });
  * ```
@@ -56,33 +52,11 @@ export function definePlan<
   Config extends PlanConfigBase,
   Name extends string,
   Output,
->(plan: LexicalPlan<Config, Name, Output>): LexicalPlan<Config, Name, Output> {
+  Init,
+>(
+  plan: LexicalPlan<Config, Name, Output, Init>,
+): LexicalPlan<Config, Name, Output, Init> {
   return plan;
-}
-
-/**
- * Define a LexicalPlan from the given object literal, assigning an
- * empty config and the name "[root]". This plan must only be used
- * at most once per editor, usually as the first argument to
- * {@link buildEditorFromPlans} or the plan argument to
- * {@link LexicalPlanComposer}.
- *
- * @param rootPlan A plan without the config or name properties
- * @returns The given plan argument, after in-place assignment of config and name
- *
- * @example
- * ```ts
- * const editorHandle = buildEditorFromPlans(
- *   defineRootPlan({
- *     dependencies: [DragonPlan, RichTextPlan, HistoryPlan],
- *   }),
- * );
- * ```
- */
-export function defineRootPlan<Output>(
-  rootPlan: RootPlanArgument<Output>,
-): RootPlan<Output> {
-  return Object.assign(rootPlan, { name: "[root]", config: {} } as const);
 }
 
 /**
@@ -113,9 +87,10 @@ export function configPlan<
   Config extends PlanConfigBase,
   Name extends string,
   Output,
+  Init,
 >(
-  ...args: NormalizedLexicalPlanArgument<Config, Name, Output>
-): NormalizedLexicalPlanArgument<Config, Name, Output> {
+  ...args: NormalizedLexicalPlanArgument<Config, Name, Output, Init>
+): NormalizedLexicalPlanArgument<Config, Name, Output, Init> {
   return args;
 }
 
@@ -133,7 +108,6 @@ export function configPlan<
  * }
  * export const RegisteredAtPlan = definePlan({
  *   name: "RegisteredAt",
- *   config: {},
  *   register(editor) {
  *     return provideOutput<RegisteredAtOutput>({ registered_at: Date.now() });
  *   },
@@ -147,7 +121,6 @@ export function configPlan<
  * }
  * export const UniqueCommandPlan = definePlan({
  *   name: 'UniqueCommand',
- *   config: {},
  *   register(editor) {
  *     const output: UniqueCommnadOutput = {command: createCommand('UNIQUE_COMMAND')};
  *     const cleanup = registerCommand(
@@ -175,6 +148,12 @@ export function provideOutput<Output>(
 export const PeerDependencyBrand: unique symbol = Symbol.for(
   "@etrepum/lexical-builder/PeerDependency",
 );
+export const ConfigTypeId: unique symbol = Symbol.for(
+  "@etrepum/lexical-builder/ConfigTypeId",
+);
+export const OutputTypeId: unique symbol = Symbol.for(
+  "@etrepum/lexical-builder/OutputTypeId",
+);
 
 /**
  * Used to declare a peer dependency of a plan in a type-safe way,
@@ -190,7 +169,6 @@ export const PeerDependencyBrand: unique symbol = Symbol.for(
  * ```ts
  * export const PeerPlan = definePlan({
  *   name: 'PeerPlan',
- *   config: {},
  *   peerDependencies: [
  *     declarePeerDependency<typeof import("foo").FooPlan>("foo"),
  *     declarePeerDependency<typeof import("bar").BarPlan>("bar", {config: "bar"}),

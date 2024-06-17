@@ -29,7 +29,6 @@ function Divider() {
 
 export const ToolbarPlan = definePlan({
   name: import.meta.url,
-  config: {},
   register() {
     return provideOutput({ Component: ToolbarPlugin });
   },

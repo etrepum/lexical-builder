@@ -76,6 +76,8 @@ const stateRef = document.getElementById(
 
 // highlight-next-line
 const {editor} = buildEditorFromPlans({
+  // Any string is suitable as long as it uniquely defines the Plan in the editor
+  name: "[root]",
   namespace: "Vanilla JS Demo (with Lexical Builder)",
   // Register nodes specific for @lexical/rich-text
   nodes: [HeadingNode, QuoteNode],
@@ -112,6 +114,7 @@ const {editor} = buildEditorFromPlans({
   // This works similarly to LexicalComposer editorState
   $initialEditorState: $prepopulatedRichText,
   // highlight-end
+  name: "[root]",
   namespace: "Vanilla JS Demo (all-in with Lexical Builder)",
   // highlight-start
   // RichTextPlan has a nodes property to add QuoteNode and HeadingNode
@@ -208,6 +211,7 @@ function Placeholder() {
 
 // highlight-start
 const editorPlan = definePlan({
+  name: "[root]",
   namespace: "React.js Plan Demo",
   dependencies: [
     AutoFocusPlan,

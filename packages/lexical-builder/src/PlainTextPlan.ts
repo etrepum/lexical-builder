@@ -13,7 +13,6 @@ import { definePlan } from "@etrepum/lexical-builder-core";
  * A plan to register @lexical/plain-text behavior
  */
 export const PlainTextPlan = definePlan({
-  config: {},
   conflictsWith: ["@lexical/rich-text"],
   name: "@lexical/plain-text",
   register: registerPlainText,

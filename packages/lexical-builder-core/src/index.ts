@@ -11,7 +11,6 @@ export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
 export {
   configPlan,
   definePlan,
-  defineRootPlan,
   provideOutput,
   declarePeerDependency,
 } from "./definePlan";
@@ -19,20 +18,27 @@ export {
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
   type EditorHandle,
+  type InitialEditorConfig,
   type InitialEditorStateType,
   type LexicalPlan,
   type LexicalPlanArgument,
   type LexicalPlanConfig,
+  type LexicalPlanInit,
   type LexicalPlanName,
   type LexicalPlanOutput,
+  type OutputComponentPlan,
   type LexicalPlanDependency,
-  type RootPlan,
-  type RootPlanArgument,
   type NormalizedLexicalPlanArgument,
   type PlanConfigBase,
   type RegisterState,
   type RegisterCleanup,
   type NormalizedPeerDependency,
 } from "./types";
+export {
+  type LexicalPlanInternal,
+  type initTypeSymbol,
+  type configTypeSymbol,
+  type outputTypeSymbol,
+} from "./internal";
 export { safeCast } from "./safeCast";
 export { shallowMergeConfig } from "./shallowMergeConfig";

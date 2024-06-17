@@ -6,6 +6,7 @@ describe("ReactPlan", () => {
   it("Requires a provider", () => {
     expect(() =>
       buildEditorFromPlans({
+        name: "[root]",
         dependencies: [ReactPlan],
       }),
     ).toThrowError(
@@ -15,6 +16,7 @@ describe("ReactPlan", () => {
   it("Succeeds with a provider", () => {
     expect(
       buildEditorFromPlans({
+        name: "[root]",
         dependencies: [ReactPlan, ReactPluginHostPlan],
       }),
     ).toBeDefined();

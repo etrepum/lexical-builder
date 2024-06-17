@@ -12,7 +12,7 @@ import {
   createCommand,
   LexicalEditor,
 } from "lexical";
-import { ComponentProps, Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { createRoot, Root } from "react-dom/client";
@@ -22,11 +22,13 @@ import {
   configPlan,
   definePlan,
   getPlanDependencyFromEditor,
-  LexicalPlanDependency,
+  LexicalPlanOutput,
+  provideOutput,
 } from "@etrepum/lexical-builder";
 import { ReactPlan } from "./ReactPlan";
 import invariant from "./shared/invariant";
 import { ReactProviderPlan } from "./ReactProviderPlan";
+import { DecoratorComponentProps, ErrorBoundaryType } from "./types";
 
 export interface HostMountCommandArg {
   root: Root;
@@ -40,24 +42,25 @@ export interface MountPluginCommandArg {
   domNode?: Container | null;
 }
 
-export function mountReactPlanComponent<
-  Plan extends AnyLexicalPlan,
-  P extends ComponentProps<LexicalPlanDependency<Plan>["output"]["Component"]>,
->(
+export function mountReactPlanComponent<Plan extends AnyLexicalPlan>(
   editor: LexicalEditor,
   opts: {
-    plan: null | Plan;
-    props: (P & React.Attributes) | null;
+    plan: Plan;
+    props: [LexicalPlanOutput<Plan>] extends [
+      {
+        Component: infer OutputComponentType extends React.ComponentType;
+      },
+    ]
+      ? /** The Props from the Plan output Component */ React.ComponentProps<OutputComponentType> | null
+      : never;
   } & Omit<MountPluginCommandArg, "element">,
 ) {
   const { props, plan, ...rest } = opts;
-  const Component =
-    plan && props
-      ? getPlanDependencyFromEditor(editor, plan).output.Component
-      : null;
+  const { Component } = getPlanDependencyFromEditor(editor, plan).output;
+  const element = props ? <Component {...props} /> : null;
   return mountReactPluginElement(editor, {
     ...rest,
-    element: Component && <Component {...props} />,
+    element,
   });
 }
 
@@ -66,14 +69,14 @@ export function mountReactPluginComponent<
 >(
   editor: LexicalEditor,
   opts: {
-    Component: null | React.ComponentType<P>;
+    Component: React.ComponentType<P>;
     props: (P & React.Attributes) | null;
   } & Omit<MountPluginCommandArg, "element">,
 ) {
   const { Component, props, ...rest } = opts;
   return mountReactPluginElement(editor, {
     ...rest,
-    element: Component && props ? <Component {...props} /> : null,
+    element: props ? <Component {...props} /> : null,
   });
 }
 
@@ -99,13 +102,31 @@ export const REACT_MOUNT_PLUGIN_COMMAND = createCommand<MountPluginCommandArg>(
   "REACT_MOUNT_PLUGIN_COMMAND",
 );
 
+function PluginHostDecorator({
+  context: [editor],
+}: DecoratorComponentProps): JSX.Element | null {
+  const {
+    output: { renderMountedPlugins },
+  } = getPlanDependencyFromEditor(editor, ReactPluginHostPlan);
+  const [children, setChildren] = useState(renderMountedPlugins);
+  useEffect(() => {
+    return editor.registerCommand(
+      REACT_MOUNT_PLUGIN_COMMAND,
+      () => {
+        // This runs after the one that updates the map
+        setChildren(renderMountedPlugins);
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR,
+    );
+  }, []);
+  return children;
+}
+
 export const ReactPluginHostPlan = definePlan({
-  config: {},
   dependencies: [
     ReactProviderPlan,
-    configPlan(ReactPlan, {
-      contentEditable: null,
-    }),
+    configPlan(ReactPlan, { decorators: [PluginHostDecorator] }),
   ],
   name: "@etrepum/lexical-builder/ReactPluginHostPlan",
   register(editor, _config, state) {
@@ -114,10 +135,12 @@ export const ReactPluginHostPlan = definePlan({
       MountPluginCommandArg["key"],
       MountPluginCommandArg
     >();
+    const reactDep = state.getDependency(ReactPlan);
     const {
       config: { ErrorBoundary },
       output: { Component },
-    } = state.getDependency(ReactPlan);
+    } = reactDep;
+    const onError = editor._onError.bind(editor);
     function renderMountedPlugins() {
       const children: JSX.Element[] = [];
       for (const { key, element, domNode } of mountedPlugins.values()) {
@@ -125,7 +148,7 @@ export const ReactPluginHostPlan = definePlan({
           continue;
         }
         const wrapped = (
-          <ErrorBoundary onError={(e) => editor._onError(e)} key={key}>
+          <ErrorBoundary onError={onError} key={key}>
             <Suspense fallback={null}>{element}</Suspense>
           </ErrorBoundary>
         );
@@ -133,51 +156,37 @@ export const ReactPluginHostPlan = definePlan({
       }
       return children.length > 0 ? <>{children}</> : null;
     }
-    function PluginHost() {
-      const [children, setChildren] = useState(renderMountedPlugins);
-      useEffect(() => {
-        return editor.registerCommand(
+    return provideOutput(
+      { renderMountedPlugins },
+      mergeRegister(
+        () => {
+          if (root) {
+            root.unmount();
+          }
+          mountedPlugins.clear();
+        },
+        editor.registerCommand(
           REACT_MOUNT_PLUGIN_COMMAND,
-          () => {
-            setChildren(renderMountedPlugins);
+          (arg) => {
+            // This runs before the PluginHost version
+            mountedPlugins.set(arg.key, arg);
+            return false;
+          },
+          COMMAND_PRIORITY_CRITICAL,
+        ),
+        editor.registerCommand(
+          REACT_PLUGIN_HOST_MOUNT_COMMAND,
+          (arg) => {
+            invariant(
+              root === undefined,
+              "ReactPluginHostPlan: Root is already mounted",
+            );
+            root = arg.root;
+            root.render(<Component contentEditable={null} />);
             return true;
           },
           COMMAND_PRIORITY_EDITOR,
-        );
-      }, []);
-      return children;
-    }
-    return mergeRegister(
-      () => {
-        if (root) {
-          root.unmount();
-        }
-      },
-      editor.registerCommand(
-        REACT_MOUNT_PLUGIN_COMMAND,
-        (arg) => {
-          // This runs before the PluginHost version
-          mountedPlugins.set(arg.key, arg);
-          return false;
-        },
-        COMMAND_PRIORITY_CRITICAL,
-      ),
-      editor.registerCommand(
-        REACT_PLUGIN_HOST_MOUNT_COMMAND,
-        (arg) => {
-          invariant(
-            root === undefined,
-            "ReactPluginHostPlan: Root is already mounted",
-          );
-          root = arg.root;
-          root.render(
-            <Component>
-              <PluginHost />
-            </Component>,
-          );
-          return true;
-        },
-        COMMAND_PRIORITY_EDITOR,
+        ),
       ),
     );
   },

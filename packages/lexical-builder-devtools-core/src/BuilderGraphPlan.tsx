@@ -14,7 +14,6 @@ export const BuilderGraphComponent = lazy(
 export const BuilderGraphPlan = definePlan({
   name: "@etrepum/lexical-builder-devtools-core/BuilderGraphPlan",
   dependencies: [ReactPlan],
-  config: {},
   register(editor) {
     const builder = LexicalBuilder.fromEditor(editor);
     invariant(

@@ -9,9 +9,12 @@
 import type { LexicalBuilder } from "./LexicalBuilder";
 import type {
   AnyLexicalPlan,
+  InitialEditorConfig,
   LexicalPlanConfig,
   LexicalPlanDependency,
+  LexicalPlanInit,
   LexicalPlanOutput,
+  RegisterState,
 } from "@etrepum/lexical-builder-core";
 
 import invariant from "./shared/invariant";
@@ -30,6 +33,8 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
   _dependency?: LexicalPlanDependency<Plan>;
   _output?: LexicalPlanOutput<Plan>;
   _peerNameSet?: Set<string>;
+  _registerState?: RegisterState<LexicalPlanInit<Plan>>;
+  _initResult?: LexicalPlanInit<Plan>;
   plan: Plan;
   constructor(builder: LexicalBuilder, plan: Plan) {
     this.builder = builder;
@@ -41,15 +46,45 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
       this._output = undefined;
       return noop;
     }
-    const cleanup = this.plan.register(editor, this.getConfig(), {
-      getPeer: this.getPeer.bind(this),
-      getDependency: this.getDependency.bind(this),
-      getDirectDependentNames: this.getDirectDependentNames.bind(this),
-      getPeerNameSet: this.getPeerNameSet.bind(this),
-      signal,
-    });
+    invariant(
+      this._registerState !== undefined,
+      "PlanRep: register called before init",
+    );
+    const cleanup = this.plan.register(
+      editor,
+      this.getConfig(),
+      this.getRegisterState(signal),
+    );
     this._output = cleanup.output as LexicalPlanOutput<Plan>;
     return cleanup;
+  }
+  init(editorConfig: InitialEditorConfig, signal: AbortSignal) {
+    const config = this.getConfig();
+    const registerState = this.getRegisterState(signal);
+    if (this.plan.init) {
+      this._initResult = this.plan.init(editorConfig, config, registerState);
+    }
+  }
+  getInitResult(): LexicalPlanInit<Plan> {
+    invariant(
+      "_initResult" in this,
+      "PlanRep: getInitResult() called for Plan %s but no result was set",
+      this.plan.name,
+    );
+    return this._initResult!;
+  }
+  getRegisterState(signal: AbortSignal): RegisterState<LexicalPlanInit<Plan>> {
+    if (!this._registerState) {
+      this._registerState = {
+        getPeer: this.getPeer.bind(this),
+        getDependency: this.getDependency.bind(this),
+        getDirectDependentNames: this.getDirectDependentNames.bind(this),
+        getPeerNameSet: this.getPeerNameSet.bind(this),
+        getInitResult: this.getInitResult.bind(this),
+        signal,
+      };
+    }
+    return this._registerState;
   }
   getPeer<PeerPlan extends AnyLexicalPlan = never>(
     name: PeerPlan["name"],
@@ -103,8 +138,8 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
     return this._dependency;
   }
   getConfig(): LexicalPlanConfig<Plan> {
-    if (!this._config) {
-      let config = this.plan.config;
+    if (this._config === undefined) {
+      let config = this.plan.config || {};
       const mergeConfig = this.plan.mergeConfig
         ? this.plan.mergeConfig.bind(this.plan)
         : shallowMergeConfig;
@@ -112,6 +147,7 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
         config = mergeConfig(config, cfg);
       }
       this._config = config;
+      return config;
     }
     return this._config;
   }
