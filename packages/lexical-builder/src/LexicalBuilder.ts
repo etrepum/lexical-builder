@@ -15,6 +15,11 @@ import type {
 
 import {
   LexicalEditor,
+  LineBreakNode,
+  ParagraphNode,
+  RootNode,
+  TabNode,
+  TextNode,
   createEditor,
   type CreateEditorArgs,
   type EditorThemeClasses,
@@ -28,9 +33,22 @@ import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
 import { initializeEditor } from "./initializeEditor";
 import { PlanRep } from "./PlanRep";
 import { mergeRegister } from "@lexical/utils";
-import { configPlan, definePlan } from "@etrepum/lexical-builder-core";
+import { configPlan } from "@etrepum/lexical-builder-core";
 
 const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
+
+// These are automatically added by createEditor, we add them here so they are
+// visible during planRep.init so plans can see all known types before the
+// editor is created.
+// (excluding ArtificialNode__DO_NOT_USE because it isn't really public API
+// and shouldn't change anything)
+const REQUIRED_NODES = [
+  RootNode,
+  TextNode,
+  LineBreakNode,
+  TabNode,
+  ParagraphNode,
+];
 
 /**
  * Build a LexicalEditor by combining together one or more plans, optionally
@@ -290,7 +308,9 @@ export class LexicalBuilder {
 
   buildCreateEditorArgs(signal: AbortSignal) {
     const config: InitialEditorConfig = {};
-    const nodes = new Set<NonNullable<CreateEditorArgs["nodes"]>[number]>();
+    const nodes = new Set<NonNullable<CreateEditorArgs["nodes"]>[number]>(
+      REQUIRED_NODES,
+    );
     const replacedNodes = new Map<
       KlassConstructor<typeof LexicalNode>,
       PlanRep<AnyLexicalPlan>

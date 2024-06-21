@@ -62,7 +62,11 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
     const config = this.getConfig();
     const registerState = this.getRegisterState(signal);
     if (this.plan.init) {
-      this._initResult = this.plan.init(editorConfig, config, registerState);
+      this._initResult = this.plan.init(
+        editorConfig,
+        config,
+        registerState as RegisterState<never>,
+      );
     }
   }
   getInitResult(): LexicalPlanInit<Plan> {

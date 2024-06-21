@@ -116,10 +116,10 @@ export type RegisterCleanup<Output> = (() => void) &
  * plans through its config.
  */
 export interface LexicalPlan<
-  in out Config extends PlanConfigBase = PlanConfigBase,
-  out Name extends string = string,
-  in out Output extends unknown = unknown,
-  in out Init extends unknown = unknown,
+  in out Config extends PlanConfigBase,
+  out Name extends string,
+  in out Output extends unknown,
+  in out Init extends unknown,
 > extends InitialEditorConfig,
     LexicalPlanInternal<Config, Output, Init> {
   /** The name of the Plan, must be unique */
@@ -182,7 +182,7 @@ export interface LexicalPlan<
   init?: (
     editorConfig: InitialEditorConfig,
     config: Config,
-    state: RegisterState<Init>,
+    state: RegisterState<never>,
   ) => Init;
   /**
    * Add behavior to the editor (register transforms, listeners, etc.) after
