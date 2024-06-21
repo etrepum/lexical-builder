@@ -17,7 +17,7 @@ export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
 export {
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
-  type EditorHandle,
+  type LexicalEditorWithDispose,
   type InitialEditorStateType,
   type LexicalPlan,
   type LexicalPlanArgument,

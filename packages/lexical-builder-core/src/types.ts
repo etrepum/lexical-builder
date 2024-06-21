@@ -54,7 +54,7 @@ export type NormalizedLexicalPlanArgument<
  * configuration for plan dependencies
  */
 export interface RegisterState<Init> {
-  /** An AbortSignal that is aborted when the EditorHandle is disposed */
+  /** An AbortSignal that is aborted when the LexicalEditor is disposed */
   signal: AbortSignal;
   /**
    * Get the result of a peerDependency by name, if it exists
@@ -240,11 +240,9 @@ export type OutputComponentPlan<ComponentType> = LexicalPlan<
 >;
 
 /**
- * A handle to the editor and its dispose function
+ * A handle to the editor with an attached dispose function
  */
-export interface EditorHandle extends Disposable {
-  /** The created editor */
-  editor: LexicalEditor;
+export interface LexicalEditorWithDispose extends LexicalEditor, Disposable {
   /**
    * Dispose the editor and perform all clean-up
    * (also available as Symbol.dispose via Disposable)

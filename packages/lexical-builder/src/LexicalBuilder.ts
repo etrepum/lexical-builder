@@ -8,7 +8,7 @@
 import type {
   AnyLexicalPlan,
   AnyLexicalPlanArgument,
-  EditorHandle,
+  LexicalEditorWithDispose,
   InitialEditorConfig,
   LexicalPlanConfig,
 } from "@etrepum/lexical-builder-core";
@@ -34,8 +34,10 @@ import { initializeEditor } from "./initializeEditor";
 import { PlanRep } from "./PlanRep";
 import { mergeRegister } from "@lexical/utils";
 import { configPlan } from "@etrepum/lexical-builder-core";
+import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
 
-const buildersForEditors = new WeakMap<LexicalEditor, LexicalBuilder>();
+/** @internal Use a well-known symbol for dev tools purposes */
+export const builderSymbol = Symbol.for("@etrepum/lexical-builder");
 
 // These are automatically added by createEditor, we add them here so they are
 // visible during planRep.init so plans can see all known types before the
@@ -60,7 +62,7 @@ const REQUIRED_NODES = [
  *
  * @example A single root plan with multiple dependencies
  * ```ts
- * const editorHandle = buildEditorFromPlans(
+ * const editor = buildEditorFromPlans(
  *   definePlan({
  *     name: "[root]",
  *     dependencies: [
@@ -76,7 +78,7 @@ const REQUIRED_NODES = [
  * ```
  * @example A very similar minimal configuration without the register hook
  * ```ts
- * const editorHandle = buildEditorFromPlans(
+ * const editor = buildEditorFromPlans(
  *   RichTextPlan,
  *   configPlan(EmojiPlan, { emojiBaseUrl: "/assets/emoji" }),
  * );
@@ -85,7 +87,7 @@ const REQUIRED_NODES = [
 export function buildEditorFromPlans(
   plan: AnyLexicalPlanArgument,
   ...plans: AnyLexicalPlanArgument[]
-): EditorHandle {
+): LexicalEditorWithDispose {
   const builder = new LexicalBuilder();
   builder.addPlan(plan);
   for (const otherPlan of plans) {
@@ -97,30 +99,18 @@ export function buildEditorFromPlans(
 /** @internal */
 function noop() {}
 
-/** @internal */
-class DisposableEditorHandle implements EditorHandle {
-  editor: LexicalEditor;
-  dispose: () => void;
-  constructor(editor: LexicalEditor, dispose: () => void) {
-    this.editor = editor;
-    this.dispose = () => {
-      try {
-        dispose();
-      } finally {
-        this.dispose = noop;
-      }
-    };
-  }
-  // This should be safe even if the runtime doesn't have Symbol.dispose
-  // because it will just be `handle[undefined] = dispose;`
-  [Symbol.dispose]() {
-    this.dispose();
-  }
-}
-
 /** Throw the given Error */
 function defaultOnError(err: Error) {
   throw err;
+}
+
+interface WithBuilder {
+  [builderSymbol]?: LexicalBuilder;
+}
+
+/** @internal */
+function maybeWithBuilder(editor: LexicalEditor): LexicalEditor & WithBuilder {
+  return editor;
 }
 
 /** @internal */
@@ -131,6 +121,7 @@ export class LexicalBuilder {
   reverseEdges: Map<AnyLexicalPlan, Set<AnyLexicalPlan>>;
   addStack: Set<AnyLexicalPlan>;
   conflicts: Map<string, string>;
+  PACKAGE_VERSION: string;
 
   constructor() {
     // closure compiler can't handle class initializers
@@ -140,31 +131,58 @@ export class LexicalBuilder {
     this.conflicts = new Map();
     this.reverseEdges = new Map();
     this.addStack = new Set();
+    this.PACKAGE_VERSION = PACKAGE_VERSION;
   }
 
-  /** Look up the editor that was created by this LexicalBuilder or undefined */
-  static fromEditor(editor: LexicalEditor): LexicalBuilder | undefined {
-    return buildersForEditors.get(editor);
+  /** Look up the editor that was created by this LexicalBuilder or throw */
+  static fromEditor(editor: LexicalEditor): LexicalBuilder {
+    const builder = maybeWithBuilder(editor)[builderSymbol];
+    invariant(
+      builder && typeof builder === "object",
+      "LexicalBuilder.fromEditor: The given editor was not created with LexicalBuilder, or has been disposed",
+    );
+    // The dev tools variant of this will relax some of these invariants
+    invariant(
+      builder.PACKAGE_VERSION === PACKAGE_VERSION,
+      "LexicalBuilder.fromEditor: The given editor was created with LexicalBuilder %s but this version is %s. A project should have exactly one copy of LexicalBuilder",
+      builder.PACKAGE_VERSION,
+      PACKAGE_VERSION,
+    );
+    invariant(
+      builder instanceof LexicalBuilder,
+      "LexicalBuilder.fromEditor: There are multiple copies of the same version of LexicalBuilder in your project, and this editor was created with another one. Your project, or one of its dependencies, has its package.json and/or bundler configured incorrectly.",
+    );
+    return builder;
   }
 
-  buildEditor(): EditorHandle {
+  buildEditor(): LexicalEditorWithDispose {
     const controller = new AbortController();
     const { $initialEditorState, onError, ...editorConfig } =
       this.buildCreateEditorArgs(controller.signal);
-    const editor = createEditor({
-      ...editorConfig,
-      ...(onError ? { onError: (err) => onError(err, editor) } : {}),
-    });
-    initializeEditor(editor, $initialEditorState);
-    buildersForEditors.set(editor, this);
-    return new DisposableEditorHandle(
-      editor,
-      mergeRegister(
-        () => buildersForEditors.delete(editor),
-        () => editor.setRootElement(null),
-        this.registerEditor(editor, controller),
-      ),
+    let disposeOnce = noop;
+    function dispose() {
+      try {
+        disposeOnce();
+      } finally {
+        disposeOnce = noop;
+      }
+    }
+    const editor: LexicalEditorWithDispose & WithBuilder = Object.assign(
+      createEditor({
+        ...editorConfig,
+        ...(onError ? { onError: (err) => onError(err, editor) } : {}),
+      }),
+      { [builderSymbol]: this, dispose, [Symbol.dispose]: dispose },
     );
+    initializeEditor(editor, $initialEditorState);
+    disposeOnce = mergeRegister(
+      () => {
+        delete maybeWithBuilder(editor)[builderSymbol];
+      },
+      () => editor.setRootElement(null),
+      this.registerEditor(editor, controller),
+    );
+    return editor;
   }
 
   getPlanRep<Plan extends AnyLexicalPlan>(

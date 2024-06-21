@@ -8,11 +8,11 @@ import { buildGraph } from "@etrepum/lexical-builder-devtools-core";
 
 describe("BuilderGraph", () => {
   it("can build a graph", () => {
-    const editorHandle = buildEditorFromPlans({
+    const editor = buildEditorFromPlans({
       name: "[root]",
       dependencies: [DragonPlan, RichTextPlan],
     });
-    expect(buildGraph(editorHandle.editor)).toEqual(`flowchart TB
+    expect(buildGraph(editor)).toEqual(`flowchart TB
   P0["dragon"]
   P1["rich-text"]
   P2["[root]"]

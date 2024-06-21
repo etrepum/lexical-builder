@@ -2,7 +2,7 @@ import {
   buildEditorFromPlans,
   configPlan,
   DragonPlan,
-  EditorHandle,
+  LexicalEditorWithDispose,
   HistoryPlan,
   RichTextPlan,
 } from "@etrepum/lexical-builder";
@@ -43,7 +43,7 @@ describe("configPlan", () => {
   });
 });
 describe("ReactPluginHostPlan", () => {
-  let editorHandle: EditorHandle;
+  let editor: LexicalEditorWithDispose;
   let rootDom: HTMLDivElement & { __lexicalEditor?: LexicalEditor | null };
   let treeDom: HTMLDivElement;
   let cleanupFn: Mock;
@@ -63,7 +63,7 @@ describe("ReactPluginHostPlan", () => {
       pluginHostDom.id = "react-plugin-host";
 
       document.body.append(rootDom, pluginHostDom, treeDom);
-      editorHandle = buildEditorFromPlans({
+      editor = buildEditorFromPlans({
         name: "[root]",
         $initialEditorState: $prepopulatedRichText,
         dependencies: [
@@ -92,22 +92,22 @@ describe("ReactPluginHostPlan", () => {
           return registerFn();
         },
       });
-      editorHandle.editor.setRootElement(rootDom);
+      editor.setRootElement(rootDom);
     });
   });
   afterEach(async () => {
     await act(async () => {
-      editorHandle.dispose();
+      editor?.dispose();
     });
   });
   it("creates an editor", async () => {
     const EXPECT_HTML = `<p dir="ltr"><span data-lexical-text="true">Plain Text!</span><br><strong data-lexical-text="true">Bold Text!</strong></p>`;
-    expect(editorHandle.editor.getRootElement()).toBe(rootDom);
-    expect(rootDom.__lexicalEditor).toBe(editorHandle.editor);
+    expect(editor.getRootElement()).toBe(rootDom);
+    expect(rootDom.__lexicalEditor).toBe(editor);
     expect(rootDom.innerHTML).toEqual(EXPECT_HTML);
     expect(treeDom.innerHTML).toMatch(/None dispatched/);
     await act(async () => {
-      editorHandle.dispose();
+      editor.dispose();
     });
     // All nodes are still in the document after dispose
     expect(rootDom.isConnected).toBe(true);

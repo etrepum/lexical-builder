@@ -75,7 +75,7 @@ const stateRef = document.getElementById(
 ) as HTMLTextAreaElement;
 
 // highlight-next-line
-const {editor} = buildEditorFromPlans({
+const editor = buildEditorFromPlans({
   // Any string is suitable as long as it uniquely defines the Plan in the editor
   name: "[root]",
   namespace: "Vanilla JS Demo (with Lexical Builder)",
@@ -109,7 +109,7 @@ import {
 } from "@etrepum/lexical-builder";
 import prepopulatedRichText from "./prepopulatedRichText";
 
-const {editor} = buildEditorFromPlans({
+const editor = buildEditorFromPlans({
   // highlight-start
   // This works similarly to LexicalComposer editorState
   $initialEditorState: $prepopulatedRichText,
