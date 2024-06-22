@@ -34,14 +34,8 @@ export {
 } from "@etrepum/lexical-builder-core";
 export { safeCast } from "@etrepum/lexical-builder-core";
 export { shallowMergeConfig } from "@etrepum/lexical-builder-core";
-export {
-  $getPlanDependency,
-  getPlanDependencyFromEditor,
-} from "./getPlanDependencyFromEditor";
-export {
-  $getPeerDependency,
-  getPeerDependencyFromEditor,
-} from "./getPeerDependencyFromEditor";
+export { getPlanDependencyFromEditor } from "./getPlanDependencyFromEditor";
+export { getPeerDependencyFromEditor } from "./getPeerDependencyFromEditor";
 export { getKnownTypesAndNodes, type KnownTypesAndNodes } from "./config";
 // These plan definitions should all be colocated with their implementations, only here for convenience
 export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";

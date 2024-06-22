@@ -1,20 +1,9 @@
-import {
-  AnyLexicalPlan,
-  LexicalBuilder,
-  PACKAGE_VERSION,
-} from "@etrepum/lexical-builder";
+import { AnyLexicalPlan, LexicalBuilder } from "@etrepum/lexical-builder";
 import { LexicalEditor } from "lexical";
-import invariant from "./shared/invariant";
 import { displayName } from "./BuilderGraphComponent";
 
 export function buildGraph(editor: LexicalEditor): string {
   const builder = LexicalBuilder.fromEditor(editor);
-  invariant(
-    builder !== undefined,
-    "buildGraph: editor was not created with this build of Lexical Builder %s",
-    PACKAGE_VERSION,
-  );
-
   const output = ["flowchart TB"];
   function emit(s: string) {
     output.push(s);
