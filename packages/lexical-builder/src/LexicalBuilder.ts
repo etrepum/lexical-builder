@@ -15,11 +15,6 @@ import type {
 
 import {
   LexicalEditor,
-  LineBreakNode,
-  ParagraphNode,
-  RootNode,
-  TabNode,
-  TextNode,
   createEditor,
   type CreateEditorArgs,
   type EditorThemeClasses,
@@ -30,27 +25,14 @@ import {
 import invariant from "./shared/invariant";
 
 import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
-import { initializeEditor } from "./initializeEditor";
 import { PlanRep } from "./PlanRep";
 import { mergeRegister } from "@lexical/utils";
 import { configPlan } from "@etrepum/lexical-builder-core";
 import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
+import { InitialStatePlan } from "./InitialStatePlan";
 
 /** @internal Use a well-known symbol for dev tools purposes */
 export const builderSymbol = Symbol.for("@etrepum/lexical-builder");
-
-// These are automatically added by createEditor, we add them here so they are
-// visible during planRep.init so plans can see all known types before the
-// editor is created.
-// (excluding ArtificialNode__DO_NOT_USE because it isn't really public API
-// and shouldn't change anything)
-const REQUIRED_NODES = [
-  RootNode,
-  TextNode,
-  LineBreakNode,
-  TabNode,
-  ParagraphNode,
-];
 
 /**
  * Build a LexicalEditor by combining together one or more plans, optionally
@@ -89,6 +71,7 @@ export function buildEditorFromPlans(
   ...plans: AnyLexicalPlanArgument[]
 ): LexicalEditorWithDispose {
   const builder = new LexicalBuilder();
+  builder.addPlan(InitialStatePlan);
   builder.addPlan(plan);
   for (const otherPlan of plans) {
     builder.addPlan(otherPlan);
@@ -174,7 +157,6 @@ export class LexicalBuilder {
       }),
       { [builderSymbol]: this, dispose, [Symbol.dispose]: dispose },
     );
-    initializeEditor(editor, $initialEditorState);
     disposeOnce = mergeRegister(
       () => {
         delete maybeWithBuilder(editor)[builderSymbol];
@@ -306,9 +288,21 @@ export class LexicalBuilder {
   ): () => void {
     const cleanups: (() => void)[] = [];
     const signal = controller.signal;
+    const planReps: PlanRep<AnyLexicalPlan>[] = [];
     for (const planRep of this.sortedPlanReps()) {
-      cleanups.push(planRep.register(editor, signal));
+      const cleanup = planRep.register(editor, signal);
+      if (cleanup) {
+        cleanups.push(cleanup);
+      }
+      planReps.push(planRep);
     }
+    for (const planRep of planReps) {
+      const cleanup = planRep.afterInitialization(editor, signal);
+      if (cleanup) {
+        cleanups.push(cleanup);
+      }
+    }
+    planReps.length = 0;
     return () => {
       for (let i = cleanups.length - 1; i >= 0; i--) {
         const cleanupFun = cleanups[i];
@@ -326,9 +320,7 @@ export class LexicalBuilder {
 
   buildCreateEditorArgs(signal: AbortSignal) {
     const config: InitialEditorConfig = {};
-    const nodes = new Set<NonNullable<CreateEditorArgs["nodes"]>[number]>(
-      REQUIRED_NODES,
-    );
+    const nodes = new Set<NonNullable<CreateEditorArgs["nodes"]>[number]>();
     const replacedNodes = new Map<
       KlassConstructor<typeof LexicalNode>,
       PlanRep<AnyLexicalPlan>

@@ -37,6 +37,7 @@ export { shallowMergeConfig } from "@etrepum/lexical-builder-core";
 export { getPlanDependencyFromEditor } from "./getPlanDependencyFromEditor";
 export { getPeerDependencyFromEditor } from "./getPeerDependencyFromEditor";
 export { getKnownTypesAndNodes, type KnownTypesAndNodes } from "./config";
+export { InitialStatePlan, type InitialStateConfig } from "./InitialStatePlan";
 // These plan definitions should all be colocated with their implementations, only here for convenience
 export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
 export { DragonPlan } from "./DragonPlan";

@@ -42,21 +42,16 @@ export const MarkdownTransformersPlan = definePlan({
   // shallowMergeConfig. I think ideally these should be additive
   init(editorConfig, config, _state) {
     const known = getKnownTypesAndNodes(editorConfig);
-    return {
-      transformerOptions: safeCast<MarkdownTransformerOptions>({
-        shouldPreserveNewlines: config.shouldPreserveNewlines,
-        listIndentSize: config.listIndentSize,
-      }),
-      transformersByType: safeCast<TransformersByType>({
-        // Only register transforms for nodes that are configured
-        element: filterDependencies(known, config.elementTransformers),
-        textMatch: filterDependencies(known, config.textMatchTransformers),
-        textFormat: config.textFormatTransformers,
-      }),
+    const transformerOptions: MarkdownTransformerOptions = {
+      shouldPreserveNewlines: config.shouldPreserveNewlines,
+      listIndentSize: config.listIndentSize,
     };
-  },
-  register: (_editor, _config, state) => {
-    const { transformersByType, transformerOptions } = state.getInitResult();
+    const transformersByType: TransformersByType = {
+      // Only register transforms for nodes that are configured
+      element: filterDependencies(known, config.elementTransformers),
+      textMatch: filterDependencies(known, config.textMatchTransformers),
+      textFormat: config.textFormatTransformers,
+    };
     const $markdownImport = createMarkdownImport(
       transformersByType,
       transformerOptions,
@@ -65,10 +60,14 @@ export const MarkdownTransformersPlan = definePlan({
       transformersByType,
       transformerOptions,
     );
-    return provideOutput({
+    return {
+      transformerOptions,
       transformersByType,
-      $markdownImport,
       $markdownExport,
-    });
+      $markdownImport,
+    };
+  },
+  register: (_editor, _config, state) => {
+    return provideOutput(state.getInitResult());
   },
 });
