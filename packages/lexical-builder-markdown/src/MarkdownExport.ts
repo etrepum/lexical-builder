@@ -10,7 +10,6 @@ import type {
   ElementTransformer,
   TextFormatTransformer,
   TextMatchTransformer,
-  Transformer,
 } from "@lexical/markdown";
 import type {
   ElementNode,

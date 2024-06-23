@@ -1,4 +1,5 @@
 import {
+  RichTextPlan,
   definePlan,
   getKnownTypesAndNodes,
   provideOutput,
@@ -29,26 +30,29 @@ function filterDependencies<
 
 export const MarkdownTransformersPlan = definePlan({
   name: "@etrepum/lexical-builder-markdown/MarkdownTransformers",
+  dependencies: [RichTextPlan],
   config: safeCast<MarkdownTransformersConfig>({
     elementTransformers: ELEMENT_TRANSFORMERS,
     textFormatTransformers: TEXT_FORMAT_TRANSFORMERS,
     textMatchTransformers: TEXT_MATCH_TRANSFORMERS,
     shouldPreserveNewlines: true,
+    listIndentSize: 4,
   }),
   // For now we replace the transformer arrays with the default
   // shallowMergeConfig. I think ideally these should be additive
   init(editorConfig, config, _state) {
     const known = getKnownTypesAndNodes(editorConfig);
     return {
-      transformerOptions: {
+      transformerOptions: safeCast<MarkdownTransformerOptions>({
         shouldPreserveNewlines: config.shouldPreserveNewlines,
-      } satisfies MarkdownTransformerOptions,
-      transformersByType: {
+        listIndentSize: config.listIndentSize,
+      }),
+      transformersByType: safeCast<TransformersByType>({
         // Only register transforms for nodes that are configured
         element: filterDependencies(known, config.elementTransformers),
         textMatch: filterDependencies(known, config.textMatchTransformers),
         textFormat: config.textFormatTransformers,
-      } satisfies TransformersByType,
+      }),
     };
   },
   register: (_editor, _config, state) => {
@@ -62,6 +66,7 @@ export const MarkdownTransformersPlan = definePlan({
       transformerOptions,
     );
     return provideOutput({
+      transformersByType,
       $markdownImport,
       $markdownExport,
     });

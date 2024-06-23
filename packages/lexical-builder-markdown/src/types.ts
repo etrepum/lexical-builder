@@ -2,6 +2,7 @@ import type { Transformer } from "@lexical/markdown";
 
 export interface MarkdownTransformerOptions {
   shouldPreserveNewlines: boolean;
+  listIndentSize: number;
 }
 
 type Filter<T, U> = T extends U ? T : never;
