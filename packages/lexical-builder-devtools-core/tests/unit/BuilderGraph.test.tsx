@@ -13,11 +13,12 @@ describe("BuilderGraph", () => {
       dependencies: [DragonPlan, RichTextPlan],
     });
     expect(buildGraph(editor)).toEqual(`flowchart TB
-  P0["dragon"]
-  P1["rich-text"]
-  P2["[root]"]
-  P2 --> P0
-  P2 --> P1
+  P0["InitialState"]
+  P1["dragon"]
+  P2["rich-text"]
+  P3["[root]"]
+  P3 --> P1
+  P3 --> P2
 `);
   });
 });
