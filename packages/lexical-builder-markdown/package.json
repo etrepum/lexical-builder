@@ -31,7 +31,11 @@
   },
   "peerDependencies": {
     "lexical": ">=0.16.0-0",
-    "@lexical/markdown": ">=0.16.0-0"
+    "@lexical/code": ">=0.16.0-0",
+    "@lexical/list": ">=0.16.0-0",
+    "@lexical/markdown": ">=0.16.0-0",
+    "@lexical/rich-text": ">=0.16.0-0",
+    "@lexical/utils": ">=0.16.0-0"
   },
   "sideEffects": false,
   "devDependencies": {

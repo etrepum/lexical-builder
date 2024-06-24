@@ -12,6 +12,7 @@ export {
 } from "./types";
 export {
   type MarkdownTransformersConfig,
+  type MarkdownTransformersOutput,
   MarkdownTransformersPlan,
 } from "./MarkdownTransformersPlan";
 export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;

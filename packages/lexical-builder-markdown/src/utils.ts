@@ -12,6 +12,8 @@ import {
   type ParagraphNode,
   type Spread,
   type LexicalNode,
+  $getSelection,
+  $setSelection,
 } from "lexical";
 
 export function indexBy<T>(
@@ -55,4 +57,31 @@ export function $isEmptyParagraph(
       $isTextNode(firstChild) &&
       MARKDOWN_EMPTY_LINE_REG_EXP.test(firstChild.getTextContent()))
   );
+}
+
+/**
+ * Run a update function but make sure it does not change the selection.
+ * This is useful for when you know that the selection should not change,
+ * the update will not change any content under the selection, but the
+ * update you're running includes selection modifications that you do not
+ * want.
+ */
+export function $wrapWithIgnoreSelection<Parameters extends any[], Returns>(
+  $update: (...args: Parameters) => Returns,
+): (...args: Parameters) => Returns {
+  return function wrappedWithIgnoreSelection(...args) {
+    const prevSelection = $getSelection();
+    const clonedPrev = prevSelection ? prevSelection.clone() : null;
+    const rval = $update(...args);
+    const nextSelection = $getSelection();
+    if (
+      // selection changed type
+      nextSelection !== prevSelection ||
+      // selection was mutated in-place
+      (clonedPrev && !clonedPrev.is(prevSelection))
+    ) {
+      $setSelection(clonedPrev);
+    }
+    return rval;
+  };
 }

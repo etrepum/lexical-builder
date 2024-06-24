@@ -16,6 +16,7 @@ import {
 import { createMarkdownImport } from "./MarkdownImport";
 import type { MarkdownTransformerOptions, TransformersByType } from "./types";
 import { createMarkdownExport } from "./MarkdownExport";
+import { $wrapWithIgnoreSelection } from "./utils";
 
 export type MarkdownTransformersConfig = MarkdownTransformerOptions & {
   [K in keyof TransformersByType as `${K}Transformers`]: TransformersByType[K];
@@ -28,6 +29,13 @@ function filterDependencies<
   return transforms.filter((t) => t.dependencies.every(hasNode));
 }
 
+export interface MarkdownTransformersOutput {
+  readonly transformerOptions: MarkdownTransformerOptions;
+  readonly transformersByType: TransformersByType;
+  readonly $markdownImport: ReturnType<typeof createMarkdownImport>;
+  readonly $markdownExport: ReturnType<typeof createMarkdownExport>;
+}
+
 export const MarkdownTransformersPlan = definePlan({
   name: "@etrepum/lexical-builder-markdown/MarkdownTransformers",
   dependencies: [RichTextPlan],
@@ -35,16 +43,14 @@ export const MarkdownTransformersPlan = definePlan({
     elementTransformers: ELEMENT_TRANSFORMERS,
     textFormatTransformers: TEXT_FORMAT_TRANSFORMERS,
     textMatchTransformers: TEXT_MATCH_TRANSFORMERS,
-    shouldPreserveNewlines: true,
-    listIndentSize: 4,
+    shouldPreserveNewlines: false,
   }),
   // For now we replace the transformer arrays with the default
   // shallowMergeConfig. I think ideally these should be additive
-  init(editorConfig, config, _state) {
+  init(editorConfig, config, _state): MarkdownTransformersOutput {
     const known = getKnownTypesAndNodes(editorConfig);
     const transformerOptions: MarkdownTransformerOptions = {
       shouldPreserveNewlines: config.shouldPreserveNewlines,
-      listIndentSize: config.listIndentSize,
     };
     const transformersByType: TransformersByType = {
       // Only register transforms for nodes that are configured
@@ -52,9 +58,8 @@ export const MarkdownTransformersPlan = definePlan({
       textMatch: filterDependencies(known, config.textMatchTransformers),
       textFormat: config.textFormatTransformers,
     };
-    const $markdownImport = createMarkdownImport(
-      transformersByType,
-      transformerOptions,
+    const $markdownImport = $wrapWithIgnoreSelection(
+      createMarkdownImport(transformersByType, transformerOptions),
     );
     const $markdownExport = createMarkdownExport(
       transformersByType,
