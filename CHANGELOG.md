@@ -1,3 +1,18 @@
+## v0.0.25 (2024-06-23
+
+2024-06-23
+2024-06-23
+2024-06-23
+2024-06-23
+2024-06-23
+2024-06-23
+2024-06-21
+2024-06-21
+2024-06-20
+2024-06-16)
+
+- Merge pull request #31 from etrepum/0.0.24release Bob Ippolito
+
 ## v0.0.24 (2024-06-16)
 
 - Merge pull request #30 from etrepum/init Bob Ippolito
