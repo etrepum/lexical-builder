@@ -27,7 +27,7 @@ import { $prepopulatedRichText } from "./$prepopulatedRichText";
 import { EmojiPlan } from "@etrepum/lexical-emoji-plan";
 import { BuilderGraphPlan } from "@etrepum/lexical-builder-devtools-core";
 
-const editorHandle = buildEditorFromPlans({
+const editor = buildEditorFromPlans({
   name: "[root]",
   $initialEditorState: $prepopulatedRichText,
   dependencies: [
@@ -72,4 +72,4 @@ const editorHandle = buildEditorFromPlans({
     };
   },
 });
-editorHandle.editor.setRootElement(document.getElementById("lexical-editor"));
+editor.setRootElement(document.getElementById("lexical-editor"));

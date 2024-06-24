@@ -17,7 +17,7 @@ export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
 export {
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
-  type EditorHandle,
+  type LexicalEditorWithDispose,
   type InitialEditorStateType,
   type LexicalPlan,
   type LexicalPlanArgument,
@@ -34,14 +34,10 @@ export {
 } from "@etrepum/lexical-builder-core";
 export { safeCast } from "@etrepum/lexical-builder-core";
 export { shallowMergeConfig } from "@etrepum/lexical-builder-core";
-export {
-  $getPlanDependency,
-  getPlanDependencyFromEditor,
-} from "./getPlanDependencyFromEditor";
-export {
-  $getPeerDependency,
-  getPeerDependencyFromEditor,
-} from "./getPeerDependencyFromEditor";
+export { getPlanDependencyFromEditor } from "./getPlanDependencyFromEditor";
+export { getPeerDependencyFromEditor } from "./getPeerDependencyFromEditor";
+export { getKnownTypesAndNodes, type KnownTypesAndNodes } from "./config";
+export { InitialStatePlan, type InitialStateConfig } from "./InitialStatePlan";
 // These plan definitions should all be colocated with their implementations, only here for convenience
 export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
 export { DragonPlan } from "./DragonPlan";

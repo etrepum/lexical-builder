@@ -10,7 +10,7 @@ import { describe, it, expect, expectTypeOf, assertType } from "vitest";
 
 describe("definePlan", () => {
   it("does not change identity", () => {
-    const planArg: LexicalPlan<PlanConfigBase, "test", undefined> = {
+    const planArg: LexicalPlan<PlanConfigBase, "test", undefined, never> = {
       name: "test",
     };
     const plan = definePlan(planArg);
@@ -18,17 +18,17 @@ describe("definePlan", () => {
     expectTypeOf(plan).toMatchTypeOf(planArg);
   });
   it("infers the expected type (base case)", () => {
-    assertType<LexicalPlan<PlanConfigBase, "test", undefined>>(
+    assertType<LexicalPlan<PlanConfigBase, "test", undefined, never>>(
       definePlan({ name: "test" }),
     );
   });
   it("infers the expected type (config inference)", () => {
-    assertType<LexicalPlan<{ number: 123 }, "test", undefined>>(
+    assertType<LexicalPlan<{ number: 123 }, "test", undefined, never>>(
       definePlan({ name: "test", config: { number: 123 } }),
     );
   });
   it("infers the expected type (output inference)", () => {
-    assertType<LexicalPlan<PlanConfigBase, "test", { output: number }>>(
+    assertType<LexicalPlan<PlanConfigBase, "test", { output: number }, never>>(
       definePlan({
         name: "test",
         register() {
@@ -38,7 +38,7 @@ describe("definePlan", () => {
     );
   });
   it("can define a plan without config", () => {
-    assertType<LexicalPlan<PlanConfigBase, "test", undefined>>(
+    assertType<LexicalPlan<PlanConfigBase, "test", undefined, never>>(
       definePlan({ name: "test" }),
     );
   });

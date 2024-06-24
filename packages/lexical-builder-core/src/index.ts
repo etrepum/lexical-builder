@@ -17,7 +17,7 @@ export {
 export {
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
-  type EditorHandle,
+  type LexicalEditorWithDispose,
   type InitialEditorConfig,
   type InitialEditorStateType,
   type LexicalPlan,

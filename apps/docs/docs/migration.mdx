@@ -1,8 +1,9 @@
 ---
 sidebar_position: 2
 ---
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Migration Guide
 
@@ -14,7 +15,6 @@ editor. Everything else can be migrated (or not) at your own leisure, but
 the result will be simpler and more composable if you do!
 
 ## Vanilla JS App
-
 
 <Tabs>
 <TabItem value="before" label="Before">
@@ -43,7 +43,7 @@ const editor = createEditor({
     throw error;
   },
   // highlight-end
-  theme: {quote: "PlaygroundEditorTheme__quote"},
+  theme: { quote: "PlaygroundEditorTheme__quote" },
 });
 editor.setRootElement(editorRef);
 
@@ -75,7 +75,7 @@ const stateRef = document.getElementById(
 ) as HTMLTextAreaElement;
 
 // highlight-next-line
-const {editor} = buildEditorFromPlans({
+const editor = buildEditorFromPlans({
   // Any string is suitable as long as it uniquely defines the Plan in the editor
   name: "[root]",
   namespace: "Vanilla JS Demo (with Lexical Builder)",
@@ -83,7 +83,7 @@ const {editor} = buildEditorFromPlans({
   nodes: [HeadingNode, QuoteNode],
   // highlight-next-line
   // onError boilerplate removed
-  theme: {quote: "PlaygroundEditorTheme__quote"},
+  theme: { quote: "PlaygroundEditorTheme__quote" },
 });
 editor.setRootElement(editorRef);
 
@@ -109,7 +109,7 @@ import {
 } from "@etrepum/lexical-builder";
 import prepopulatedRichText from "./prepopulatedRichText";
 
-const {editor} = buildEditorFromPlans({
+const editor = buildEditorFromPlans({
   // highlight-start
   // This works similarly to LexicalComposer editorState
   $initialEditorState: $prepopulatedRichText,
@@ -122,7 +122,7 @@ const {editor} = buildEditorFromPlans({
   // with defaults for all of the History configuration
   dependencies: [RichTextPlan, DragonPlan, HistoryPlan],
   // highlight-end
-  theme: {quote: "PlaygroundEditorTheme__quote"},
+  theme: { quote: "PlaygroundEditorTheme__quote" },
 });
 editor.setRootElement(editorRef);
 ```
@@ -185,7 +185,7 @@ export default function App() {
           <TreeViewPlugin />
         </div>
       </div>
-    {/* highlight-next-line */}
+      {/* highlight-next-line */}
     </LexicalComposer>
   );
 }
@@ -197,7 +197,11 @@ export default function App() {
 ```tsx
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 // highlight-start
-import { AutoFocusPlan, HistoryPlan, RichTextPlan } from "@etrepum/lexical-builder";
+import {
+  AutoFocusPlan,
+  HistoryPlan,
+  RichTextPlan,
+} from "@etrepum/lexical-builder";
 import { LexicalPlanComposer } from "@etrepum/lexical-react-plan";
 // highlight-end
 
@@ -242,7 +246,7 @@ export default function App() {
           <TreeViewPlugin />
         </div>
       </div>
-    {/* highlight-next-line */}
+      {/* highlight-next-line */}
     </LexicalPlanComposer>
   );
 }
@@ -523,8 +527,13 @@ export const KeywordsPlan = definePlan({
  *    If you don't like that selector, use
  *    `configPlan(KeywordsPlan, {className: 'something-else'})`
  */
+import type {
+  EditorConfig,
+  LexicalNode,
+  SerializedTextNode,
+  $getEditor,
+} from "lexical";
 // highlight-end
-import type { EditorConfig, LexicalNode, SerializedTextNode } from "lexical";
 import { TextNode } from "lexical";
 import { registerLexicalTextEntity } from "@lexical/text";
 import { useCallback, useEffect } from "react";
@@ -541,7 +550,6 @@ export interface KeywordsConfig {
   className: string;
 }
 // highlight-end
-
 
 export class KeywordNode extends TextNode {
   static getType(): string {
@@ -574,7 +582,10 @@ export class KeywordNode extends TextNode {
     dom.style.cursor = "default";
     // highlight-start
     // This lets us configure the class name!
-    dom.className = $getPlanDependency(KeywordsPlan).config.className;
+    dom.className = getPlanDependencyFromEditor(
+      $getEditor(),
+      KeywordsPlan,
+    ).config.className;
     // highlight-end
     return dom;
   }

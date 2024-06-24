@@ -70,7 +70,7 @@ export function LexicalPlanComposer({
   plan,
   children,
 }: LexicalPlanComposerProps) {
-  const handle = useMemo(
+  const editor = useMemo(
     () => buildEditorFromPlans(ReactProviderPlan, ReactPlan, plan),
     [plan],
   );
@@ -83,13 +83,10 @@ export function LexicalPlanComposer({
     });
     return () => {
       if (didMount) {
-        handle.dispose();
+        editor.dispose();
       }
     };
-  }, [handle]);
-  const { Component } = getPlanDependencyFromEditor(
-    handle.editor,
-    ReactPlan,
-  ).output;
+  }, [editor]);
+  const { Component } = getPlanDependencyFromEditor(editor, ReactPlan).output;
   return <Component>{children}</Component>;
 }

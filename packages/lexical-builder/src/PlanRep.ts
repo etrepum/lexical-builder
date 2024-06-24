@@ -41,10 +41,26 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
     this.plan = plan;
     this.configs = new Set();
   }
-  register(editor: LexicalEditor, signal: AbortSignal): () => void {
+  afterInitialization(
+    editor: LexicalEditor,
+    signal: AbortSignal,
+  ): undefined | (() => void) {
+    if (!this.plan.afterInitialization) {
+      return undefined;
+    }
+    return this.plan.afterInitialization(
+      editor,
+      this.getConfig(),
+      this.getRegisterState(signal),
+    );
+  }
+  register(
+    editor: LexicalEditor,
+    signal: AbortSignal,
+  ): undefined | (() => void) {
     if (!this.plan.register) {
       this._output = undefined;
-      return noop;
+      return undefined;
     }
     invariant(
       this._registerState !== undefined,
@@ -62,7 +78,11 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
     const config = this.getConfig();
     const registerState = this.getRegisterState(signal);
     if (this.plan.init) {
-      this._initResult = this.plan.init(editorConfig, config, registerState);
+      this._initResult = this.plan.init(
+        editorConfig,
+        config,
+        registerState as RegisterState<never>,
+      );
     }
   }
   getInitResult(): LexicalPlanInit<Plan> {

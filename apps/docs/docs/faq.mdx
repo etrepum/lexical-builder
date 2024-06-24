@@ -62,10 +62,9 @@ decorate method could even be deprecated at some point!
 
 ## How will this interact with Lexical Dev Tools?
 
-All of the Builder metadata is present at runtime, but we would need
-to have some well known place to store the LexicalBuilder instance
-(perhaps `__lexicalBuilder` on the rootElement) so that the dev tools
-could access it. There are many things that could be done, here are
+All of the Builder metadata is present at runtime, and is is present
+on the LexicalEditor instance with a well-known symbol so that the dev tools
+can access it. There are many things that could be done, here are
 a few examples:
 
 * Show a diagram of the Plan tree

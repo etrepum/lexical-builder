@@ -1,0 +1,58 @@
+{
+  "name": "@etrepum/lexical-builder-markdown",
+  "description": "[EXPERIMENTAL] Lexical Builder @etrepum/lexical-builder-markdown",
+  "type": "module",
+  "keywords": [
+    "lexical",
+    "lexical-builder",
+    "plug-in",
+    "plan",
+    "markdown"
+  ],
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "version": "0.0.24",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etrepum/lexical-builder.git",
+    "directory": "packages/lexical-builder-markdown"
+  },
+  "bugs": {
+    "url": "https://github.com/etrepum/lexical-builder/issues"
+  },
+  "homepage": "https://github.com/etrepum/lexical-builder",
+  "dependencies": {
+    "@etrepum/lexical-builder": "*"
+  },
+  "peerDependencies": {
+    "lexical": ">=0.16.0-0",
+    "@lexical/code": ">=0.16.0-0",
+    "@lexical/list": ">=0.16.0-0",
+    "@lexical/markdown": ">=0.16.0-0",
+    "@lexical/rich-text": ">=0.16.0-0",
+    "@lexical/utils": ">=0.16.0-0"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "@testing-library/dom": "^10.1.0",
+    "@testing-library/jest-dom": "^6.4.5",
+    "@testing-library/user-event": "^14.5.2",
+    "jsdom": "^24.1.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-package-version": "^1.1.0",
+    "vitest": "^1.6.0"
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ]
+}

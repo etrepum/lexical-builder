@@ -54,7 +54,7 @@ export type NormalizedLexicalPlanArgument<
  * configuration for plan dependencies
  */
 export interface RegisterState<Init> {
-  /** An AbortSignal that is aborted when the EditorHandle is disposed */
+  /** An AbortSignal that is aborted when the LexicalEditor is disposed */
   signal: AbortSignal;
   /**
    * Get the result of a peerDependency by name, if it exists
@@ -116,10 +116,10 @@ export type RegisterCleanup<Output> = (() => void) &
  * plans through its config.
  */
 export interface LexicalPlan<
-  in out Config extends PlanConfigBase = PlanConfigBase,
-  out Name extends string = string,
-  in out Output extends unknown = unknown,
-  in out Init extends unknown = unknown,
+  in out Config extends PlanConfigBase,
+  out Name extends string,
+  in out Output extends unknown,
+  in out Init extends unknown,
 > extends InitialEditorConfig,
     LexicalPlanInternal<Config, Output, Init> {
   /** The name of the Plan, must be unique */
@@ -182,11 +182,12 @@ export interface LexicalPlan<
   init?: (
     editorConfig: InitialEditorConfig,
     config: Config,
-    state: RegisterState<Init>,
+    state: RegisterState<never>,
   ) => Init;
   /**
    * Add behavior to the editor (register transforms, listeners, etc.) after
-   * the Editor is created. The register function may also mutate the config
+   * the Editor is created, but before its initial state is set.
+   * The register function may also mutate the config
    * in-place to expose data to other plans that use it as a dependency.
    *
    * @param editor The editor this Plan is being registered with
@@ -201,6 +202,23 @@ export interface LexicalPlan<
     config: Config,
     state: RegisterState<Init>,
   ) => RegisterCleanup<Output>;
+
+  /**
+   * Run any code that must happen after initialization of the
+   * editor state (which happens after all register calls).
+   *
+   * @param editor The editor this Plan is being registered with
+   * @param config The merged configuration specific to this Plan
+   * @param state An object containing an AbortSignal that can be
+   *   used, and methods for accessing the merged configuration of
+   *   dependencies and peerDependencies
+   * @returns A clean-up function
+   */
+  afterInitialization?: (
+    editor: LexicalEditor,
+    config: Config,
+    state: RegisterState<Init>,
+  ) => () => void;
 }
 
 /**
@@ -240,11 +258,9 @@ export type OutputComponentPlan<ComponentType> = LexicalPlan<
 >;
 
 /**
- * A handle to the editor and its dispose function
+ * A handle to the editor with an attached dispose function
  */
-export interface EditorHandle extends Disposable {
-  /** The created editor */
-  editor: LexicalEditor;
+export interface LexicalEditorWithDispose extends LexicalEditor, Disposable {
   /**
    * Dispose the editor and perform all clean-up
    * (also available as Symbol.dispose via Disposable)
