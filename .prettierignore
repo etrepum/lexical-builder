@@ -1,3 +1,4 @@
 package-lock.json
 .docusaurus
 apps/docs/docs/api
+.svelte-kit

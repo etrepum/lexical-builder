@@ -41,7 +41,11 @@
       $initialEditorState: prepopulatedRichText,
       register: (editor) =>
         editor.registerUpdateListener(({ editorState }) => {
-          stateRef!.textContent = JSON.stringify(editorState.toJSON(), undefined, 2);
+          stateRef!.textContent = JSON.stringify(
+            editorState.toJSON(),
+            undefined,
+            2,
+          );
         }),
     });
     editor.setRootElement(editorRef);
@@ -56,7 +60,11 @@
   <h1>Lexical Builder + Svelte + Tailwind</h1>
 </header>
 <main class="m-4">
-  <div class="border p-4 border-solid" bind:this={editorRef} contenteditable></div>
+  <div
+    class="border p-4 border-solid"
+    bind:this={editorRef}
+    contenteditable
+  ></div>
 </main>
 <footer class="m-4">
   <h4>Editor state:</h4>
