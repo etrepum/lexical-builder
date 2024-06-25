@@ -4,6 +4,7 @@ const project = resolve(process.cwd(), "tsconfig.json");
 
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
+  root: true,
   rules: {
     "unicorn/filename-case": "off",
     "import/no-default-export": "off",
@@ -16,6 +17,7 @@ module.exports = {
       "@vercel/style-guide/eslint/react",
       "eslint-config-turbo",
     ].map(require.resolve),
+    "plugin:svelte/recommended",
     // https://github.com/facebook/lexical/pull/6252 - do not upgrade to v0.16.0
     "plugin:@lexical/recommended",
   ],
@@ -43,7 +45,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ["*.js?(x)", "*.ts?(x)"],
+      files: ["*.js?(x)", "*.ts?(x)", "*.svelte"],
     },
   ],
 };

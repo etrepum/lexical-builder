@@ -8,20 +8,29 @@
 import path from "node:path";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
-import packageVersion from "vite-plugin-package-version";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
     lib: {
-      fileName: "index",
+      fileName: (moduleFormat, entryName) => `${entryName}.${moduleFormat}`,
       entry: path.resolve(__dirname, "src/index.ts"),
-      formats: ["es"],
+      formats: ["cjs"],
     },
     rollupOptions: {
       // Anything that does not start with . or / is external
       external: /^[^./]/,
     },
   },
-  plugins: [packageVersion(), dts({ include: ["src"] })],
+  plugins: [
+    dts({
+      include: ["src"],
+      beforeWriteFile(filePath, content) {
+        return {
+          filePath: filePath.replace("/index.d.ts", "/index.d.cts"),
+          content,
+        };
+      },
+    }),
+  ],
 });

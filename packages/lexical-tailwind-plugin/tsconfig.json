@@ -1,4 +1,8 @@
 {
   "extends": "@repo/typescript-config/base.json",
-  "include": ["src"]
+  "compilerOptions": {
+    "module": "Preserve"
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

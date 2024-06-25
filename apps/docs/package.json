@@ -39,9 +39,10 @@
     "@repo/eslint-config": "*",
     "docusaurus-plugin-typedoc": "^1.0.1",
     "eslint": "^8.57.0",
-    "typedoc": "^0.25.13",
-    "typedoc-plugin-markdown": "^4.0.2",
     "typescript": "^5.4.5"
+  },
+  "overrides": {
+    "typescript": "$typescript"
   },
   "browserslist": {
     "production": [

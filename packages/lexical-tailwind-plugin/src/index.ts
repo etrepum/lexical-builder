@@ -9,14 +9,20 @@
 import plugin from "tailwindcss/plugin";
 import type { Config, PluginCreator } from "tailwindcss/types/config";
 
-export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
-export interface LexicalTailwindOptions {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface -- no options yet
+export interface LexicalTailwindOptions {
+  /* empty for now */
+}
+
 const defaultOptions: LexicalTailwindOptions = {};
 function pluginFunction(
   _options: LexicalTailwindOptions = defaultOptions,
 ): PluginCreator {
-  return (_api) => {};
+  return (_api) => {
+    /* empty for now */
+  };
 }
+
 function configFunction(
   _options: LexicalTailwindOptions = defaultOptions,
 ): Partial<Config> {
@@ -36,8 +42,10 @@ function configFunction(
     },
   };
 }
-export const lexicalTailwindPlugin = plugin.withOptions(
+
+const lexicalTailwindPlugin = plugin.withOptions(
   pluginFunction,
   configFunction,
 );
-export default lexicalTailwindPlugin;
+
+module.exports = lexicalTailwindPlugin;
