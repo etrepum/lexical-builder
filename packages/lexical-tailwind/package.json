@@ -1,13 +1,12 @@
 {
-  "name": "@etrepum/lexical-builder-markdown",
-  "description": "[EXPERIMENTAL] Lexical Builder @etrepum/lexical-builder-markdown",
+  "name": "@etrepum/lexical-tailwind",
+  "description": "[EXPERIMENTAL] Lexical Builder @etrepum/lexical-tailwind",
   "type": "module",
   "keywords": [
     "lexical",
     "lexical-builder",
     "plug-in",
-    "plan",
-    "markdown"
+    "plan"
   ],
   "scripts": {
     "build": "tsc --noEmit && vite build",
@@ -21,7 +20,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/etrepum/lexical-builder.git",
-    "directory": "packages/lexical-builder-markdown"
+    "directory": "packages/lexical-tailwind"
   },
   "bugs": {
     "url": "https://github.com/etrepum/lexical-builder/issues"
@@ -31,15 +30,12 @@
     "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
-    "@lexical/code": ">=0.16.0-0",
-    "@lexical/list": ">=0.16.0-0",
-    "@lexical/markdown": ">=0.16.0-0",
-    "@lexical/rich-text": ">=0.16.0-0",
-    "@lexical/utils": ">=0.16.0-0",
-    "lexical": ">=0.16.0-0"
+    "lexical": ">=0.16.0-0",
+    "tailwindcss": ">=3.3.0"
   },
   "sideEffects": false,
   "devDependencies": {
+    "@etrepum/lexical-tailwind-plugin": "*",
     "@repo/eslint-config": "*",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^6.4.5",

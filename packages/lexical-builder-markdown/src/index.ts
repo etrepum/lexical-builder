@@ -9,6 +9,8 @@
 export {
   type MarkdownTransformerOptions,
   type TransformersByType,
+  type Filter,
+  type KebabToCamel,
 } from "./types";
 export {
   type MarkdownTransformersConfig,
