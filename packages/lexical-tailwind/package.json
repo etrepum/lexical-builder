@@ -36,6 +36,7 @@
   "sideEffects": false,
   "devDependencies": {
     "@etrepum/lexical-tailwind-plugin": "*",
+    "@lexical/utils": "^0.16.0",
     "@repo/eslint-config": "*",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^6.4.5",

@@ -7,5 +7,8 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [require("@etrepum/lexical-tailwind-plugin")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("@etrepum/lexical-tailwind-plugin"),
+  ],
 };

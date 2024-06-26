@@ -19,9 +19,8 @@
     MarkdownShortcutsPlan,
   } from "@etrepum/lexical-builder-markdown";
   import { TailwindPlan } from "@etrepum/lexical-tailwind";
-
-  import prepopulatedRichText from "$lib/$prepopulatedRichText";
   import { onMount } from "svelte";
+  import prepopulatedRichText from "$lib/$prepopulatedRichText";
 
   let editorRef: HTMLElement;
   let stateRef: HTMLPreElement;
@@ -61,7 +60,7 @@
 </header>
 <main class="m-4">
   <div
-    class="border p-4 border-solid"
+    class="border p-4 border-solid prose prose-sm sm:prose-base lg:prose-lg focus:outline-none"
     bind:this={editorRef}
     contenteditable
   ></div>
