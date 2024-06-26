@@ -11,9 +11,7 @@
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "dev": "vite",
-    "lint": "eslint",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "lint": "eslint"
   },
   "version": "0.0.25",
   "license": "MIT",
@@ -38,17 +36,11 @@
     "@etrepum/lexical-tailwind-plugin": "*",
     "@lexical/utils": "^0.16.0",
     "@repo/eslint-config": "*",
-    "@testing-library/dom": "^10.1.0",
-    "@testing-library/jest-dom": "^6.4.5",
-    "@testing-library/user-event": "^14.5.2",
     "eslint": "^8.57.0",
-    "jsdom": "^24.1.0",
-    "tslib": "^2.6.2",
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
     "vite-plugin-dts": "^3.9.1",
-    "vite-plugin-package-version": "^1.1.0",
-    "vitest": "^1.6.0"
+    "vite-plugin-package-version": "^1.1.0"
   },
   "main": "dist/index.js",
   "module": "dist/index.js",
