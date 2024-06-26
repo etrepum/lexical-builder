@@ -10,7 +10,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "server:ws": "cross-env HOST=localhost PORT=1234 npx y-websocket",
-    "server:webrtc": "cross-env HOST=localhost PORT=1235 npx y-webrtc"
+    "server:webrtc": "cross-env HOST=localhost PORT=1235 npx y-webrtc",
+    "lint": "eslint"
   },
   "stackblitz": {
     "startCommand": "npm run server:dev"
@@ -29,11 +30,13 @@
     "yjs": "^13.6.15"
   },
   "devDependencies": {
+    "@repo/eslint-config": "*",
     "@types/react": "^18.2.59",
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
+    "eslint": "^8.57.0",
     "typescript": "^5.2.2",
     "vite": "^5.1.4"
   }

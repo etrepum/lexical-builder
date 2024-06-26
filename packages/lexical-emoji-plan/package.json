@@ -12,6 +12,7 @@
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "dev": "vite",
+    "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -36,9 +37,11 @@
   },
   "sideEffects": false,
   "devDependencies": {
+    "@repo/eslint-config": "*",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/user-event": "^14.5.2",
+    "eslint": "^8.57.0",
     "jsdom": "^24.1.0",
     "tslib": "^2.6.2",
     "typescript": "^5.4.5",

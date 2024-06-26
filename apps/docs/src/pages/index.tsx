@@ -4,7 +4,6 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import Heading from "@theme/Heading";
 import Mermaid from "@theme/Mermaid";
-
 import styles from "./index.module.css";
 
 function HomepageHeader() {
@@ -58,9 +57,9 @@ export default function Home(): JSX.Element {
       description="EXPERIMENTAL @etrepum/lexical-builder plugin"
     >
       <HomepageHeader />
-      <section className="container container-fluid pt-4">
+      <section className="container-fluid container pt-4">
         <h2 className="text-4xl">Solved Problems</h2>
-        <dl className="grid md:grid-cols-2 gap-x-6 gap-y-2">
+        <dl className="grid gap-x-6 gap-y-2 md:grid-cols-2">
           <Solution title="Modularized editor configuration">
             Each Plan can specify partial editor configuration (nodes, theme,
             DOM import/export, etc.) that are all merged to build the editor
@@ -114,9 +113,9 @@ export default function Home(): JSX.Element {
           </Solution>
         </dl>
       </section>
-      <section className="container container-fluid pt-4">
+      <section className="container-fluid container pt-4">
         <h2 className="text-center">Adding a Plugin</h2>
-        <div className="grid grid-cols-2 gap-4 content-center">
+        <div className="grid grid-cols-2 content-center gap-4">
           <div className="flex flex-col gap-2 [&>div]:mx-auto">
             <h3 className="text-center">🧩 Using Legacy (React) Plugins</h3>
             <Mermaid

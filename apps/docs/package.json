@@ -12,7 +12,8 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "lint": "eslint"
   },
   "dependencies": {
     "@docusaurus/core": "^3.4.0",
@@ -35,10 +36,13 @@
     "@etrepum/lexical-builder-devtools-core": "*",
     "@etrepum/lexical-emoji-plan": "*",
     "@etrepum/lexical-react-plan": "*",
+    "@repo/eslint-config": "*",
     "docusaurus-plugin-typedoc": "^1.0.1",
-    "typedoc": "^0.25.13",
-    "typedoc-plugin-markdown": "^4.0.2",
+    "eslint": "^8.57.0",
     "typescript": "^5.4.5"
+  },
+  "overrides": {
+    "typescript": "$typescript"
   },
   "browserslist": {
     "production": [

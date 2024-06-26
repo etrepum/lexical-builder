@@ -1,0 +1,45 @@
+{
+  "name": "@etrepum/lexical-tailwind-plugin",
+  "description": "[EXPERIMENTAL] Lexical Builder @etrepum/lexical-tailwind-plugin",
+  "type": "module",
+  "keywords": [
+    "lexical",
+    "lexical-builder",
+    "plug-in",
+    "plan"
+  ],
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "lint": "eslint",
+    "dev": "vite"
+  },
+  "version": "0.0.25",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etrepum/lexical-builder.git",
+    "directory": "packages/lexical-tailwind-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/etrepum/lexical-builder/issues"
+  },
+  "homepage": "https://github.com/etrepum/lexical-builder",
+  "peerDependencies": {
+    "tailwindcss": ">=3.3.0",
+    "@tailwindcss/typography": ">=0.5.0"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "eslint": "^8.57.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "main": "dist/index.cjs",
+  "types": "dist/index.d.cts",
+  "files": [
+    "dist"
+  ]
+}

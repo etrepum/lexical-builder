@@ -9,10 +9,17 @@
 export {
   type MarkdownTransformerOptions,
   type TransformersByType,
+  type Filter,
+  type KebabToCamel,
 } from "./types";
 export {
   type MarkdownTransformersConfig,
   type MarkdownTransformersOutput,
   MarkdownTransformersPlan,
 } from "./MarkdownTransformersPlan";
+export {
+  type MarkdownShortcutsConfig,
+  type MarkdownShortcutsOutput,
+  MarkdownShortcutsPlan,
+} from "./MarkdownShortcutsPlan";
 export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
