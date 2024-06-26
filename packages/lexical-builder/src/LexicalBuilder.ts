@@ -12,9 +12,8 @@ import type {
   InitialEditorConfig,
   LexicalPlanConfig,
 } from "@etrepum/lexical-builder-core";
-
 import {
-  LexicalEditor,
+  type LexicalEditor,
   createEditor,
   type CreateEditorArgs,
   type EditorThemeClasses,
@@ -22,12 +21,11 @@ import {
   type KlassConstructor,
   type LexicalNode,
 } from "lexical";
-import invariant from "./shared/invariant";
-
-import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
-import { PlanRep } from "./PlanRep";
 import { mergeRegister } from "@lexical/utils";
 import { configPlan } from "@etrepum/lexical-builder-core";
+import invariant from "./shared/invariant";
+import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
+import { PlanRep } from "./PlanRep";
 import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
 import { InitialStatePlan } from "./InitialStatePlan";
 
@@ -153,7 +151,7 @@ export class LexicalBuilder {
     const editor: LexicalEditorWithDispose & WithBuilder = Object.assign(
       createEditor({
         ...editorConfig,
-        ...(onError ? { onError: (err) => onError(err, editor) } : {}),
+        ...(onError ? { onError: (err) => { onError(err, editor); } } : {}),
       }),
       { [builderSymbol]: this, dispose, [Symbol.dispose]: dispose },
     );
@@ -161,7 +159,7 @@ export class LexicalBuilder {
       () => {
         delete maybeWithBuilder(editor)[builderSymbol];
       },
-      () => editor.setRootElement(null),
+      () => { editor.setRootElement(null); },
       this.registerEditor(editor, controller),
     );
     return editor;

@@ -28,13 +28,13 @@
     "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
-    "lexical": ">=0.16.0-0",
+    "lexical": ">=0.16.1-nightly.20240626",
+    "@lexical/utils": ">=0.16.1-nightly.20240626",
     "tailwindcss": ">=3.3.0"
   },
   "sideEffects": false,
   "devDependencies": {
     "@etrepum/lexical-tailwind-plugin": "*",
-    "@lexical/utils": "^0.16.0",
     "@repo/eslint-config": "*",
     "eslint": "^8.57.0",
     "typescript": "^5.4.5",

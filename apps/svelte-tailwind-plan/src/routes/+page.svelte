@@ -1,3 +1,5 @@
+<svelte:options runes={true} />
+
 <script lang="ts">
   /**
    * Copyright (c) Meta Platforms, Inc. and affiliates.
@@ -7,47 +9,34 @@
    *
    */
 
-  import { type LexicalEditor } from "lexical";
-  import {
-    buildEditorFromPlans,
-    DragonPlan,
-    RichTextPlan,
-    HistoryPlan,
-  } from "@etrepum/lexical-builder";
-  import {
-    MarkdownTransformersPlan,
-    MarkdownShortcutsPlan,
-  } from "@etrepum/lexical-builder-markdown";
-  import { TailwindPlan } from "@etrepum/lexical-tailwind";
-  import { onMount } from "svelte";
-  import prepopulatedRichText from "$lib/$prepopulatedRichText";
+  import { mergeRegister } from "@lexical/utils";
+  import { type LexicalEditorWithDispose } from "@etrepum/lexical-builder";
+  import { buildEditor } from "$lib/buildEditor";
 
   let editorRef: HTMLElement;
   let stateRef: HTMLPreElement;
-  let editor: LexicalEditor;
+  let editor: LexicalEditorWithDispose;
 
-  onMount(() => {
-    editor = buildEditorFromPlans({
-      name: "[root]",
-      dependencies: [
-        DragonPlan,
-        RichTextPlan,
-        MarkdownTransformersPlan,
-        MarkdownShortcutsPlan,
-        TailwindPlan,
-        HistoryPlan,
-      ],
-      $initialEditorState: prepopulatedRichText,
-      register: (editor) =>
-        editor.registerUpdateListener(({ editorState }) => {
-          stateRef!.textContent = JSON.stringify(
-            editorState.toJSON(),
-            undefined,
-            2,
-          );
-        }),
-    });
+  $effect(() => {
+    if (!editorRef) {
+      console.log("Missing editorRef");
+      return;
+    }
+    console.log("building editor");
+    console.log(editorRef);
+    editor = buildEditor();
+    const cleanup = mergeRegister(
+      () => editor.dispose(),
+      editor.registerUpdateListener(({ editorState }) => {
+        stateRef!.textContent = JSON.stringify(
+          editorState.toJSON(),
+          undefined,
+          2,
+        );
+      }),
+    );
     editor.setRootElement(editorRef);
+    return cleanup;
   });
 </script>
 
@@ -60,7 +49,7 @@
 </header>
 <main class="m-4">
   <div
-    class="border p-4 border-solid prose prose-sm sm:prose-base lg:prose-lg focus:outline-none"
+    class="border p-4 border-solid"
     bind:this={editorRef}
     contenteditable
   ></div>
