@@ -1,6 +1,6 @@
 {
   "name": "@repo/monorepo-tests",
-  "version": "0.0.26",
+  "version": "0.0.27-nightly.20240627.0",
   "private": true,
   "scripts": {
     "lint": "eslint",
