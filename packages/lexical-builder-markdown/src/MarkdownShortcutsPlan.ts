@@ -23,10 +23,14 @@ import {
   $isRootOrShadowRoot,
   $isTextNode,
   $setSelection,
-  LexicalNode,
+  type LexicalNode,
 } from "lexical";
-import { definePlan, provideOutput, safeCast } from "@etrepum/lexical-builder";
-
+import {
+  definePlan,
+  disabledToggle,
+  provideOutput,
+  safeCast,
+} from "@etrepum/lexical-builder";
 import { MarkdownTransformersPlan } from "./MarkdownTransformersPlan";
 import { indexBy, PUNCTUATION_OR_SPACE } from "./utils";
 import type { TransformersByType } from "./types";
@@ -36,7 +40,7 @@ function runElementTransformers(
   parentNode: ElementNode,
   anchorNode: TextNode,
   anchorOffset: number,
-  elementTransformers: ReadonlyArray<ElementTransformer>,
+  elementTransformers: readonly ElementTransformer[],
 ): boolean {
   const grandParentNode = parentNode.getParent();
 
@@ -80,7 +84,7 @@ function runElementTransformers(
 function runTextMatchTransformers(
   anchorNode: TextNode,
   anchorOffset: number,
-  transformersByTrigger: Readonly<Record<string, Array<TextMatchTransformer>>>,
+  transformersByTrigger: Readonly<Record<string, TextMatchTransformer[]>>,
 ): boolean {
   let textContent = anchorNode.getTextContent();
   const lastChar = textContent[anchorOffset - 1]!;
@@ -132,7 +136,7 @@ function $runTextFormatTransformers(
   anchorNode: TextNode,
   anchorOffset: number,
   textFormatTransformers: Readonly<
-    Record<string, ReadonlyArray<TextFormatTransformer>>
+    Record<string, readonly TextFormatTransformer[]>
   >,
 ): boolean {
   const textContent = anchorNode.getTextContent();
@@ -428,40 +432,30 @@ export function registerMarkdownShortcuts(
 }
 
 export interface MarkdownShortcutsConfig {
-  enabled: boolean;
+  disabled: boolean;
 }
 export interface MarkdownShortcutsOutput {
-  getEnabled: () => boolean;
-  setEnabled: (enabled: boolean) => void;
+  isDisabled: () => boolean;
+  setDisabled: (disabled: boolean) => void;
 }
 
 export const MarkdownShortcutsPlan = definePlan({
   name: "@etrepum/lexical-builder-markdown/MarkdownShortcuts",
   dependencies: [MarkdownTransformersPlan],
   config: safeCast<MarkdownShortcutsConfig>({
-    enabled: true,
+    disabled: false,
   }),
   register(editor, config, state) {
-    let cleanup: null | (() => void) = null;
-    function getEnabled(): boolean {
-      return cleanup !== null;
-    }
-    function setEnabled(enabled: boolean): void {
-      if (enabled && cleanup === null) {
-        cleanup = registerMarkdownShortcuts(
-          editor,
-          state.getDependency(MarkdownTransformersPlan).output
-            .transformersByType,
-        );
-      } else if (!enabled && cleanup !== null) {
-        cleanup();
-        cleanup = null;
-      }
-    }
-    setEnabled(config.enabled);
     return provideOutput<MarkdownShortcutsOutput>(
-      { getEnabled, setEnabled },
-      () => setEnabled(false),
+      ...disabledToggle({
+        disabled: config.disabled,
+        register: () =>
+          registerMarkdownShortcuts(
+            editor,
+            state.getDependency(MarkdownTransformersPlan).output
+              .transformersByType,
+          ),
+      }),
     );
   },
 });

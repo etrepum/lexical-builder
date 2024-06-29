@@ -28,9 +28,13 @@ import {
   COMMAND_PRIORITY_LOW,
   TextNode,
 } from "lexical";
-import { useEffect } from "react";
 import invariant from "./shared/invariant";
-import { definePlan, safeCast } from "@etrepum/lexical-builder-core";
+import {
+  definePlan,
+  disabledToggle,
+  provideOutput,
+  safeCast,
+} from "@etrepum/lexical-builder";
 import { LinkPlan } from "./LinkPlan";
 
 type ChangeHandler = (url: string | null, prevUrl: string | null) => void;
@@ -454,6 +458,7 @@ function getTextNodesToMatch(textNode: TextNode): TextNode[] {
 export interface AutoLinkConfig {
   matchers: LinkMatcher[];
   onChange: ChangeHandler;
+  disabled: boolean;
 }
 
 const URL_REGEX =
@@ -471,6 +476,11 @@ export const DEFAULT_MATCHERS = [
   }),
 ];
 
+export interface AutoLinkOutput {
+  isDisabled: () => boolean;
+  setDisabled: (disabled: boolean) => void;
+}
+
 export const AutoLinkPlan = definePlan({
   name: "@etrepum/lexical-builder-link/AutoLink",
   dependencies: [LinkPlan],
@@ -478,49 +488,58 @@ export const AutoLinkPlan = definePlan({
   config: safeCast<AutoLinkConfig>({
     matchers: DEFAULT_MATCHERS,
     onChange: (_url, _prevUrl) => {},
+    disabled: false,
   }),
-  register(editor, { matchers, onChange }) {
-    return mergeRegister(
-      editor.registerNodeTransform(TextNode, (textNode: TextNode) => {
-        const parent = textNode.getParentOrThrow();
-        const previous = textNode.getPreviousSibling();
-        if ($isAutoLinkNode(parent) && !parent.getIsUnlinked()) {
-          handleLinkEdit(parent, matchers, onChange);
-        } else if (!$isLinkNode(parent)) {
-          if (
-            textNode.isSimpleText() &&
-            (startsWithSeparator(textNode.getTextContent()) ||
-              !$isAutoLinkNode(previous))
-          ) {
-            const textNodesToMatch = getTextNodesToMatch(textNode);
-            $handleLinkCreation(textNodesToMatch, matchers, onChange);
-          }
+  register(editor, config) {
+    return provideOutput<AutoLinkOutput>(
+      ...disabledToggle({
+        disabled: config.disabled,
+        register() {
+          const { matchers, onChange } = config;
+          return mergeRegister(
+            editor.registerNodeTransform(TextNode, (textNode: TextNode) => {
+              const parent = textNode.getParentOrThrow();
+              const previous = textNode.getPreviousSibling();
+              if ($isAutoLinkNode(parent) && !parent.getIsUnlinked()) {
+                handleLinkEdit(parent, matchers, onChange);
+              } else if (!$isLinkNode(parent)) {
+                if (
+                  textNode.isSimpleText() &&
+                  (startsWithSeparator(textNode.getTextContent()) ||
+                    !$isAutoLinkNode(previous))
+                ) {
+                  const textNodesToMatch = getTextNodesToMatch(textNode);
+                  $handleLinkCreation(textNodesToMatch, matchers, onChange);
+                }
 
-          handleBadNeighbors(textNode, matchers, onChange);
-        }
-      }),
-      editor.registerCommand(
-        TOGGLE_LINK_COMMAND,
-        (payload) => {
-          const selection = $getSelection();
-          if (payload !== null || !$isRangeSelection(selection)) {
-            return false;
-          }
-          const nodes = selection.extract();
-          nodes.forEach((node) => {
-            const parent = node.getParent();
+                handleBadNeighbors(textNode, matchers, onChange);
+              }
+            }),
+            editor.registerCommand(
+              TOGGLE_LINK_COMMAND,
+              (payload) => {
+                const selection = $getSelection();
+                if (payload !== null || !$isRangeSelection(selection)) {
+                  return false;
+                }
+                const nodes = selection.extract();
+                nodes.forEach((node) => {
+                  const parent = node.getParent();
 
-            if ($isAutoLinkNode(parent)) {
-              // invert the value
-              parent.setIsUnlinked(!parent.getIsUnlinked());
-              parent.markDirty();
-              return true;
-            }
-          });
-          return false;
+                  if ($isAutoLinkNode(parent)) {
+                    // invert the value
+                    parent.setIsUnlinked(!parent.getIsUnlinked());
+                    parent.markDirty();
+                    return true;
+                  }
+                });
+                return false;
+              },
+              COMMAND_PRIORITY_LOW,
+            ),
+          );
         },
-        COMMAND_PRIORITY_LOW,
-      ),
+      }),
     );
   },
 });

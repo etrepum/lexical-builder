@@ -7,6 +7,10 @@ module.exports = {
   rules: {
     "unicorn/filename-case": "off",
     "import/no-default-export": "off",
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    eqeqeq: "off",
   },
   extends: [
     ...[

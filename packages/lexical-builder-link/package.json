@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/etrepum/lexical-builder",
   "dependencies": {
-    "@etrepum/lexical-builder-core": "*"
+    "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
     "lexical": ">=0.16.1-nightly.20240626",

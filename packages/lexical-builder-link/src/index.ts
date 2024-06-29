@@ -8,5 +8,14 @@
 
 export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
 
-export { type LinkConfig, LinkPlan } from "./LinkPlan";
-export { type AutoLinkConfig, AutoLinkPlan } from "./AutoLinkPlan";
+export { type LinkConfig, type LinkOutput, LinkPlan } from "./LinkPlan";
+export {
+  type AutoLinkConfig,
+  type AutoLinkOutput,
+  AutoLinkPlan,
+} from "./AutoLinkPlan";
+export {
+  type ClickableLinkConfig,
+  type ClickableLinkOutput,
+  ClickableLinkPlan,
+} from "./ClickableLinkPlan";
