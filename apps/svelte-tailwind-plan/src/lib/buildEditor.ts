@@ -7,11 +7,11 @@
 
 import {
   buildEditorFromPlans,
-  DragonPlan,
   RichTextPlan,
   HistoryPlan,
   type LexicalEditorWithDispose,
 } from "@etrepum/lexical-builder";
+import { AutoLinkPlan, ClickableLinkPlan } from "@etrepum/lexical-builder-link";
 import {
   MarkdownTransformersPlan,
   MarkdownShortcutsPlan,
@@ -23,12 +23,13 @@ export function buildEditor(): LexicalEditorWithDispose {
   return buildEditorFromPlans({
     name: "[root]",
     dependencies: [
-      DragonPlan,
       RichTextPlan,
       MarkdownTransformersPlan,
       MarkdownShortcutsPlan,
       TailwindPlan,
       HistoryPlan,
+      AutoLinkPlan,
+      ClickableLinkPlan,
     ],
     $initialEditorState: $prepopulatedRichText,
   });

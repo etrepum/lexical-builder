@@ -1,23 +1,35 @@
+/* eslint-disable @typescript-eslint/require-await, @typescript-eslint/no-shadow, @typescript-eslint/no-unsafe-return -- tests */
 import {
   buildEditorFromPlans,
   configPlan,
-  DragonPlan,
-  LexicalEditorWithDispose,
+  type LexicalEditorWithDispose,
   HistoryPlan,
   RichTextPlan,
 } from "@etrepum/lexical-builder";
+import { TreeView } from "@lexical/react/LexicalTreeView";
+import {
+  $createLineBreakNode,
+  type LexicalEditor,
+  $createParagraphNode,
+  $createTextNode,
+  $getRoot,
+} from "lexical";
+import { act } from "@testing-library/react";
+import {
+  describe,
+  beforeEach,
+  it,
+  afterEach,
+  expect,
+  vi,
+  type Mock,
+} from "vitest";
 import {
   mountReactPluginComponent,
   mountReactPluginHost,
   ReactPlan,
   ReactPluginHostPlan,
 } from "@etrepum/lexical-react-plan";
-import { TreeView } from "@lexical/react/LexicalTreeView";
-import { $createLineBreakNode, LexicalEditor } from "lexical";
-import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
-import { act } from "@testing-library/react";
-
-import { describe, beforeEach, it, afterEach, expect, vi, Mock } from "vitest";
 
 function $prepopulatedRichText() {
   const root = $getRoot();
@@ -66,12 +78,7 @@ describe("ReactPluginHostPlan", () => {
       editor = buildEditorFromPlans({
         name: "[root]",
         $initialEditorState: $prepopulatedRichText,
-        dependencies: [
-          DragonPlan,
-          RichTextPlan,
-          HistoryPlan,
-          ReactPluginHostPlan,
-        ],
+        dependencies: [RichTextPlan, HistoryPlan, ReactPluginHostPlan],
         namespace: "Vanilla JS Plan Demo",
         register: (editor: LexicalEditor) => {
           mountReactPluginHost(editor, pluginHostDom);
@@ -97,7 +104,7 @@ describe("ReactPluginHostPlan", () => {
   });
   afterEach(async () => {
     await act(async () => {
-      editor?.dispose();
+      editor.dispose();
     });
   });
   it("creates an editor", async () => {

@@ -10,7 +10,6 @@ import "./styles.css";
 import {
   buildEditorFromPlans,
   configPlan,
-  DragonPlan,
   HistoryPlan,
   RichTextPlan,
 } from "@etrepum/lexical-builder";
@@ -21,17 +20,15 @@ import {
   ReactPluginHostPlan,
 } from "@etrepum/lexical-react-plan";
 import { TreeView } from "@lexical/react/LexicalTreeView";
-import { LexicalEditor } from "lexical";
-
-import { $prepopulatedRichText } from "./$prepopulatedRichText";
+import { type LexicalEditor } from "lexical";
 import { EmojiPlan } from "@etrepum/lexical-emoji-plan";
 import { BuilderGraphPlan } from "@etrepum/lexical-builder-devtools-core";
+import { $prepopulatedRichText } from "./$prepopulatedRichText";
 
-const editor = buildEditorFromPlans({
+const vanillaEditor = buildEditorFromPlans({
   name: "[root]",
   $initialEditorState: $prepopulatedRichText,
   dependencies: [
-    DragonPlan,
     RichTextPlan,
     HistoryPlan,
     configPlan(EmojiPlan, {
@@ -72,4 +69,4 @@ const editor = buildEditorFromPlans({
     };
   },
 });
-editor.setRootElement(document.getElementById("lexical-editor"));
+vanillaEditor.setRootElement(document.getElementById("lexical-editor"));

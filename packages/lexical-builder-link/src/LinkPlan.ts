@@ -19,6 +19,7 @@ import {
   $isElementNode,
   $isRangeSelection,
   COMMAND_PRIORITY_LOW,
+  type CommandPayloadType,
   PASTE_COMMAND,
 } from "lexical";
 
@@ -28,7 +29,7 @@ export interface LinkConfig {
 }
 
 export interface LinkOutput {
-  TOGGLE_LINK_COMMAND: typeof TOGGLE_LINK_COMMAND;
+  toggleLink: (payload: CommandPayloadType<typeof TOGGLE_LINK_COMMAND>) => void;
   isDisabled: () => boolean;
   setDisabled: (disabled: boolean) => void;
 }
@@ -103,7 +104,11 @@ export const LinkPlan = definePlan({
       },
     });
     return provideOutput<LinkOutput>(
-      { ...output, TOGGLE_LINK_COMMAND },
+      {
+        ...output,
+        toggleLink: (payload) =>
+          editor.dispatchCommand(TOGGLE_LINK_COMMAND, payload),
+      },
       cleanup,
     );
   },

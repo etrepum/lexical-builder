@@ -24,27 +24,24 @@ describe("Link", () => {
       $getRoot().append(p);
     },
   });
-  it("can convert a text node to a link with TOGGLE_LINK_COMMAND", () => {
+  it("can convert a text node to a link with toggleLink", () => {
     const editor = buildEditorFromPlans(plan);
-    const dep = getPlanDependencyFromEditor(editor, LinkPlan);
+    const { toggleLink } = getPlanDependencyFromEditor(editor, LinkPlan).output;
     editor.update(
       () => {
         const textNode: TextNode = $getRoot().getLastDescendant();
         textNode.select(0);
         expect($isLinkNode(textNode.getParent())).toBe(false);
-        editor.dispatchCommand(
-          dep.output.TOGGLE_LINK_COMMAND,
-          "https://lexical.dev/",
-        );
+        toggleLink("https://lexical.dev/");
         expect($isLinkNode(textNode.getParent())).toBe(true);
         let linkNode: LinkNode = textNode.getParent();
         expect(linkNode.getURL()).toBe("https://lexical.dev/");
         expect(linkNode.getTarget()).toBe(null);
         expect($getRoot().getTextContent()).toBe("Hello");
-        editor.dispatchCommand(dep.output.TOGGLE_LINK_COMMAND, null);
+        toggleLink(null);
         expect($getRoot().getTextContent()).toBe("Hello");
         expect($isLinkNode(textNode.getParent())).toBe(false);
-        editor.dispatchCommand(dep.output.TOGGLE_LINK_COMMAND, {
+        toggleLink({
           url: "https://lexical.dev/",
           target: "_blank",
           rel: "noopener",

@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@etrepum/lexical-builder": "*",
+    "@etrepum/lexical-builder-link": "*",
     "@etrepum/lexical-builder-markdown": "*",
     "@etrepum/lexical-tailwind": "*",
     "@etrepum/lexical-tailwind-plugin": "*",
