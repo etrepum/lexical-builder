@@ -1,14 +1,6 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-  /**
-   * Copyright (c) Meta Platforms, Inc. and affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *
-   */
-
   import { mergeRegister } from "@lexical/utils";
   import {
     getPlanDependencyFromEditor,
@@ -55,7 +47,7 @@
   ></div>
 </main>
 <footer class="my-4">
-  <h2 class="m-4 text-lg font-bold">Editor Markdown:</h2>
+  <h2 class="m-4 text-lg font-bold">Markdown Export:</h2>
   <div
     bind:this={stateRef}
     class="w-full whitespace-pre-wrap font-mono container mx-auto"
