@@ -10,28 +10,28 @@
    */
 
   import { mergeRegister } from "@lexical/utils";
-  import { type LexicalEditorWithDispose } from "@etrepum/lexical-builder";
+  import {
+    getPlanDependencyFromEditor,
+    type LexicalEditorWithDispose,
+  } from "@etrepum/lexical-builder";
+  import { MarkdownTransformersPlan } from "@etrepum/lexical-builder-markdown";
   import { buildEditor } from "$lib/buildEditor";
 
   let editorRef: HTMLElement;
-  let stateRef: HTMLPreElement;
+  let stateRef: HTMLElement;
   let editor: LexicalEditorWithDispose;
 
   $effect(() => {
-    if (!editorRef) {
-      console.log("Missing editorRef");
-      return;
-    }
-    console.log("building editor");
-    console.log(editorRef);
     editor = buildEditor();
+    const transformers = getPlanDependencyFromEditor(
+      editor,
+      MarkdownTransformersPlan,
+    ).output;
     const cleanup = mergeRegister(
       () => editor.dispose(),
       editor.registerUpdateListener(({ editorState }) => {
-        stateRef!.textContent = JSON.stringify(
-          editorState.toJSON(),
-          undefined,
-          2,
+        stateRef!.textContent = editorState.read(() =>
+          transformers.$markdownExport(),
         );
       }),
     );
@@ -45,16 +45,19 @@
 </svelte:head>
 
 <header class="m-4">
-  <h1>Lexical Builder + Svelte + Tailwind</h1>
+  <h1 class="my-4 text-xl font-bold">Lexical Builder + Svelte + Tailwind</h1>
 </header>
 <main class="m-4">
   <div
-    class="border p-4 border-solid"
+    class="border p-4 border-solid container mx-auto"
     bind:this={editorRef}
     contenteditable
   ></div>
 </main>
-<footer class="m-4">
-  <h4>Editor state:</h4>
-  <pre bind:this={stateRef} class="w-full"></pre>
+<footer class="my-4">
+  <h2 class="m-4 text-lg font-bold">Editor Markdown:</h2>
+  <div
+    bind:this={stateRef}
+    class="w-full whitespace-pre-wrap font-mono container mx-auto"
+  ></div>
 </footer>

@@ -57,7 +57,7 @@ const theme: EditorThemeClasses = {
   // inlineImage: 'inline-editor-image',
   // layoutContainer: 'PlaygroundEditorTheme__layoutContainer',
   // layoutItem: 'PlaygroundEditorTheme__layoutItem',
-  // link: 'PlaygroundEditorTheme__link',
+  link: "text-blue-600 hover:underline hover:cursor-pointer",
   // list: {
   //   checklist: 'PlaygroundEditorTheme__checklist',
   //   listitem: 'PlaygroundEditorTheme__listItem',

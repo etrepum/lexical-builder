@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+/* eslint-disable prefer-named-capture-group -- meta style */
+/* eslint-disable no-labels -- meta style */
 
 import type { CodeNode } from "@lexical/code";
 import type {
@@ -12,10 +14,17 @@ import type {
   TextFormatTransformer,
   TextMatchTransformer,
 } from "@lexical/markdown";
-import type { TextNode } from "lexical";
-
+import {
+  type TextNode,
+  $createLineBreakNode,
+  $createParagraphNode,
+  $createTextNode,
+  $isElementNode,
+  $isParagraphNode,
+  type ElementNode,
+} from "lexical";
 import { $createCodeNode } from "@lexical/code";
-import { $isListItemNode, $isListNode, ListItemNode } from "@lexical/list";
+import { $isListItemNode, $isListNode, type ListItemNode } from "@lexical/list";
 import { $isQuoteNode } from "@lexical/rich-text";
 import {
   $findMatchingParent,
@@ -23,18 +32,12 @@ import {
   IS_IOS,
   IS_SAFARI,
 } from "@lexical/utils";
-import {
-  $createLineBreakNode,
-  $createParagraphNode,
-  $createTextNode,
-  $isElementNode,
-  $isParagraphNode,
-  ElementNode,
-} from "lexical";
-
 import { $isEmptyParagraph, PUNCTUATION_OR_SPACE } from "./utils";
 import invariant from "./shared/invariant";
-import { MarkdownTransformerOptions, TransformersByType } from "./types";
+import {
+  type MarkdownTransformerOptions,
+  type TransformersByType,
+} from "./types";
 
 const CODE_BLOCK_REG_EXP = /^[ \t]*```(\w{1,10})?\s?$/;
 type TextFormatTransformersIndex = Readonly<{
@@ -54,7 +57,7 @@ export function createMarkdownImport(
   options?: MarkdownTransformerOptions,
 ) => ElementNode[] {
   const textFormatTransformersIndex = createTextFormatTransformersIndex(
-    byType.textFormat || [],
+    byType.textFormat,
   );
 
   return function $markdownImport(
@@ -115,9 +118,9 @@ export function createMarkdownImport(
 function $importBlocks(
   lineText: string,
   rootNode: ElementNode,
-  elementTransformers: Array<ElementTransformer>,
+  elementTransformers: ElementTransformer[],
   textFormatTransformersIndex: TextFormatTransformersIndex,
-  textMatchTransformers: Array<TextMatchTransformer>,
+  textMatchTransformers: TextMatchTransformer[],
 ) {
   const lineTextTrimmed = lineText.trim();
   const textNode = $createTextNode(lineTextTrimmed);
@@ -174,18 +177,18 @@ function $importBlocks(
 }
 
 function $importCodeBlock(
-  lines: Array<string>,
+  lines: string[],
   startLineIndex: number,
   rootNode: ElementNode,
 ): [CodeNode | null, number] {
-  const openMatch = lines[startLineIndex]!.match(CODE_BLOCK_REG_EXP);
+  const openMatch = CODE_BLOCK_REG_EXP.exec(lines[startLineIndex]!);
 
   if (openMatch) {
     let endLineIndex = startLineIndex;
     const linesLength = lines.length;
 
     while (++endLineIndex < linesLength) {
-      const closeMatch = lines[endLineIndex]!.match(CODE_BLOCK_REG_EXP);
+      const closeMatch = CODE_BLOCK_REG_EXP.exec(lines[endLineIndex]!);
 
       if (closeMatch) {
         const codeBlockNode = $createCodeNode(openMatch[1]);
@@ -212,7 +215,7 @@ function $importCodeBlock(
 function importTextFormatTransformers(
   textNode: TextNode,
   textFormatTransformersIndex: TextFormatTransformersIndex,
-  textMatchTransformers: Array<TextMatchTransformer>,
+  textMatchTransformers: TextMatchTransformer[],
 ) {
   const textContent = textNode.getTextContent();
   const match = findOutermostMatch(textContent, textFormatTransformersIndex);
@@ -293,9 +296,9 @@ function importTextFormatTransformers(
 
 function importTextMatchTransformers(
   textNode_: TextNode,
-  textMatchTransformers: Array<TextMatchTransformer>,
+  textMatchTransformers: TextMatchTransformer[],
 ) {
-  let textNode = textNode_;
+  let textNode: TextNode | undefined = textNode_;
 
   mainLoop: while (textNode) {
     for (const transformer of textMatchTransformers) {
@@ -318,8 +321,8 @@ function importTextMatchTransformers(
       } else {
         const splitText = textNode.splitText(startIndex, endIndex);
         invariant(
-          splitText[1] !== undefined && splitText[2] !== undefined,
-          "importTextMatchTransformers: splitText expected three nodes",
+          splitText[1] !== undefined,
+          "importTextMatchTransformers: splitText expected two nodes",
         );
         [, replaceNode, newTextNode] = splitText;
         if (newTextNode) {
@@ -381,7 +384,7 @@ function findOutermostMatch(
 }
 
 function createTextFormatTransformersIndex(
-  textTransformers: Array<TextFormatTransformer>,
+  textTransformers: TextFormatTransformer[],
 ): TextFormatTransformersIndex {
   const transformersByTag: Record<string, TextFormatTransformer> = {};
   const fullMatchRegExpByTag: Record<string, RegExp> = {};
@@ -410,10 +413,9 @@ function createTextFormatTransformersIndex(
     fullMatchRegExpByTag,
     // Reg exp to find opening tags
     openTagsRegExp: new RegExp(
-      (IS_SAFARI || IS_IOS || IS_APPLE_WEBKIT ? "" : `${escapeRegExp}`) +
-        "(" +
-        openTagsRegExp.join("|") +
-        ")",
+      `${
+        IS_SAFARI || IS_IOS || IS_APPLE_WEBKIT ? "" : escapeRegExp
+      }(${openTagsRegExp.join("|")})`,
       "g",
     ),
     transformersByTag,

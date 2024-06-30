@@ -8,10 +8,10 @@ import {
 } from "@etrepum/lexical-builder";
 import {
   ELEMENT_TRANSFORMERS,
-  ElementTransformer,
+  type ElementTransformer,
   TEXT_FORMAT_TRANSFORMERS,
   TEXT_MATCH_TRANSFORMERS,
-  TextMatchTransformer,
+  type TextMatchTransformer,
 } from "@lexical/markdown";
 import { createMarkdownImport } from "./MarkdownImport";
 import type { MarkdownTransformerOptions, TransformersByType } from "./types";
