@@ -7,14 +7,33 @@
  */
 
 import { registerDragonSupport } from "@lexical/dragon";
+import {
+  definePlan,
+  provideOutput,
+  safeCast,
+} from "@etrepum/lexical-builder-core";
+import { disabledToggle } from "./disabledToggle";
 
-import { definePlan } from "@etrepum/lexical-builder-core";
+export interface DragonConfig {
+  disabled: boolean;
+}
+export interface DragonOutput {
+  isDisabled: () => boolean;
+  setDisabled: (disabled: boolean) => void;
+}
 
 /**
  * Add Dragon speech to text input support to the editor, via the
- * @lexical/dragon module.
+ * \@lexical/dragon module.
  */
 export const DragonPlan = definePlan({
   name: "@lexical/dragon",
-  register: registerDragonSupport,
+  config: safeCast<DragonConfig>({ disabled: false }),
+  register: (editor, config) =>
+    provideOutput<DragonOutput>(
+      ...disabledToggle({
+        disabled: config.disabled,
+        register: () => registerDragonSupport(editor),
+      }),
+    ),
 });

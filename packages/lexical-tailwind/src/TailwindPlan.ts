@@ -1,6 +1,10 @@
 import { definePlan } from "@etrepum/lexical-builder";
 import { type EditorThemeClasses } from "lexical";
 
+// This [&]: is necessary to override the mx-8 from listitem since the theme is not designed for tailwind semantics
+const listItemCommonClasses =
+  "relative [&]:mx-2 px-6 list-none outline-none before:w-4 before:h-4 before:top-0.5 before:left-0 before:cursor-pointer before:block before:bg-color before:absolute rtl:before:left-auto rtl:before:right-0 focus:before:shadow-[0_0_0_2px_#a6cdfe] before:rounded-sm";
+
 const theme: EditorThemeClasses = {
   blockCursor:
     "block pointer-events-none absolute after:block after:absolute after:-top-0.5 after:width-5 after:border-t after:border-solid after:border-black after:animate-lexical-cursor-blink",
@@ -43,45 +47,45 @@ const theme: EditorThemeClasses = {
   //   focus: 'PlaygroundEditorTheme__embedBlockFocus',
   // },
   // hashtag: 'PlaygroundEditorTheme__hashtag',
-  // heading: {
-  //   h1: "text-[24px] text-neutral-950 font-normal m-0",
-  //   h2: "text-[15px] text-gray-500 font-bold m-0 uppercase",
-  //   h3: "text-[12px] m-0 uppercase",
-  //   h4: undefined,
-  //   h5: undefined,
-  //   h6: undefined,
-  // },
+  heading: {
+    h1: "text-[24px] text-neutral-950 font-normal m-0",
+    h2: "text-[15px] text-gray-500 font-bold m-0 uppercase",
+    h3: "text-[12px] m-0 uppercase",
+    h4: undefined,
+    h5: undefined,
+    h6: undefined,
+  },
   // hr: 'PlaygroundEditorTheme__hr',
   // image: 'editor-image',
-  // indent: 'PlaygroundEditorTheme__indent',
+  indent: "[--lexical-indent-base-value:40px]",
   // inlineImage: 'inline-editor-image',
   // layoutContainer: 'PlaygroundEditorTheme__layoutContainer',
   // layoutItem: 'PlaygroundEditorTheme__layoutItem',
-  // link: 'PlaygroundEditorTheme__link',
-  // list: {
-  //   checklist: 'PlaygroundEditorTheme__checklist',
-  //   listitem: 'PlaygroundEditorTheme__listItem',
-  //   listitemChecked: 'PlaygroundEditorTheme__listItemChecked',
-  //   listitemUnchecked: 'PlaygroundEditorTheme__listItemUnchecked',
-  //   nested: {
-  //     listitem: 'PlaygroundEditorTheme__nestedListItem',
-  //   },
-  //   olDepth: [
-  //     'PlaygroundEditorTheme__ol1',
-  //     'PlaygroundEditorTheme__ol2',
-  //     'PlaygroundEditorTheme__ol3',
-  //     'PlaygroundEditorTheme__ol4',
-  //     'PlaygroundEditorTheme__ol5',
-  //   ],
-  //   ul: 'PlaygroundEditorTheme__ul',
-  // },
-  // ltr: "text-left",
+  link: "text-blue-600 hover:underline hover:cursor-pointer",
+  list: {
+    checklist: "",
+    listitem: "mx-8",
+    listitemChecked: `${listItemCommonClasses} line-through before:border before:border-solid before:border-[rgb(61,135,245)] before:bg-[#3d87f5] before:bg-no-repeat after:cursor-pointer after:border-white after:border-solid after:absolute after:block after:top-1.5 after:width-[3px] after:inset-x-[7px] after:height-1.5 after:rotate-45 after:border-t-0 after:border-r-0.5 after:border-b-0.5 after:border-l-0`,
+    listitemUnchecked: `${listItemCommonClasses} before:border before:border-solid before:border-[#999]`,
+    nested: {
+      listitem: "list-none before:hidden after:hidden",
+    },
+    olDepth: [
+      "p-0 m-0 list-outside list-decimal",
+      "p-0 m-0 list-outside list-[upper-alpha]",
+      "p-0 m-0 list-outside list-[lower-alpha]",
+      "p-0 m-0 list-outside list-[upper-roman]",
+      "p-0 m-0 list-outside list-[lower-roman]",
+    ],
+    ul: "p-0 m-0 list-outside list-disc",
+  },
+  ltr: "text-left",
   // mark: 'PlaygroundEditorTheme__mark',
   // markOverlap: 'PlaygroundEditorTheme__markOverlap',
-  // paragraph: "relative m-0",
-  // quote:
-  //   "m-0 ml-5 mb-2.5 text-[15px] text-gray-500 border-slate-300 border-l-4 border-solid pl-4",
-  // rtl: "text-right",
+  paragraph: "relative m-0",
+  quote:
+    "m-0 ml-5 mb-2.5 text-[15px] text-gray-500 border-slate-300 border-l-4 border-solid pl-4",
+  rtl: "text-right",
   // table: 'PlaygroundEditorTheme__table',
   // tableAddColumns: 'PlaygroundEditorTheme__tableAddColumns',
   // tableAddRows: 'PlaygroundEditorTheme__tableAddRows',
@@ -98,16 +102,16 @@ const theme: EditorThemeClasses = {
   // tableResizeRuler: 'PlaygroundEditorTheme__tableCellResizeRuler',
   // tableSelected: 'PlaygroundEditorTheme__tableSelected',
   // tableSelection: 'PlaygroundEditorTheme__tableSelection',
-  // text: {
-  //   bold: "font-bold",
-  //   code: "font-mono text-[94%] py-px px-1 background-color: bg-slate-100",
-  //   italic: "italic",
-  //   strikethrough: "line-through",
-  //   subscript: "text-[0.8em] !align-sub",
-  //   superscript: "text-[0.8em] align-super",
-  //   underline: "underline",
-  //   underlineStrikethrough: "[text-decoration:underline_line-through]",
-  // },
+  text: {
+    bold: "font-bold",
+    code: "font-mono text-[94%] py-px px-1 background-color: bg-slate-100",
+    italic: "italic",
+    strikethrough: "line-through",
+    subscript: "text-[0.8em] !align-sub",
+    superscript: "text-[0.8em] align-super",
+    underline: "underline",
+    underlineStrikethrough: "[text-decoration:underline_line-through]",
+  },
 };
 
 export const TailwindPlan = definePlan({

@@ -102,7 +102,6 @@ editor.update($prepopulatedRichText, { tag: "history-merge" });
 
 ```ts
 import {
-  DragonPlan,
   HistoryPlan,
   RichTextPlan,
   buildEditorFromPlans,
@@ -120,7 +119,7 @@ const editor = buildEditorFromPlans({
   // RichTextPlan has a nodes property to add QuoteNode and HeadingNode
   // All three plans have register properties to add behavior to the editor,
   // with defaults for all of the History configuration
-  dependencies: [RichTextPlan, DragonPlan, HistoryPlan],
+  dependencies: [RichTextPlan, HistoryPlan],
   // highlight-end
   theme: { quote: "PlaygroundEditorTheme__quote" },
 });

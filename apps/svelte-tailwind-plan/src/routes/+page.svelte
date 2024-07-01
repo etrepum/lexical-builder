@@ -1,53 +1,34 @@
-<script lang="ts">
-  /**
-   * Copyright (c) Meta Platforms, Inc. and affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *
-   */
+<svelte:options runes={true} />
 
-  import { type LexicalEditor } from "lexical";
+<script lang="ts">
+  import { mergeRegister } from "@lexical/utils";
   import {
-    buildEditorFromPlans,
-    DragonPlan,
-    RichTextPlan,
-    HistoryPlan,
+    getPlanDependencyFromEditor,
+    type LexicalEditorWithDispose,
   } from "@etrepum/lexical-builder";
-  import {
-    MarkdownTransformersPlan,
-    MarkdownShortcutsPlan,
-  } from "@etrepum/lexical-builder-markdown";
-  import { TailwindPlan } from "@etrepum/lexical-tailwind";
-  import { onMount } from "svelte";
-  import prepopulatedRichText from "$lib/$prepopulatedRichText";
+  import { MarkdownTransformersPlan } from "@etrepum/lexical-builder-markdown";
+  import { buildEditor } from "$lib/buildEditor";
 
   let editorRef: HTMLElement;
-  let stateRef: HTMLPreElement;
-  let editor: LexicalEditor;
+  let stateRef: HTMLElement;
+  let editor: LexicalEditorWithDispose;
 
-  onMount(() => {
-    editor = buildEditorFromPlans({
-      name: "[root]",
-      dependencies: [
-        DragonPlan,
-        RichTextPlan,
-        MarkdownTransformersPlan,
-        MarkdownShortcutsPlan,
-        TailwindPlan,
-        HistoryPlan,
-      ],
-      $initialEditorState: prepopulatedRichText,
-      register: (editor) =>
-        editor.registerUpdateListener(({ editorState }) => {
-          stateRef!.textContent = JSON.stringify(
-            editorState.toJSON(),
-            undefined,
-            2,
-          );
-        }),
-    });
+  $effect(() => {
+    editor = buildEditor();
+    const transformers = getPlanDependencyFromEditor(
+      editor,
+      MarkdownTransformersPlan,
+    ).output;
+    const cleanup = mergeRegister(
+      () => editor.dispose(),
+      editor.registerUpdateListener(({ editorState }) => {
+        stateRef!.textContent = editorState.read(() =>
+          transformers.$markdownExport(),
+        );
+      }),
+    );
     editor.setRootElement(editorRef);
+    return cleanup;
   });
 </script>
 
@@ -56,16 +37,19 @@
 </svelte:head>
 
 <header class="m-4">
-  <h1>Lexical Builder + Svelte + Tailwind</h1>
+  <h1 class="my-4 text-xl font-bold">Lexical Builder + Svelte + Tailwind</h1>
 </header>
 <main class="m-4">
   <div
-    class="border p-4 border-solid prose prose-sm sm:prose-base lg:prose-lg focus:outline-none"
+    class="border p-4 border-solid container mx-auto"
     bind:this={editorRef}
     contenteditable
   ></div>
 </main>
-<footer class="m-4">
-  <h4>Editor state:</h4>
-  <pre bind:this={stateRef} class="w-full"></pre>
+<footer class="my-4">
+  <h2 class="m-4 text-lg font-bold">Markdown Export:</h2>
+  <div
+    bind:this={stateRef}
+    class="w-full whitespace-pre-wrap font-mono container mx-auto"
+  ></div>
 </footer>

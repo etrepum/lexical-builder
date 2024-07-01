@@ -1,12 +1,12 @@
+import { describe, it, expect, expectTypeOf, assertType } from "vitest";
 import {
-  LexicalPlan,
-  NormalizedPeerDependency,
-  PlanConfigBase,
+  type LexicalPlan,
+  type NormalizedPeerDependency,
+  type PlanConfigBase,
   declarePeerDependency,
   definePlan,
   provideOutput,
 } from "@etrepum/lexical-builder-core";
-import { describe, it, expect, expectTypeOf, assertType } from "vitest";
 
 describe("definePlan", () => {
   it("does not change identity", () => {
@@ -58,7 +58,7 @@ describe("declarePeerDependency", () => {
     const dep = declarePeerDependency<typeof other>("other");
     assertType<NormalizedPeerDependency<typeof other>>(dep);
     expect(dep).toEqual(["other", undefined]);
-    // @ts-expect-error
+    // @ts-expect-error -- name doesn't match
     declarePeerDependency<typeof other>("wrong");
   });
 });

@@ -28,7 +28,7 @@ export interface LexicalPlanComposerProps {
  * ```tsx
  * const plan = definePlan({
  *   name: "[root]",
- *   dependencies: [DragonPlan, RichTextPlan, HistoryPlan, EmojiPlan]
+ *   dependencies: [RichTextPlan, HistoryPlan, EmojiPlan]
  * });
  * function MyEditor({ children }) {
  *   return (<LexicalPlanComposer plan={plan}>{children}</LexicalPlanComposer>);
@@ -42,7 +42,6 @@ export interface LexicalPlanComposerProps {
  *     return definePlan({
  *       name: "[root]",
  *       dependencies: [
- *         DragonPlan,
  *         RichTextPlan,
  *         HistoryPlan,
  *         configPlan(EmojiPlan, { emojiBaseUrl }),
@@ -60,7 +59,7 @@ export interface LexicalPlanComposerProps {
  *   // all state is lost!
  *   const plan = definePlan({
  *     name: "[root]",
- *     dependencies: [DragonPlan, RichTextPlan, HistoryPlan, EmojiPlan]
+ *     dependencies: [RichTextPlan, HistoryPlan, EmojiPlan]
  *   });
  *   return (<LexicalPlanComposer plan={plan}>{children}</LexicalPlanComposer>);
  * }

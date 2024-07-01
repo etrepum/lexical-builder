@@ -59,3 +59,10 @@ more props configuration than most beacuse of the classes
 This one demonstrates full compatibility with the existing React plug-in
 convention. The transition from using LexicalComposer to LexicalPlanCompser is
 very smooth and straightforward.
+
+## Svelte
+
+- [GitHub](https://github.com/etrepum/lexical-builder/blob/main/apps/svelte-tailwind-plan/src/buildEditor.ts)
+- [Stackblitz](https://stackblitz.com/github/etrepum/lexical-builder/tree/main/apps/svelte-tailwind-plan?file=src%2FApp.tsx)
+
+Styles from a Tailwind theme, MarkdownTransforms, MarkdownShortcuts, Link, AutoLink, ClickableLink, Svelte 5 integration.

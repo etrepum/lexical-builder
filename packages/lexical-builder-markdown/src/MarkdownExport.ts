@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+/* eslint-disable no-labels -- meta style */
 
 import type {
   ElementTransformer,
@@ -17,7 +18,6 @@ import type {
   TextFormatType,
   TextNode,
 } from "lexical";
-
 import {
   $getRoot,
   $isDecoratorNode,
@@ -26,7 +26,6 @@ import {
   $isRootOrShadowRoot,
   $isTextNode,
 } from "lexical";
-
 import { $isEmptyParagraph } from "./utils";
 import invariant from "./shared/invariant";
 import type { MarkdownTransformerOptions, TransformersByType } from "./types";
@@ -65,7 +64,7 @@ export function createMarkdownExport(
           isNewlineDelimited &&
             i > 0 &&
             !$isEmptyParagraph(child) &&
-            !$isEmptyParagraph(children[i - 1]!)
+            !$isEmptyParagraph(children[i - 1])
             ? "\n".concat(result)
             : result,
         );
@@ -79,9 +78,9 @@ export function createMarkdownExport(
 
 function exportTopLevelElements(
   node: LexicalNode,
-  elementTransformers: Array<ElementTransformer>,
-  textTransformersIndex: Array<TextFormatTransformer>,
-  textMatchTransformers: Array<TextMatchTransformer>,
+  elementTransformers: ElementTransformer[],
+  textTransformersIndex: TextFormatTransformer[],
+  textMatchTransformers: TextMatchTransformer[],
 ): string | null {
   for (const transformer of elementTransformers) {
     const result = transformer.export(node, (_node) =>
@@ -97,15 +96,14 @@ function exportTopLevelElements(
     return exportChildren(node, textTransformersIndex, textMatchTransformers);
   } else if ($isDecoratorNode(node)) {
     return node.getTextContent();
-  } else {
-    return null;
   }
+  return null;
 }
 
 function exportChildren(
   node: ElementNode,
-  textTransformersIndex: Array<TextFormatTransformer>,
-  textMatchTransformers: Array<TextMatchTransformer>,
+  textTransformersIndex: TextFormatTransformer[],
+  textMatchTransformers: TextMatchTransformer[],
 ): string {
   const output = [];
   const children = node.getChildren();
@@ -152,7 +150,7 @@ function exportChildren(
 function exportTextFormat(
   node: TextNode,
   textContent: string,
-  textTransformers: Array<TextFormatTransformer>,
+  textTransformers: TextFormatTransformer[],
 ): string {
   // This function handles the case of a string looking like this: "   foo   "
   // Where it would be invalid markdown to generate: "**   foo   **"
@@ -222,11 +220,10 @@ function getTextSibling(node: TextNode, backward: boolean): TextNode | null {
 
       if ($isTextNode(descendant)) {
         return descendant;
-      } else {
-        sibling = backward
-          ? sibling.getPreviousSibling()
-          : sibling.getNextSibling();
       }
+      sibling = backward
+        ? sibling.getPreviousSibling()
+        : sibling.getNextSibling();
     }
 
     if ($isTextNode(sibling)) {

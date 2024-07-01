@@ -40,7 +40,12 @@ export { getKnownTypesAndNodes, type KnownTypesAndNodes } from "./config";
 export { InitialStatePlan, type InitialStateConfig } from "./InitialStatePlan";
 // These plan definitions should all be colocated with their implementations, only here for convenience
 export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
-export { DragonPlan } from "./DragonPlan";
+export { type DragonConfig, type DragonOutput, DragonPlan } from "./DragonPlan";
 export { type HistoryConfig, HistoryPlan } from "./HistoryPlan";
 export { PlainTextPlan } from "./PlainTextPlan";
 export { RichTextPlan } from "./RichTextPlan";
+export {
+  disabledToggle,
+  type DisabledToggleOutput,
+  type DisabledToggleOptions,
+} from "./disabledToggle";

@@ -33,13 +33,13 @@
     "@etrepum/lexical-builder-core": "*"
   },
   "peerDependencies": {
-    "@lexical/dragon": ">=0.16.0-0",
-    "@lexical/history": ">=0.16.0-0",
-    "@lexical/plain-text": ">=0.16.0-0",
-    "@lexical/rich-text": ">=0.16.0-0",
-    "@lexical/text": ">=0.16.0-0",
-    "@lexical/utils": ">=0.16.0-0",
-    "lexical": ">=0.16.0-0"
+    "@lexical/dragon": ">=0.16.1-nightly.20240626",
+    "@lexical/history": ">=0.16.1-nightly.20240626",
+    "@lexical/plain-text": ">=0.16.1-nightly.20240626",
+    "@lexical/rich-text": ">=0.16.1-nightly.20240626",
+    "@lexical/text": ">=0.16.1-nightly.20240626",
+    "@lexical/utils": ">=0.16.1-nightly.20240626",
+    "lexical": ">=0.16.1-nightly.20240626"
   },
   "sideEffects": false,
   "devDependencies": {

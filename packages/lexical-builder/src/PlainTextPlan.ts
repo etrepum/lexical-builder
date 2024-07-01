@@ -6,14 +6,15 @@
  *
  */
 import { registerPlainText } from "@lexical/plain-text";
-
 import { definePlan } from "@etrepum/lexical-builder-core";
+import { DragonPlan } from "./DragonPlan";
 
 /**
- * A plan to register @lexical/plain-text behavior
+ * A plan to register \@lexical/plain-text behavior
  */
 export const PlainTextPlan = definePlan({
   conflictsWith: ["@lexical/rich-text"],
   name: "@lexical/plain-text",
+  dependencies: [DragonPlan],
   register: registerPlainText,
 });
