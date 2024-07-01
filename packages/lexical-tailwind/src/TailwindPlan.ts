@@ -1,6 +1,10 @@
 import { definePlan } from "@etrepum/lexical-builder";
 import { type EditorThemeClasses } from "lexical";
 
+// This [&]: is necessary to override the mx-8 from listitem since the theme is not designed for tailwind semantics
+const listItemCommonClasses =
+  "relative [&]:mx-2 px-6 list-none outline-none before:w-4 before:h-4 before:top-0.5 before:left-0 before:cursor-pointer before:block before:bg-color before:absolute rtl:before:left-auto rtl:before:right-0 focus:before:shadow-[0_0_0_2px_#a6cdfe] before:rounded-sm";
+
 const theme: EditorThemeClasses = {
   blockCursor:
     "block pointer-events-none absolute after:block after:absolute after:-top-0.5 after:width-5 after:border-t after:border-solid after:border-black after:animate-lexical-cursor-blink",
@@ -58,23 +62,23 @@ const theme: EditorThemeClasses = {
   // layoutContainer: 'PlaygroundEditorTheme__layoutContainer',
   // layoutItem: 'PlaygroundEditorTheme__layoutItem',
   link: "text-blue-600 hover:underline hover:cursor-pointer",
-  // list: {
-  //   checklist: 'PlaygroundEditorTheme__checklist',
-  //   listitem: 'PlaygroundEditorTheme__listItem',
-  //   listitemChecked: 'PlaygroundEditorTheme__listItemChecked',
-  //   listitemUnchecked: 'PlaygroundEditorTheme__listItemUnchecked',
-  //   nested: {
-  //     listitem: 'PlaygroundEditorTheme__nestedListItem',
-  //   },
-  //   olDepth: [
-  //     'PlaygroundEditorTheme__ol1',
-  //     'PlaygroundEditorTheme__ol2',
-  //     'PlaygroundEditorTheme__ol3',
-  //     'PlaygroundEditorTheme__ol4',
-  //     'PlaygroundEditorTheme__ol5',
-  //   ],
-  //   ul: 'PlaygroundEditorTheme__ul',
-  // },
+  list: {
+    checklist: "",
+    listitem: "mx-8",
+    listitemChecked: `${listItemCommonClasses} line-through before:border before:border-solid before:border-[rgb(61,135,245)] before:bg-[#3d87f5] before:bg-no-repeat after:cursor-pointer after:border-white after:border-solid after:absolute after:block after:top-1.5 after:width-[3px] after:inset-x-[7px] after:height-1.5 after:rotate-45 after:border-t-0 after:border-r-0.5 after:border-b-0.5 after:border-l-0`,
+    listitemUnchecked: `${listItemCommonClasses} before:border before:border-solid before:border-[#999]`,
+    nested: {
+      listitem: "list-none before:hidden after:hidden",
+    },
+    olDepth: [
+      "p-0 m-0 list-outside list-decimal",
+      "p-0 m-0 list-outside list-[upper-alpha]",
+      "p-0 m-0 list-outside list-[lower-alpha]",
+      "p-0 m-0 list-outside list-[upper-roman]",
+      "p-0 m-0 list-outside list-[lower-roman]",
+    ],
+    ul: "p-0 m-0 list-outside list-disc",
+  },
   ltr: "text-left",
   // mark: 'PlaygroundEditorTheme__mark',
   // markOverlap: 'PlaygroundEditorTheme__markOverlap',

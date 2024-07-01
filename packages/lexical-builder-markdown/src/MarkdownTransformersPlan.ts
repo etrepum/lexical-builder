@@ -1,5 +1,6 @@
 import {
   RichTextPlan,
+  declarePeerDependency,
   definePlan,
   getKnownTypesAndNodes,
   provideOutput,
@@ -12,7 +13,10 @@ import {
   TEXT_FORMAT_TRANSFORMERS,
   TEXT_MATCH_TRANSFORMERS,
   type TextMatchTransformer,
+  CHECK_LIST,
+  UNORDERED_LIST,
 } from "@lexical/markdown";
+import { type CheckListPlan } from "@etrepum/lexical-builder-list";
 import { createMarkdownImport } from "./MarkdownImport";
 import type { MarkdownTransformerOptions, TransformersByType } from "./types";
 import { createMarkdownExport } from "./MarkdownExport";
@@ -29,6 +33,9 @@ function filterDependencies<
   return transforms.filter((t) => t.dependencies.every(hasNode));
 }
 
+const CHECK_LIST_PLAN_NAME: (typeof CheckListPlan)["name"] =
+  "@etrepum/lexical-builder-list/CheckList";
+
 export interface MarkdownTransformersOutput {
   readonly transformerOptions: MarkdownTransformerOptions;
   readonly transformersByType: TransformersByType;
@@ -39,6 +46,9 @@ export interface MarkdownTransformersOutput {
 export const MarkdownTransformersPlan = definePlan({
   name: "@etrepum/lexical-builder-markdown/MarkdownTransformers",
   dependencies: [RichTextPlan],
+  peerDependencies: [
+    declarePeerDependency<typeof CheckListPlan>(CHECK_LIST_PLAN_NAME),
+  ],
   config: safeCast<MarkdownTransformersConfig>({
     elementTransformers: ELEMENT_TRANSFORMERS,
     textFormatTransformers: TEXT_FORMAT_TRANSFORMERS,
@@ -47,14 +57,26 @@ export const MarkdownTransformersPlan = definePlan({
   }),
   // For now we replace the transformer arrays with the default
   // shallowMergeConfig. I think ideally these should be additive
-  init(editorConfig, config, _state): MarkdownTransformersOutput {
+  init(editorConfig, config, state): MarkdownTransformersOutput {
     const known = getKnownTypesAndNodes(editorConfig);
     const transformerOptions: MarkdownTransformerOptions = {
       shouldPreserveNewlines: config.shouldPreserveNewlines,
     };
+    const elementTransformers = filterDependencies(
+      known,
+      config.elementTransformers,
+    );
+    // TODO: Awkward because CheckList is a separate plan from List
+    //       but not a different node type!
+    if (state.getPeer<typeof CheckListPlan>(CHECK_LIST_PLAN_NAME)) {
+      const idx = elementTransformers.indexOf(UNORDERED_LIST);
+      if (idx >= 0) {
+        elementTransformers.splice(idx, 0, CHECK_LIST);
+      }
+    }
     const transformersByType: TransformersByType = {
       // Only register transforms for nodes that are configured
-      element: filterDependencies(known, config.elementTransformers),
+      element: elementTransformers,
       textMatch: filterDependencies(known, config.textMatchTransformers),
       textFormat: config.textFormatTransformers,
     };

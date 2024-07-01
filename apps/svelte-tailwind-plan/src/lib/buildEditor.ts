@@ -13,6 +13,7 @@ import {
   getPlanDependencyFromEditor,
 } from "@etrepum/lexical-builder";
 import { AutoLinkPlan, ClickableLinkPlan } from "@etrepum/lexical-builder-link";
+import { CheckListPlan } from "@etrepum/lexical-builder-list";
 import {
   MarkdownTransformersPlan,
   MarkdownShortcutsPlan,
@@ -35,6 +36,11 @@ See more:
 - [lexical.dev](https://lexical.dev/)
 - [lexical-builder.pages.dev](https://lexical-builder.pages.dev/)
 - [svelte.dev](https://svelte.dev/)
+
+Checklist:
+
+- [ ] Read the docs
+- [ ] Build an app
 `.trim();
 
 export function buildEditor(): LexicalEditorWithDispose {
@@ -48,6 +54,7 @@ export function buildEditor(): LexicalEditorWithDispose {
       HistoryPlan,
       AutoLinkPlan,
       ClickableLinkPlan,
+      CheckListPlan,
     ],
     $initialEditorState(editor) {
       const { $markdownImport } = getPlanDependencyFromEditor(

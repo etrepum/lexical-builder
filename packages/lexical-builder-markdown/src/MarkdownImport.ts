@@ -314,15 +314,15 @@ function importTextMatchTransformers(
       if (startIndex === 0) {
         const splitText = textNode.splitText(endIndex);
         invariant(
-          splitText[0] !== undefined && splitText[1] !== undefined,
-          "importTextMatchTransformers: splitText expected two nodes",
+          splitText[0] !== undefined,
+          "importTextMatchTransformers: splitText expected at least one node",
         );
         [replaceNode, textNode] = splitText;
       } else {
         const splitText = textNode.splitText(startIndex, endIndex);
         invariant(
           splitText[1] !== undefined,
-          "importTextMatchTransformers: splitText expected two nodes",
+          "importTextMatchTransformers: splitText expected at least two nodes",
         );
         [, replaceNode, newTextNode] = splitText;
         if (newTextNode) {
