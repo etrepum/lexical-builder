@@ -6,8 +6,7 @@
  *
  */
 
-import { TextNode } from "lexical";
-
+import { type TextNode } from "lexical";
 import { $createEmojiNode } from "./EmojiNode";
 import { findEmoji } from "./findEmoji";
 
@@ -38,7 +37,8 @@ export function $textNodeTransform(node: TextNode): void {
       emojiMatch.position + emojiMatch.shortcode.length,
     );
   }
-
-  const emojiNode = $createEmojiNode(emojiMatch.emoji);
-  targetNode!.replace(emojiNode);
+  if (targetNode !== undefined) {
+    const emojiNode = $createEmojiNode(emojiMatch.emoji);
+    targetNode.replace(emojiNode);
+  }
 }

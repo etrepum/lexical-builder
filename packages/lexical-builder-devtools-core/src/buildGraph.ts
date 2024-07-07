@@ -1,6 +1,6 @@
-import { AnyLexicalPlan, LexicalBuilder } from "@etrepum/lexical-builder";
-import { LexicalEditor } from "lexical";
-import { displayName } from "./BuilderGraphComponent";
+import { type AnyLexicalPlan, LexicalBuilder } from "@etrepum/lexical-builder";
+import { type LexicalEditor } from "lexical";
+import { displayName } from "./displayName";
 
 export function buildGraph(editor: LexicalEditor): string {
   const builder = LexicalBuilder.fromEditor(editor);
@@ -11,7 +11,7 @@ export function buildGraph(editor: LexicalEditor): string {
   const planReps = [...builder.sortedPlanReps()];
   const nameToId: Record<string, string> = {};
   for (let i = 0; i < planReps.length; i++) {
-    nameToId[planReps[i]!.plan.name] = `P${i}`;
+    nameToId[planReps[i]!.plan.name] = `P${String(i)}`;
   }
   function q(plan: AnyLexicalPlan): string {
     return nameToId[plan.name]!;
@@ -29,5 +29,5 @@ export function buildGraph(editor: LexicalEditor): string {
       }
     }
   }
-  return output.join("\n  ") + "\n";
+  return `${output.join("\n  ")}\n`;
 }

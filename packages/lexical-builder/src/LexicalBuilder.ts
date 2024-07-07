@@ -36,8 +36,8 @@ export const builderSymbol = Symbol.for("@etrepum/lexical-builder");
  * Build a LexicalEditor by combining together one or more plans, optionally
  * overriding some of their configuration.
  *
- * @param plan A plan argument (a plan, or a plan with config overrides)
- * @param plans Optional additional plan arguments
+ * @param plan - A plan argument (a plan, or a plan with config overrides)
+ * @param plans - Optional additional plan arguments
  * @returns An editor handle
  *
  * @example A single root plan with multiple dependencies
@@ -78,7 +78,9 @@ export function buildEditorFromPlans(
 }
 
 /** @internal */
-function noop() {}
+function noop() {
+  /*empty*/
+}
 
 /** Throw the given Error */
 function defaultOnError(err: Error) {
@@ -86,7 +88,7 @@ function defaultOnError(err: Error) {
 }
 
 interface WithBuilder {
-  [builderSymbol]?: LexicalBuilder;
+  [builderSymbol]?: LexicalBuilder | undefined;
 }
 
 /** @internal */
@@ -106,7 +108,7 @@ export class LexicalBuilder {
 
   constructor() {
     // closure compiler can't handle class initializers
-    this.phases = [new Map()];
+    this.phases = [new Map<AnyLexicalPlan, PlanRep<AnyLexicalPlan>>()];
     this.planMap = new Map();
     this.planNameMap = new Map();
     this.conflicts = new Map();
@@ -138,8 +140,11 @@ export class LexicalBuilder {
 
   buildEditor(): LexicalEditorWithDispose {
     const controller = new AbortController();
-    const { $initialEditorState, onError, ...editorConfig } =
-      this.buildCreateEditorArgs(controller.signal);
+    const {
+      $initialEditorState: _$initialEditorState,
+      onError,
+      ...editorConfig
+    } = this.buildCreateEditorArgs(controller.signal);
     let disposeOnce = noop;
     function dispose() {
       try {
@@ -151,15 +156,23 @@ export class LexicalBuilder {
     const editor: LexicalEditorWithDispose & WithBuilder = Object.assign(
       createEditor({
         ...editorConfig,
-        ...(onError ? { onError: (err) => { onError(err, editor); } } : {}),
+        ...(onError
+          ? {
+              onError: (err) => {
+                onError(err, editor);
+              },
+            }
+          : {}),
       }),
       { [builderSymbol]: this, dispose, [Symbol.dispose]: dispose },
     );
     disposeOnce = mergeRegister(
       () => {
-        delete maybeWithBuilder(editor)[builderSymbol];
+        maybeWithBuilder(editor)[builderSymbol] = undefined;
       },
-      () => { editor.setRootElement(null); },
+      () => {
+        editor.setRootElement(null);
+      },
       this.registerEditor(editor, controller),
     );
     return editor;
@@ -233,14 +246,7 @@ export class LexicalBuilder {
         if (dep) {
           phase = Math.max(
             phase,
-            1 +
-              this.addPlan(
-                configPlan(
-                  dep.plan,
-                  (cfg || {}) as LexicalPlanConfig<typeof dep.plan>,
-                ),
-                plan,
-              ),
+            1 + this.addPlan(configPlan(dep.plan, cfg || {}), plan),
           );
         }
       }

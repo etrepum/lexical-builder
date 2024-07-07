@@ -27,8 +27,8 @@ export type EmojiMatch = Readonly<{
 const emojiReplacementMap = supportedEmojis
   .split("\n")
   .reduce<Map<string, string>>((acc, line) => {
-    const [emoji, short_name, ...texts] = line.split(" ");
-    acc.set(`:${short_name}:`, emoji!);
+    const [emoji, shortName, ...texts] = line.split(" ");
+    acc.set(`:${shortName!}:`, emoji!);
     for (const text of texts) {
       acc.set(text, emoji!);
     }
@@ -43,7 +43,7 @@ const emojiReplacementMap = supportedEmojis
  *
  * @example Matching canonical short names
  * ```js
- * assert(findEmoji(":man-facepalming").emoji === "🤦‍♂️");
+ * assert(findEmoji(":man-facepalming:").emoji === "🤦‍♂️");
  * ```
  *
  * @example Matching non-canonical text for an emoji

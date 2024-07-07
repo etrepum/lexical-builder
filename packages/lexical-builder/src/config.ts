@@ -1,5 +1,5 @@
-import { InitialEditorConfig } from "@etrepum/lexical-builder-core";
-import { KlassConstructor, LexicalNode } from "lexical";
+import type { InitialEditorConfig } from "@etrepum/lexical-builder-core";
+import type { KlassConstructor, LexicalNode } from "lexical";
 
 export interface KnownTypesAndNodes {
   types: Set<string>;

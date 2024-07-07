@@ -7,7 +7,6 @@
  */
 
 import type { LexicalNode, SerializedTextNode, Spread } from "lexical";
-
 import { TextNode } from "lexical";
 
 export type SerializedEmojiNode = Spread<
@@ -51,7 +50,7 @@ export class EmojiNode extends TextNode {
 }
 
 /**
- * @param text The emoji string (a decoded unified id)
+ * @param text - The emoji string (a decoded unified id)
  * @returns the EmojiNode
  */
 export function $createEmojiNode(text: string): EmojiNode {

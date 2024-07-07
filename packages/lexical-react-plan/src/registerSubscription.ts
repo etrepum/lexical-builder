@@ -29,6 +29,7 @@ export function registerLexicalSubscription<T>(
     initialized = true;
     onChange(v);
   });
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- false positive
   if (!initialized) {
     onChange(subscription.initialValueFn(editor));
   }

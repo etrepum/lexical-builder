@@ -8,7 +8,7 @@
 
 import { definePlan, safeCast } from "@etrepum/lexical-builder";
 import { mergeRegister } from "@lexical/utils";
-import { LexicalEditor, NodeKey, TextNode } from "lexical";
+import { type LexicalEditor, type NodeKey, TextNode } from "lexical";
 import { EmojiNode } from "./EmojiNode";
 import { unifiedIDFromText } from "./unifiedID";
 
@@ -18,7 +18,7 @@ const NAME = "@etrepum/lexical-builder/emoji-plan";
 export interface EmojiPlanConfig {
   /**
    * The base URL to find the emoji PNG files, originally from the 64x64 set in emoji-datasource-facebook.
-   * Default: https://cdn.jsdelivr.net/npm/@etrepum/lexical-emoji-plan@${import.meta.env.PACKAGE_VERSION}/dist/emoji
+   * Default: "https://cdn.jsdelivr.net/npm/\@etrepum/lexical-emoji-plan\@$\{PACKAGE_VERSION\}/dist/emoji"
    *
    * Do not add a trailing slash to the path.
    */
@@ -49,7 +49,7 @@ export interface EmojiPlanConfig {
  */
 export const EmojiPlan = definePlan({
   config: safeCast<EmojiPlanConfig>({
-    emojiBaseUrl: `https://cdn.jsdelivr.net/npm/@etrepum/lexical-emoji-plan@${import.meta.env.PACKAGE_VERSION}/dist/emoji`,
+    emojiBaseUrl: `https://cdn.jsdelivr.net/npm/@etrepum/lexical-emoji-plan@${PACKAGE_VERSION}/dist/emoji`,
     emojiClass: "emoji-node",
     emojiLoadedClass: "emoji-node-loaded",
   }),
@@ -84,9 +84,9 @@ export const EmojiPlan = definePlan({
                 dom.classList.add(config.emojiLoadedClass);
                 nodeCleanup.delete(nodeKey);
               };
-              nodeCleanup.set(nodeKey, () =>
-                img.removeEventListener("load", callback),
-              );
+              nodeCleanup.set(nodeKey, () => {
+                img.removeEventListener("load", callback);
+              });
               img.addEventListener("load", callback, {
                 signal: state.signal,
                 once: true,
@@ -104,7 +104,7 @@ export const EmojiPlan = definePlan({
       },
     );
     // Defer loading of the transform which needs to load the emoji JSON
-    import("./$textNodeTransform").then(({ $textNodeTransform }) => {
+    void import("./$textNodeTransform").then(({ $textNodeTransform }) => {
       if (!state.signal.aborted) {
         cleanup = mergeRegister(
           cleanup,
@@ -112,6 +112,8 @@ export const EmojiPlan = definePlan({
         );
       }
     });
-    return () => cleanup();
+    return () => {
+      cleanup();
+    };
   },
 });

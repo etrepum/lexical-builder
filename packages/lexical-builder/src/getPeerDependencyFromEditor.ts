@@ -1,5 +1,5 @@
-import { LexicalEditor } from "lexical";
-import {
+import type { LexicalEditor } from "lexical";
+import type {
   AnyLexicalPlan,
   LexicalPlanDependency,
 } from "@etrepum/lexical-builder-core";
@@ -21,8 +21,8 @@ import { LexicalBuilder } from "./LexicalBuilder";
  * getPeerDependencyFromEditor<typeof import("@some/plan").SomePlan>(editor, "@some/plan");
  * ```
 
- * @param editor The editor that may have been built using plan
- * @param planName The name of the Plan
+ * @param editor - The editor that may have been built using plan
+ * @param planName - The name of the Plan
  * @returns The config and output of the Plan or undefined
  */
 export function getPeerDependencyFromEditor<

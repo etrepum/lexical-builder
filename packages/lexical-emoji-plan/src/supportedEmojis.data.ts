@@ -1,5 +1,6 @@
 import emojis from "emoji-datasource-facebook/emoji.json";
 import { textFromUnifiedID } from "./unifiedID";
+/* eslint-disable camelcase -- database is not in camel case */
 
 /**
  * We rewrite the emoji dataset into plain text delimited by

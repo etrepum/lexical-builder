@@ -10,8 +10,8 @@ import type { PlanConfigBase } from "./types";
 /**
  * The default merge strategy for plan configuration is a shallow merge.
  *
- * @param config A full config
- * @param overrides A partial config of overrides
+ * @param config - A full config
+ * @param overrides - A partial config of overrides
  * @returns config if there are no overrides, otherwise `{...config, ...overrides}`
  */
 export function shallowMergeConfig<T extends PlanConfigBase>(

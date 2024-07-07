@@ -6,7 +6,6 @@
  *
  */
 
-import type { LexicalBuilder } from "./LexicalBuilder";
 import type {
   AnyLexicalPlan,
   InitialEditorConfig,
@@ -16,13 +15,11 @@ import type {
   LexicalPlanOutput,
   RegisterState,
 } from "@etrepum/lexical-builder-core";
-
-import invariant from "./shared/invariant";
-
 import { shallowMergeConfig } from "@etrepum/lexical-builder-core";
 import type { LexicalEditor } from "lexical";
+import invariant from "./shared/invariant";
+import type { LexicalBuilder } from "./LexicalBuilder";
 
-const noop = () => {};
 /**
  * @internal
  */
@@ -82,7 +79,7 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
         editorConfig,
         config,
         registerState as RegisterState<never>,
-      );
+      ) as LexicalPlanInit<Plan>;
     }
   }
   getInitResult(): LexicalPlanInit<Plan> {
@@ -91,7 +88,8 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
       "PlanRep: getInitResult() called for Plan %s but no result was set",
       this.plan.name,
     );
-    return this._initResult!;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- LexicalPlanInit<Plan> is any
+    return this._initResult! as LexicalPlanInit<Plan>;
   }
   getRegisterState(signal: AbortSignal): RegisterState<LexicalPlanInit<Plan>> {
     if (!this._registerState) {
@@ -159,16 +157,18 @@ export class PlanRep<Plan extends AnyLexicalPlan> {
   }
   getConfig(): LexicalPlanConfig<Plan> {
     if (this._config === undefined) {
-      let config = this.plan.config || {};
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- LexicalPlanConfig<Plan> is any
+      let config: LexicalPlanConfig<Plan> = this.plan.config || {};
       const mergeConfig = this.plan.mergeConfig
         ? this.plan.mergeConfig.bind(this.plan)
         : shallowMergeConfig;
       for (const cfg of this.configs) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- LexicalPlanConfig<Plan> is any
         config = mergeConfig(config, cfg);
       }
       this._config = config;
-      return config;
     }
-    return this._config;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- LexicalPlanConfig<Plan> is any
+    return this._config!;
   }
 }

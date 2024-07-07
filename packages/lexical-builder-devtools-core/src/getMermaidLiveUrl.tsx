@@ -11,8 +11,7 @@ export function getMermaidLiveUrl(code: string): string {
     updateEditor: false,
     editorMode: "code",
   });
-  return (
-    `https://mermaid.live/edit#pako:` +
-    fromUint8Array(deflate(new TextEncoder().encode(state), { level: 9 }))
-  );
+  return `https://mermaid.live/edit#pako:${fromUint8Array(
+    deflate(new TextEncoder().encode(state), { level: 9 }),
+  )}`;
 }

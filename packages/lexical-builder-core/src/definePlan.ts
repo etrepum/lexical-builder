@@ -21,7 +21,7 @@ import type {
  * infer Config and Name in most cases, but you may want to use
  * {@link safeCast} for config if there are default fields or varying types.
  *
- * @param plan The LexicalPlan
+ * @param plan - The LexicalPlan
  * @returns The unmodified plan argument (this is only an inference helper)
  *
  * @example Basic example
@@ -68,7 +68,7 @@ export function definePlan<
  * plan.mergeConfig(plan, config) or {@link shallowMergeConfig} if
  * this is not directly implemented by the Plan.
  *
- * @param args A plan followed by one or more config partials for that plan
+ * @param args - A plan followed by one or more config partials for that plan
  * @returns [plan, config, ...configs]
  *
  * @example
@@ -141,7 +141,12 @@ export function provideOutput<Output>(
   output: Output,
   cleanup?: () => void,
 ): RegisterCleanup<Output> {
-  return Object.assign(() => cleanup && cleanup(), { output } as const);
+  return Object.assign(
+    () => {
+      cleanup && cleanup();
+    },
+    { output } as const,
+  );
 }
 
 /** @internal */
@@ -161,8 +166,8 @@ export const OutputTypeId: unique symbol = Symbol.for(
  * is to avoid a direct import dependency, so you would want to use a
  * type import or the import type (shown in below examples).
  *
- * @param name The plan's name
- * @param config An optional config override
+ * @param name - The plan's name
+ * @param config - An optional config override
  * @returns NormalizedPeerDependency
  *
  * @example
@@ -174,6 +179,7 @@ export const OutputTypeId: unique symbol = Symbol.for(
  *     declarePeerDependency<typeof import("bar").BarPlan>("bar", {config: "bar"}),
  *   ],
  * });
+ * ```
  */
 export function declarePeerDependency<Plan extends AnyLexicalPlan = never>(
   name: Plan["name"],

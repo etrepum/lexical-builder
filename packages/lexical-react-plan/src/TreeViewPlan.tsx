@@ -1,7 +1,7 @@
-import { definePlan, provideOutput, safeCast } from "@etrepum/lexical-builder";
+import { definePlan, provideOutput } from "@etrepum/lexical-builder";
 import { TreeView } from "@lexical/react/LexicalTreeView";
-import { usePlanDependency } from "./usePlanComponent";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { usePlanDependency } from "./usePlanComponent";
 import { ReactPlan } from "./ReactPlan";
 
 export type TreeViewConfig = Omit<Parameters<typeof TreeView>[0], "editor">;

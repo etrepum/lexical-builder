@@ -12,13 +12,11 @@ import {
   provideOutput,
   shallowMergeConfig,
 } from "@etrepum/lexical-builder";
-
 import { type LexicalComposerContextWithEditor } from "@lexical/react/LexicalComposerContext";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-
 import { buildEditorComponent } from "./buildEditorComponent";
-import { ReactConfig, ReactOutputs } from "./types";
+import { type ReactConfig, type ReactOutputs } from "./types";
 import { DefaultEditorChildrenComponent } from "./DefaultEditorChildrenComponent";
 import { ReactProviderPlan } from "./ReactProviderPlan";
 import invariant from "./shared/invariant";

@@ -17,16 +17,16 @@ import {
 } from "lexical";
 
 export function indexBy<T>(
-  list: Array<T>,
+  list: T[],
   callback: (arg0: T) => string,
-): Readonly<Record<string, Array<T>>> {
-  const index: Record<string, Array<T>> = {};
+): Readonly<Record<string, T[]>> {
+  const index: Record<string, T[]> = {};
 
   for (const item of list) {
     const key = callback(item);
-
-    if (index[key]) {
-      index[key]!.push(item);
+    const arr = index[key];
+    if (arr) {
+      arr.push(item);
     } else {
       index[key] = [item];
     }
@@ -66,9 +66,10 @@ export function $isEmptyParagraph(
  * update you're running includes selection modifications that you do not
  * want.
  *
- * This is useful because the existing @lexical/markdown importers
+ * This is useful because the existing \@lexical/markdown importers
  * mangle the selection because of legacy mistakes.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
 export function $wrapWithIgnoreSelection<Parameters extends any[], Returns>(
   $update: (...args: Parameters) => Returns,
 ): (...args: Parameters) => Returns {
