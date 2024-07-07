@@ -20,6 +20,7 @@ import {
 } from "@etrepum/lexical-builder-markdown";
 import { TailwindPlan } from "@etrepum/lexical-tailwind";
 import { $getRoot } from "lexical";
+import { SlackPastePlan } from "./SlackPastePlan";
 
 const INITIAL_CONTENT = `
 # Welcome to the Svelte 5 Tailwind example!
@@ -55,6 +56,7 @@ export function buildEditor(): LexicalEditorWithDispose {
       AutoLinkPlan,
       ClickableLinkPlan,
       CheckListPlan,
+      SlackPastePlan,
     ],
     $initialEditorState(editor) {
       const { $markdownImport } = getPlanDependencyFromEditor(
