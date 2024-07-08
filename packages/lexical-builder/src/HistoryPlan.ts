@@ -33,7 +33,7 @@ export const HistoryPlan = definePlan({
     createInitialHistoryState: createEmptyHistoryState,
     delay: 300,
   }),
-  name: "@etrepum/lexical-builder/HistoryPlan",
+  name: "@etrepum/lexical-builder/History",
   register(editor, { delay, createInitialHistoryState }) {
     return registerHistory(editor, createInitialHistoryState(), delay);
   },

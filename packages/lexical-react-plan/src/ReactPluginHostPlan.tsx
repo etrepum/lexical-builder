@@ -121,7 +121,7 @@ function PluginHostDecorator({
       },
       COMMAND_PRIORITY_EDITOR,
     );
-  }, []);
+  }, [editor, renderMountedPlugins]);
   return children;
 }
 
@@ -142,7 +142,7 @@ export const ReactPluginHostPlan = definePlan({
     ReactProviderPlan,
     configPlan(ReactPlan, { decorators: [PluginHostDecorator] }),
   ],
-  name: "@etrepum/lexical-builder/ReactPluginHostPlan",
+  name: "@etrepum/lexical-builder/ReactPluginHost",
   register(editor, _config, state) {
     let root: Root | undefined;
     const mountedPlugins = new Map<

@@ -25,7 +25,13 @@ import { mergeRegister } from "@lexical/utils";
 import { configPlan } from "@etrepum/lexical-builder-core";
 import invariant from "./shared/invariant";
 import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
-import { PlanRep } from "./PlanRep";
+import {
+  PlanRep,
+  applyPermanentMark,
+  applyTemporaryMark,
+  isExactlyPermanentPlanRepState,
+  isExactlyUnmarkedPlanRepState,
+} from "./PlanRep";
 import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
 import { InitialStatePlan } from "./InitialStatePlan";
 
@@ -36,8 +42,7 @@ export const builderSymbol = Symbol.for("@etrepum/lexical-builder");
  * Build a LexicalEditor by combining together one or more plans, optionally
  * overriding some of their configuration.
  *
- * @param plan - A plan argument (a plan, or a plan with config overrides)
- * @param plans - Optional additional plan arguments
+ * @param plans - Plan arguments (plans or plans with config overrides)
  * @returns An editor handle
  *
  * @example A single root plan with multiple dependencies
@@ -65,16 +70,9 @@ export const builderSymbol = Symbol.for("@etrepum/lexical-builder");
  * ```
  */
 export function buildEditorFromPlans(
-  plan: AnyLexicalPlanArgument,
   ...plans: AnyLexicalPlanArgument[]
 ): LexicalEditorWithDispose {
-  const builder = new LexicalBuilder();
-  builder.addPlan(InitialStatePlan);
-  builder.addPlan(plan);
-  for (const otherPlan of plans) {
-    builder.addPlan(otherPlan);
-  }
-  return builder.buildEditor();
+  return LexicalBuilder.fromPlans(plans).buildEditor();
 }
 
 /** @internal */
@@ -96,25 +94,44 @@ function maybeWithBuilder(editor: LexicalEditor): LexicalEditor & WithBuilder {
   return editor;
 }
 
+type AnyNormalizedLexicalPlanArgument = ReturnType<
+  typeof normalizePlanArgument
+>;
+function normalizePlanArgument(arg: AnyLexicalPlanArgument) {
+  return Array.isArray(arg) ? arg : configPlan(arg);
+}
+
 /** @internal */
 export class LexicalBuilder {
-  phases: Map<AnyLexicalPlan, PlanRep<AnyLexicalPlan>>[];
-  planMap: Map<AnyLexicalPlan, [number, PlanRep<AnyLexicalPlan>]>;
+  roots: readonly AnyNormalizedLexicalPlanArgument[];
   planNameMap: Map<string, PlanRep<AnyLexicalPlan>>;
-  reverseEdges: Map<AnyLexicalPlan, Set<AnyLexicalPlan>>;
-  addStack: Set<AnyLexicalPlan>;
+  outgoingConfigEdges: Map<
+    string,
+    Map<string, LexicalPlanConfig<AnyLexicalPlan>[]>
+  >;
+  incomingEdges: Map<string, Set<string>>;
   conflicts: Map<string, string>;
+  _sortedPlanReps?: readonly PlanRep<AnyLexicalPlan>[];
   PACKAGE_VERSION: string;
 
-  constructor() {
-    // closure compiler can't handle class initializers
-    this.phases = [new Map<AnyLexicalPlan, PlanRep<AnyLexicalPlan>>()];
-    this.planMap = new Map();
+  constructor(roots: AnyNormalizedLexicalPlanArgument[]) {
+    this.outgoingConfigEdges = new Map();
+    this.incomingEdges = new Map();
     this.planNameMap = new Map();
     this.conflicts = new Map();
-    this.reverseEdges = new Map();
-    this.addStack = new Set();
     this.PACKAGE_VERSION = PACKAGE_VERSION;
+    this.roots = roots;
+    for (const plan of roots) {
+      this.addPlan(plan);
+    }
+  }
+
+  static fromPlans(plans: AnyLexicalPlanArgument[]): LexicalBuilder {
+    const roots = [normalizePlanArgument(InitialStatePlan)];
+    for (const plan of plans) {
+      roots.push(normalizePlanArgument(plan));
+    }
+    return new LexicalBuilder(roots);
   }
 
   /** Look up the editor that was created by this LexicalBuilder or throw */
@@ -181,38 +198,60 @@ export class LexicalBuilder {
   getPlanRep<Plan extends AnyLexicalPlan>(
     plan: Plan,
   ): PlanRep<Plan> | undefined {
-    const pair = this.planMap.get(plan);
-    if (pair) {
-      const rep: PlanRep<AnyLexicalPlan> = pair[1];
+    const rep = this.planNameMap.get(plan.name);
+    if (rep) {
+      invariant(
+        rep.plan === plan,
+        "LexicalBuilder: A registered plan with name %s exists but does not match the given plan",
+        plan.name,
+      );
       return rep as PlanRep<Plan>;
     }
   }
 
-  addPlan(arg: AnyLexicalPlanArgument, parent?: AnyLexicalPlan): number {
-    let plan: AnyLexicalPlan;
-    let configs: unknown[];
-    if (Array.isArray(arg)) {
-      [plan, ...configs] = arg;
+  addEdge(
+    fromPlanName: string,
+    toPlanName: string,
+    configs: LexicalPlanConfig<AnyLexicalPlan>[],
+  ) {
+    const outgoing = this.outgoingConfigEdges.get(fromPlanName);
+    if (outgoing) {
+      outgoing.set(toPlanName, configs);
     } else {
-      plan = arg;
-      configs = [];
+      this.outgoingConfigEdges.set(
+        fromPlanName,
+        new Map([[toPlanName, configs]]),
+      );
     }
+    const incoming = this.incomingEdges.get(toPlanName);
+    if (incoming) {
+      incoming.add(fromPlanName);
+    } else {
+      this.incomingEdges.set(toPlanName, new Set([fromPlanName]));
+    }
+  }
+
+  addPlan(arg: AnyLexicalPlanArgument) {
+    invariant(
+      this._sortedPlanReps === undefined,
+      "LexicalBuilder: addPlan called after finalization",
+    );
+    const normalized = normalizePlanArgument(arg);
+    const [plan] = normalized;
     invariant(
       typeof plan.name === "string",
       "LexicalBuilder: plan name must be string, not %s",
       typeof plan.name,
     );
-    // Track incoming dependencies
-    if (parent) {
-      let edgeSet = this.reverseEdges.get(plan);
-      if (!edgeSet) {
-        edgeSet = new Set();
-        this.reverseEdges.set(plan, edgeSet);
-      }
-      edgeSet.add(parent);
-    }
-    let [phase, planRep] = this.planMap.get(plan) || [0, undefined];
+    let planRep = this.planNameMap.get(plan.name);
+    invariant(
+      planRep === undefined || planRep.plan === plan,
+      "LexicalBuilder: Multiple plans registered with name %s, names must be unique",
+      plan.name,
+    );
     if (!planRep) {
+      planRep = new PlanRep(this, plan);
+      this.planNameMap.set(plan.name, planRep);
       const hasConflict = this.conflicts.get(plan.name);
       if (typeof hasConflict === "string") {
         invariant(
@@ -231,59 +270,87 @@ export class LexicalBuilder {
         );
         this.conflicts.set(name, plan.name);
       }
-      invariant(
-        !this.addStack.has(plan),
-        "LexicalBuilder: Circular dependency detected for Plan %s from %s",
-        plan.name,
-        parent?.name || "[unknown]",
-      );
-      this.addStack.add(plan);
       for (const dep of plan.dependencies || []) {
-        phase = Math.max(phase, 1 + this.addPlan(dep, plan));
+        const normDep = normalizePlanArgument(dep);
+        this.addEdge(plan.name, normDep[0].name, normDep.slice(1));
+        this.addPlan(normDep);
       }
-      for (const [depName, cfg] of plan.peerDependencies || []) {
-        const dep = this.planNameMap.get(depName);
-        if (dep) {
-          phase = Math.max(
-            phase,
-            1 + this.addPlan(configPlan(dep.plan, cfg || {}), plan),
-          );
-        }
+      for (const [depName, config] of plan.peerDependencies || []) {
+        this.addEdge(plan.name, depName, config ? [config] : []);
       }
-      invariant(
-        this.phases.length >= phase,
-        "LexicalBuilder: Expected phase to be no greater than phases.length",
-      );
-      if (this.phases.length === phase) {
-        this.phases.push(new Map());
-      }
-      planRep = new PlanRep(this, plan);
-      invariant(
-        !this.planNameMap.has(plan.name),
-        "LexicalBuilder: Multiple plans registered with name %s, names must be unique",
-        plan.name,
-      );
-      this.planMap.set(plan, [phase, planRep]);
-      this.planNameMap.set(plan.name, planRep);
-      const currentPhaseMap = this.phases[phase];
-      invariant(
-        currentPhaseMap !== undefined,
-        "LexicalBuilder: Expecting phase map for phase %s",
-        String(phase),
-      );
-      currentPhaseMap.set(plan, planRep);
-      this.addStack.delete(plan);
     }
-    for (const config of configs) {
-      planRep.configs.add(config as Partial<LexicalPlanConfig<AnyLexicalPlan>>);
-    }
-    return phase;
   }
 
-  *sortedPlanReps() {
-    for (const phase of this.phases) {
-      yield* phase.values();
+  sortedPlanReps(): readonly PlanRep<AnyLexicalPlan>[] {
+    if (this._sortedPlanReps) {
+      return this._sortedPlanReps;
     }
+    // depth-first search based topological DAG sort
+    // https://en.wikipedia.org/wiki/Topological_sorting
+    const sortedPlanReps: PlanRep<AnyLexicalPlan>[] = [];
+    const visit = (rep: PlanRep<AnyLexicalPlan>, fromPlanName?: string) => {
+      let mark = rep.state;
+      if (isExactlyPermanentPlanRepState(mark)) {
+        return;
+      }
+      const planName = rep.plan.name;
+      invariant(
+        isExactlyUnmarkedPlanRepState(mark),
+        "LexicalBuilder: Circular dependency detected for Plan %s from %s",
+        planName,
+        fromPlanName || "[unknown]",
+      );
+      mark = applyTemporaryMark(mark);
+      rep.state = mark;
+      const outgoingConfigEdges = this.outgoingConfigEdges.get(planName);
+      if (outgoingConfigEdges) {
+        for (const toPlanName of outgoingConfigEdges.keys()) {
+          const toRep = this.planNameMap.get(toPlanName);
+          // may be undefined for an optional peer dependency
+          if (toRep) {
+            visit(toRep, planName);
+          }
+        }
+      }
+      mark = applyPermanentMark(mark);
+      rep.state = mark;
+      sortedPlanReps.push(rep);
+    };
+    for (const rep of this.planNameMap.values()) {
+      if (isExactlyUnmarkedPlanRepState(rep.state)) {
+        visit(rep);
+      }
+    }
+    for (const rep of sortedPlanReps) {
+      for (const [toPlanName, configs] of this.outgoingConfigEdges.get(
+        rep.plan.name,
+      ) || []) {
+        if (configs.length > 0) {
+          const toRep = this.planNameMap.get(toPlanName);
+          if (toRep) {
+            for (const config of configs) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- any
+              toRep.configs.add(config);
+            }
+          }
+        }
+      }
+    }
+    for (const [plan, ...configs] of this.roots) {
+      if (configs.length > 0) {
+        const toRep = this.planNameMap.get(plan.name);
+        invariant(
+          toRep !== undefined,
+          "LexicalBuilder: Expecting existing PlanRep for %s",
+          plan.name,
+        );
+        for (const config of configs) {
+          toRep.configs.add(config);
+        }
+      }
+    }
+    this._sortedPlanReps = sortedPlanReps;
+    return this._sortedPlanReps;
   }
 
   registerEditor(
@@ -291,22 +358,19 @@ export class LexicalBuilder {
     controller: AbortController,
   ): () => void {
     const cleanups: (() => void)[] = [];
-    const signal = controller.signal;
-    const planReps: PlanRep<AnyLexicalPlan>[] = [];
-    for (const planRep of this.sortedPlanReps()) {
-      const cleanup = planRep.register(editor, signal);
+    const planReps = this.sortedPlanReps();
+    for (const planRep of planReps) {
+      const cleanup = planRep.register(editor);
       if (cleanup) {
         cleanups.push(cleanup);
       }
-      planReps.push(planRep);
     }
     for (const planRep of planReps) {
-      const cleanup = planRep.afterInitialization(editor, signal);
+      const cleanup = planRep.afterInitialization(editor);
       if (cleanup) {
         cleanups.push(cleanup);
       }
     }
-    planReps.length = 0;
     return () => {
       for (let i = cleanups.length - 1; i >= 0; i--) {
         const cleanupFun = cleanups[i];
@@ -332,7 +396,7 @@ export class LexicalBuilder {
     const htmlExport: NonNullable<HTMLConfig["export"]> = new Map();
     const htmlImport: NonNullable<HTMLConfig["import"]> = {};
     const theme: EditorThemeClasses = {};
-    const planReps = [...this.sortedPlanReps()];
+    const planReps = this.sortedPlanReps();
     for (const planRep of planReps) {
       const { plan } = planRep;
       if (plan.onError !== undefined) {

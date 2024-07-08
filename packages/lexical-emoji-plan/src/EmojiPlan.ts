@@ -7,14 +7,17 @@
  */
 
 import { definePlan, safeCast } from "@etrepum/lexical-builder";
-import { mergeRegister } from "@lexical/utils";
+import {
+  addClassNamesToElement,
+  mergeRegister,
+  removeClassNamesFromElement,
+} from "@lexical/utils";
 import { type LexicalEditor, type NodeKey, TextNode } from "lexical";
 import { EmojiNode } from "./EmojiNode";
 import { unifiedIDFromText } from "./unifiedID";
 
 export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
 
-const NAME = "@etrepum/lexical-builder/emoji-plan";
 export interface EmojiPlanConfig {
   /**
    * The base URL to find the emoji PNG files, originally from the 64x64 set in emoji-datasource-facebook.
@@ -27,6 +30,10 @@ export interface EmojiPlanConfig {
    * The class to use for emoji nodes
    */
   emojiClass: string;
+  /**
+   * The class to use for emoji nodes before the image is loaded
+   */
+  emojiLoadingClass: string;
   /**
    * The class to use for emoji nodes after the image is loaded and set as a background-image
    */
@@ -51,9 +58,10 @@ export const EmojiPlan = definePlan({
   config: safeCast<EmojiPlanConfig>({
     emojiBaseUrl: `https://cdn.jsdelivr.net/npm/@etrepum/lexical-emoji-plan@${PACKAGE_VERSION}/dist/emoji`,
     emojiClass: "emoji-node",
+    emojiLoadingClass: "emoji-node-loading",
     emojiLoadedClass: "emoji-node-loaded",
   }),
-  name: NAME,
+  name: "@etrepum/lexical-emoji-plan/Emoji",
   nodes: [EmojiNode],
   register(editor: LexicalEditor, config, state) {
     const nodeCleanup = new Map<NodeKey, () => void>();
@@ -77,11 +85,16 @@ export const EmojiPlan = definePlan({
               // in which case we would want to have a separate class and not
               // use a background image if we don't have one.
               const imageUrl = `${config.emojiBaseUrl}/${unifiedIDFromText(dom.innerText)}.png`;
-              dom.classList.add(config.emojiClass);
+              addClassNamesToElement(
+                dom,
+                config.emojiClass,
+                config.emojiLoadingClass,
+              );
               dom.style.backgroundImage = `url(${imageUrl})`;
               const img = new Image();
               const callback = () => {
-                dom.classList.add(config.emojiLoadedClass);
+                removeClassNamesFromElement(dom, config.emojiLoadingClass);
+                addClassNamesToElement(dom, config.emojiLoadedClass);
                 nodeCleanup.delete(nodeKey);
               };
               nodeCleanup.set(nodeKey, () => {

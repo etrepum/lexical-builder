@@ -11,7 +11,7 @@ import invariant from "./shared/invariant";
  *
  * This is useful in the implementation of a LexicalNode or in other
  * situations where you have an editor reference but it's not easy to
- * pass the config or {@link RegisterState} around.
+ * pass the config or {@link PlanRegisterState} around.
  *
  * It will throw if the Editor was not built using this Plan.
  *

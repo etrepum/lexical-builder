@@ -35,7 +35,7 @@ export interface LinkOutput {
 }
 
 export const LinkPlan = definePlan({
-  name: "@etrepum/lexical-builder-link/LinkPlan",
+  name: "@etrepum/lexical-builder-link/Link",
   config: safeCast<LinkConfig>({ disabled: false }),
   nodes: [LinkNode],
   register(editor, config) {

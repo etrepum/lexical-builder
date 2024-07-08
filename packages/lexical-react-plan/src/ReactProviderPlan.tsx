@@ -9,5 +9,5 @@ import { definePlan } from "@etrepum/lexical-builder";
  * It is a separate plan so it can be used as a peer dependency.
  */
 export const ReactProviderPlan = definePlan({
-  name: "@etrepum/lexical-builder/ReactProviderPlan",
+  name: "@etrepum/lexical-builder/ReactProvider",
 });

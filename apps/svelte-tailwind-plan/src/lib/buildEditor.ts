@@ -19,13 +19,14 @@ import {
   MarkdownShortcutsPlan,
 } from "@etrepum/lexical-builder-markdown";
 import { TailwindPlan } from "@etrepum/lexical-tailwind";
+import { EmojiPlan } from "@etrepum/lexical-emoji-plan";
 import { $getRoot } from "lexical";
 import { SlackPastePlan } from "./SlackPastePlan";
 
 const INITIAL_CONTENT = `
 # Welcome to the Svelte 5 Tailwind example!
 
-This example uses *markdown*, **markdown shortcuts**, _history_, and the link plan!
+This example uses *markdown*, **markdown shortcuts**, _history_, emoji and the link plan!
 
 > Quotes are supported
 
@@ -57,6 +58,7 @@ export function buildEditor(): LexicalEditorWithDispose {
       ClickableLinkPlan,
       CheckListPlan,
       SlackPastePlan,
+      EmojiPlan,
     ],
     $initialEditorState(editor) {
       const { $markdownImport } = getPlanDependencyFromEditor(

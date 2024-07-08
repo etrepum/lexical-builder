@@ -1,15 +1,24 @@
 import { definePlan } from "@etrepum/lexical-builder";
-import { $createLineBreakNode } from "lexical";
+import { $createLineBreakNode, $createTextNode } from "lexical";
 
 export const SlackPastePlan = definePlan({
   name: "SlackPastePlan",
   html: {
     import: {
+      img: (node) => {
+        const emoji = node.getAttribute("data-stringify-emoji");
+        if (emoji) {
+          return {
+            conversion: () => ({
+              node: $createTextNode(emoji),
+            }),
+            priority: 4,
+          };
+        }
+        return null;
+      },
       span: (node) => {
-        if (
-          node.nodeName === "SPAN" &&
-          node.getAttribute("data-stringify-type") === "paragraph-break"
-        ) {
+        if (node.getAttribute("data-stringify-type") === "paragraph-break") {
           return {
             conversion: () => ({
               node: [$createLineBreakNode(), $createLineBreakNode()],

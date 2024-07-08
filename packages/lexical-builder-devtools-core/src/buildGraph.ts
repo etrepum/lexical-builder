@@ -8,7 +8,7 @@ export function buildGraph(editor: LexicalEditor): string {
   function emit(s: string) {
     output.push(s);
   }
-  const planReps = [...builder.sortedPlanReps()];
+  const planReps = builder.sortedPlanReps();
   const nameToId: Record<string, string> = {};
   for (let i = 0; i < planReps.length; i++) {
     nameToId[planReps[i]!.plan.name] = `P${String(i)}`;

@@ -1,8 +1,9 @@
-import { definePlan } from "@etrepum/lexical-builder";
+import { declarePeerDependency, definePlan } from "@etrepum/lexical-builder";
 import { type EditorThemeClasses } from "lexical";
+import type { EmojiPlan } from "@etrepum/lexical-emoji-plan";
 
-// This [&]: is necessary to override the mx-8 from listitem since the theme is not designed for tailwind semantics (both sets of classes are applied)
 const checklistItemCommonClasses =
+  // This [&]: is necessary to override the mx-8 from listitem since the theme is not designed for tailwind semantics (both sets of classes are applied)
   "relative [&]:mx-2 px-6 list-none outline-none before:w-4 before:h-4 before:top-0.5 before:left-0 before:cursor-pointer before:block before:bg-color before:absolute rtl:before:left-auto rtl:before:right-0 focus:before:shadow-[0_0_0_2px_#a6cdfe] before:rounded-sm";
 
 const theme: EditorThemeClasses = {
@@ -117,4 +118,18 @@ const theme: EditorThemeClasses = {
 export const TailwindPlan = definePlan({
   name: "@etrepum/lexical-tailwind",
   theme,
+  peerDependencies: [
+    declarePeerDependency<typeof EmojiPlan>(
+      "@etrepum/lexical-emoji-plan/Emoji",
+      {
+        // .emoji-node
+        emojiClass:
+          "caret-neutral-950 bg-[length:1em_1em] inline-block align-top size-[1em]",
+        // .emoji-node-loaded
+        emojiLoadedClass: "color-transparent",
+        // .emoji-node-loading
+        emojiLoadingClass: "",
+      },
+    ),
+  ],
 });

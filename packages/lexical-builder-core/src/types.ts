@@ -36,26 +36,55 @@ export type NormalizedPeerDependency<Plan extends AnyLexicalPlan> = [
 ] & { readonly [peerDependencySymbol]: Plan };
 
 /**
- * A tuple of [plan, configOverride, ...configOverrides]
+ * A tuple of [plan, ...configOverrides]
  */
 export type NormalizedLexicalPlanArgument<
   in out Config extends PlanConfigBase,
   out Name extends string,
   in out Output,
   in out Init,
-> = [
-  LexicalPlan<Config, Name, Output, Init>,
-  Partial<Config>,
-  ...Partial<Config>[],
-];
+> = [LexicalPlan<Config, Name, Output, Init>, ...Partial<Config>[]];
 
 /**
  * An object that the register method can use to detect unmount and access the
  * configuration for plan dependencies
  */
-export interface RegisterState<Init> {
+export interface PlanInitState {
   /** An AbortSignal that is aborted when the LexicalEditor is disposed */
   signal: AbortSignal;
+  /**
+   * Get the result of a peerDependency by name, if it exists
+   * (must be a peerDependency of this plan)
+   */
+  getPeer: <Dependency extends AnyLexicalPlan = never>(
+    name: Dependency["name"],
+  ) => undefined | Omit<LexicalPlanDependency<Dependency>, "output">;
+  /**
+   * Get the configuration of a dependency by plan
+   * (must be a direct dependency of this plan)
+   */
+  getDependency: <Dependency extends AnyLexicalPlan>(
+    dep: Dependency,
+  ) => Omit<LexicalPlanDependency<Dependency>, "output">;
+  /**
+   * Get the names of any direct dependents of this
+   * Plan, typically only used for error messages.
+   */
+  getDirectDependentNames: () => ReadonlySet<string>;
+  /**
+   * Get the names of all peer dependencies of this
+   * Plan, even if they do not exist in the builder,
+   * typically only used for devtools.
+   */
+  getPeerNameSet: () => ReadonlySet<string>;
+}
+
+/**
+ * An object that the register method can use to detect unmount and access the
+ * configuration for plan dependencies
+ */
+export interface PlanRegisterState<Init>
+  extends Omit<PlanInitState, "getPeer" | "getDependency"> {
   /**
    * Get the result of a peerDependency by name, if it exists
    * (must be a peerDependency of this plan)
@@ -70,17 +99,6 @@ export interface RegisterState<Init> {
   getDependency: <Dependency extends AnyLexicalPlan>(
     dep: Dependency,
   ) => LexicalPlanDependency<Dependency>;
-  /**
-   * Get the names of any direct dependents of this
-   * Plan, typically only used for error messages.
-   */
-  getDirectDependentNames: () => string[];
-  /**
-   * Get the names of all peer dependencies of this
-   * Plan, even if they do not exist in the builder,
-   * typically only used for devtools.
-   */
-  getPeerNameSet: () => Set<string>;
   /**
    * The result of the init function
    */
@@ -182,7 +200,7 @@ export interface LexicalPlan<
   init?: (
     editorConfig: InitialEditorConfig,
     config: Config,
-    state: RegisterState<never>,
+    state: PlanInitState,
   ) => Init;
   /**
    * Add behavior to the editor (register transforms, listeners, etc.) after
@@ -200,7 +218,7 @@ export interface LexicalPlan<
   register?: (
     editor: LexicalEditor,
     config: Config,
-    state: RegisterState<Init>,
+    state: PlanRegisterState<Init>,
   ) => RegisterCleanup<Output>;
 
   /**
@@ -217,7 +235,7 @@ export interface LexicalPlan<
   afterInitialization?: (
     editor: LexicalEditor,
     config: Config,
-    state: RegisterState<Init>,
+    state: PlanRegisterState<Init>,
   ) => () => void;
 }
 

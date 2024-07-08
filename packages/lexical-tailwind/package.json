@@ -32,6 +32,9 @@
     "@lexical/utils": ">=0.16.1-nightly.20240626",
     "tailwindcss": ">=3.3.0"
   },
+  "optionalDependencies": {
+    "@etrepum/lexical-emoji-plan": "*"
+  },
   "sideEffects": false,
   "devDependencies": {
     "@etrepum/lexical-tailwind-plugin": "*",
