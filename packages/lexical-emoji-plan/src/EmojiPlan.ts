@@ -66,6 +66,7 @@ export const EmojiPlan = definePlan({
   register(editor: LexicalEditor, config, state) {
     const nodeCleanup = new Map<NodeKey, () => void>();
     let cleanup = mergeRegister(
+      // no need for init since we are synchronously registering at editor creation
       editor.registerMutationListener(EmojiNode, (nodes) => {
         // Everything we already need is in the DOM, otherwise we would
         // want to get the node reference from here as well

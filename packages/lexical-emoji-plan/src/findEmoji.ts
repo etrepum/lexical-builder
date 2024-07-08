@@ -66,7 +66,7 @@ const emojiReplacementMap = supportedEmojis
  * ```
  */
 export function findEmoji(text: string): EmojiMatch | null {
-  const words = text.split(" ");
+  const words = text.split(/[ \xa0]/g);
   for (let i = 0, position = 0; i < words.length; i++) {
     const word = words[i]!;
     const emoji = emojiReplacementMap.get(word);

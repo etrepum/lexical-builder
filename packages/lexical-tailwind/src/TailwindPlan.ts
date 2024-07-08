@@ -124,9 +124,9 @@ export const TailwindPlan = definePlan({
       {
         // .emoji-node
         emojiClass:
-          "caret-neutral-950 bg-[length:1em_1em] inline-block align-top size-[1em]",
+          "caret-neutral-950 bg-no-repeat bg-contain inline size-[1em] translate-y-1",
         // .emoji-node-loaded
-        emojiLoadedClass: "color-transparent",
+        emojiLoadedClass: "text-transparent",
         // .emoji-node-loading
         emojiLoadingClass: "",
       },

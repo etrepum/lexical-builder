@@ -11,6 +11,7 @@ import {
   HistoryPlan,
   type LexicalEditorWithDispose,
   getPlanDependencyFromEditor,
+  configPlan,
 } from "@etrepum/lexical-builder";
 import { AutoLinkPlan, ClickableLinkPlan } from "@etrepum/lexical-builder-link";
 import { CheckListPlan } from "@etrepum/lexical-builder-list";
@@ -19,8 +20,13 @@ import {
   MarkdownShortcutsPlan,
 } from "@etrepum/lexical-builder-markdown";
 import { TailwindPlan } from "@etrepum/lexical-tailwind";
-import { EmojiPlan } from "@etrepum/lexical-emoji-plan";
+import {
+  $isEmojiNode,
+  EmojiNode,
+  EmojiPlan,
+} from "@etrepum/lexical-emoji-plan";
 import { $getRoot } from "lexical";
+import type { TextMatchTransformer } from "@lexical/markdown";
 import { SlackPastePlan } from "./SlackPastePlan";
 
 const INITIAL_CONTENT = `
@@ -32,6 +38,8 @@ This example uses *markdown*, **markdown shortcuts**, _history_, emoji and the l
 
 CSS is provided by the Tailwind plan which has default styles for most built-in
 nodes.
+
+:bear:
 
 See more:
 
@@ -45,12 +53,31 @@ Checklist:
 - [ ] Build an app
 `.trim();
 
+// TODO - The markdown transformers are not a very good abstraction for this
+const NO_MATCH_REGEX = /^(?!)/;
+const EmojiShortcodeTransformer: TextMatchTransformer = {
+  dependencies: [EmojiNode],
+  export: (node) => ($isEmojiNode(node) ? node.getShortcode() ?? null : null),
+  importRegExp: NO_MATCH_REGEX,
+  regExp: NO_MATCH_REGEX,
+  replace: () => {
+    throw Error("should never be called");
+  },
+  trigger: "",
+  type: "text-match",
+};
+
 export function buildEditor(): LexicalEditorWithDispose {
   return buildEditorFromPlans({
     name: "[root]",
     dependencies: [
       RichTextPlan,
-      MarkdownTransformersPlan,
+      configPlan(MarkdownTransformersPlan, {
+        textMatchTransformers: [
+          ...(MarkdownTransformersPlan.config?.textMatchTransformers ?? []),
+          EmojiShortcodeTransformer,
+        ],
+      }),
       MarkdownShortcutsPlan,
       TailwindPlan,
       HistoryPlan,

@@ -38,7 +38,7 @@ export function $textNodeTransform(node: TextNode): void {
     );
   }
   if (targetNode !== undefined) {
-    const emojiNode = $createEmojiNode(emojiMatch.emoji);
+    const emojiNode = $createEmojiNode(emojiMatch.emoji, emojiMatch.shortcode);
     targetNode.replace(emojiNode);
   }
 }
