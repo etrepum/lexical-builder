@@ -35,7 +35,10 @@ export {
 export { safeCast } from "@etrepum/lexical-builder-core";
 export { shallowMergeConfig } from "@etrepum/lexical-builder-core";
 export { getPlanDependencyFromEditor } from "./getPlanDependencyFromEditor";
-export { getPeerDependencyFromEditor } from "./getPeerDependencyFromEditor";
+export {
+  getPeerDependencyFromEditor,
+  getPeerDependencyFromEditorOrThrow,
+} from "./getPeerDependencyFromEditor";
 export { getKnownTypesAndNodes, type KnownTypesAndNodes } from "./config";
 export { InitialStatePlan, type InitialStateConfig } from "./InitialStatePlan";
 // These plan definitions should all be colocated with their implementations, only here for convenience

@@ -6,6 +6,8 @@
  *
  */
 
+import { getPeerDependencyFromEditorOrThrow } from "@etrepum/lexical-builder";
+import { addClassNamesToElement } from "@lexical/utils";
 import type {
   EditorConfig,
   LexicalEditor,
@@ -14,7 +16,8 @@ import type {
   SerializedTextNode,
   Spread,
 } from "lexical";
-import { TextNode, $applyNodeReplacement } from "lexical";
+import { TextNode, $applyNodeReplacement, $getEditor } from "lexical";
+import type { EmojiPlan } from "./EmojiPlan";
 
 export type SerializedEmojiNode = Spread<
   {
@@ -73,6 +76,18 @@ export class EmojiNode extends TextNode {
     editor?: LexicalEditor | undefined,
   ): HTMLElement {
     const dom = super.createDOM(config, editor);
+    // We reference this as a peer dependency so we can avoid a circular
+    // import. If this was in the same file as the plan definition it
+    // would not be an issue. It is fine to have circular type imports.
+    // Alternatively, we could include this code in the mutation listener,
+    // but that would not run in the default implementation of exportDOM.
+    addClassNamesToElement(
+      dom,
+      getPeerDependencyFromEditorOrThrow<typeof EmojiPlan>(
+        editor || $getEditor(),
+        "@etrepum/lexical-emoji-plan/Emoji",
+      ).config.emojiClass,
+    );
     if (this.__shortcode) {
       dom.dataset.emojiShortcode = this.__shortcode;
     }

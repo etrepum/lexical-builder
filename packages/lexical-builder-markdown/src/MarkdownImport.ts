@@ -301,8 +301,9 @@ function importTextMatchTransformers(
   let textNode: TextNode | undefined = textNode_;
 
   mainLoop: while (textNode) {
+    const textContent = textNode.getTextContent();
     for (const transformer of textMatchTransformers) {
-      const match = textNode.getTextContent().match(transformer.importRegExp);
+      const match = textContent.match(transformer.importRegExp);
 
       if (!match) {
         continue;
