@@ -12,13 +12,11 @@ import {
   provideOutput,
   shallowMergeConfig,
 } from "@etrepum/lexical-builder";
-
 import { type LexicalComposerContextWithEditor } from "@lexical/react/LexicalComposerContext";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-
 import { buildEditorComponent } from "./buildEditorComponent";
-import { ReactConfig, ReactOutputs } from "./types";
+import { type ReactConfig, type ReactOutputs } from "./types";
 import { DefaultEditorChildrenComponent } from "./DefaultEditorChildrenComponent";
 import { ReactProviderPlan } from "./ReactProviderPlan";
 import invariant from "./shared/invariant";
@@ -57,19 +55,23 @@ export const ReactPlan = definePlan({
     }
     return config;
   },
-  name: "@etrepum/lexical-builder/ReactPlan",
+  name: "@etrepum/lexical-builder/React",
   peerDependencies: [
     // We are not trying to avoid the import, just the direct dependency,
     // so using the plan directly is fine.
     declarePeerDependency<typeof ReactProviderPlan>(ReactProviderPlan.name),
   ],
   register(editor, config, state) {
-    invariant(
-      state.getPeer<typeof ReactProviderPlan>(ReactProviderPlan.name) !==
-        undefined,
-      "No ReactProviderPlan detected. You must use ReactPluginHostPlan or LexicalPlanComposer to host React plans. The following plans depend on ReactPlan: %s",
-      state.getDirectDependentNames().join(" "),
+    const providerPeer = state.getPeer<typeof ReactProviderPlan>(
+      ReactProviderPlan.name,
     );
+    if (!providerPeer) {
+      invariant(
+        false,
+        "No ReactProviderPlan detected. You must use ReactPluginHostPlan or LexicalPlanComposer to host React plans. The following plans depend on ReactPlan: %s",
+        [...state.getDirectDependentNames()].join(" "),
+      );
+    }
     const context: LexicalComposerContextWithEditor = [
       editor,
       { getTheme: () => editor._config.theme },

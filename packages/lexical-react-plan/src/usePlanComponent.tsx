@@ -1,12 +1,12 @@
 import {
-  LexicalPlanOutput,
-  OutputComponentPlan,
+  type LexicalPlanOutput,
+  type OutputComponentPlan,
   getPlanDependencyFromEditor,
   type AnyLexicalPlan,
   type LexicalPlanDependency,
 } from "@etrepum/lexical-builder";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { ComponentProps } from "react";
+import { type ComponentProps } from "react";
 
 export function usePlanDependency<Plan extends AnyLexicalPlan>(
   plan: Plan,
@@ -18,7 +18,7 @@ export function usePlanDependency<Plan extends AnyLexicalPlan>(
  * Use a Component from the given Plan that uses the ReactPlan convention
  * of exposing a Component property in its output.
  *
- * @param plan A plan with a Component property in the output
+ * @param plan - A plan with a Component property in the output
  * @returns `getPlanConfigFromEditor(useLexicalComposerContext()[0], plan).Component`
  */
 export function usePlanComponent<
@@ -66,9 +66,9 @@ export type UsePlanComponentProps<Plan extends AnyLexicalPlan> = {
  * ```
  */
 export function UsePlanComponent<Plan extends AnyLexicalPlan>({
-  ["lexical:plan"]: plan,
+  "lexical:plan": plan,
   ...props
 }: UsePlanComponentProps<Plan>) {
-  const Component = usePlanComponent(plan as Plan);
+  const Component = usePlanComponent(plan);
   return <Component {...props} />;
 }

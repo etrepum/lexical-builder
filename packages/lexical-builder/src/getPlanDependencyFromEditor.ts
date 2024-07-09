@@ -1,5 +1,5 @@
-import { LexicalEditor } from "lexical";
-import {
+import type { LexicalEditor } from "lexical";
+import type {
   AnyLexicalPlan,
   LexicalPlanDependency,
 } from "@etrepum/lexical-builder-core";
@@ -11,12 +11,12 @@ import invariant from "./shared/invariant";
  *
  * This is useful in the implementation of a LexicalNode or in other
  * situations where you have an editor reference but it's not easy to
- * pass the config or {@link RegisterState} around.
+ * pass the config or {@link PlanRegisterState} around.
  *
  * It will throw if the Editor was not built using this Plan.
  *
- * @param editor The editor that was built using plan
- * @param plan The concrete reference to a Plan used to build this editor
+ * @param editor - The editor that was built using plan
+ * @param plan - The concrete reference to a Plan used to build this editor
  * @returns The config and output for that Plan
  */
 export function getPlanDependencyFromEditor<Plan extends AnyLexicalPlan>(

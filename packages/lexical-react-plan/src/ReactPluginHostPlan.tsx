@@ -10,25 +10,24 @@ import {
   COMMAND_PRIORITY_CRITICAL,
   COMMAND_PRIORITY_EDITOR,
   createCommand,
-  LexicalEditor,
+  type LexicalEditor,
 } from "lexical";
 import { Suspense, useEffect, useState } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { createRoot, Root, type Container } from "react-dom/client";
-
+import { createRoot, type Root, type Container } from "react-dom/client";
 import {
-  AnyLexicalPlan,
+  type AnyLexicalPlan,
   configPlan,
   definePlan,
   getPlanDependencyFromEditor,
-  LexicalPlanOutput,
+  type LexicalPlanOutput,
   provideOutput,
 } from "@etrepum/lexical-builder";
 import { ReactPlan } from "./ReactPlan";
 import invariant from "./shared/invariant";
 import { ReactProviderPlan } from "./ReactProviderPlan";
-import { DecoratorComponentProps } from "./types";
+import { type DecoratorComponentProps } from "./types";
 
 export interface HostMountCommandArg {
   root: Root;
@@ -56,7 +55,7 @@ export function mountReactPlanComponent<Plan extends AnyLexicalPlan>(
   const { props, plan, ...rest } = opts;
   const { Component } = getPlanDependencyFromEditor(editor, plan).output;
   const element = props ? <Component {...props} /> : null;
-  return mountReactPluginElement(editor, {
+  mountReactPluginElement(editor, {
     ...rest,
     element,
   });
@@ -72,7 +71,7 @@ export function mountReactPluginComponent<
   } & Omit<MountPluginCommandArg, "element">,
 ) {
   const { Component, props, ...rest } = opts;
-  return mountReactPluginElement(editor, {
+  mountReactPluginElement(editor, {
     ...rest,
     element: props ? <Component {...props} /> : null,
   });
@@ -122,7 +121,7 @@ function PluginHostDecorator({
       },
       COMMAND_PRIORITY_EDITOR,
     );
-  }, []);
+  }, [editor, renderMountedPlugins]);
   return children;
 }
 
@@ -143,7 +142,7 @@ export const ReactPluginHostPlan = definePlan({
     ReactProviderPlan,
     configPlan(ReactPlan, { decorators: [PluginHostDecorator] }),
   ],
-  name: "@etrepum/lexical-builder/ReactPluginHostPlan",
+  name: "@etrepum/lexical-builder/ReactPluginHost",
   register(editor, _config, state) {
     let root: Root | undefined;
     const mountedPlugins = new Map<

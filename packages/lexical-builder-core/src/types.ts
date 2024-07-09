@@ -18,12 +18,12 @@ import type {
 /**
  * Any concrete {@link LexicalPlan}
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
 export type AnyLexicalPlan = LexicalPlan<any, string, any, any>;
 /**
  * Any {@link LexicalPlan} or {@link NormalizedLexicalPlanArgument}
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
 export type AnyLexicalPlanArgument = LexicalPlanArgument<any, string, any, any>;
 /**
  * The default plan configuration of an empty object
@@ -36,55 +36,73 @@ export type NormalizedPeerDependency<Plan extends AnyLexicalPlan> = [
 ] & { readonly [peerDependencySymbol]: Plan };
 
 /**
- * A tuple of [plan, configOverride, ...configOverrides]
+ * A tuple of [plan, ...configOverrides]
  */
 export type NormalizedLexicalPlanArgument<
   in out Config extends PlanConfigBase,
   out Name extends string,
-  in out Output extends unknown,
-  in out Init extends unknown,
-> = [
-  LexicalPlan<Config, Name, Output, Init>,
-  Partial<Config>,
-  ...Partial<Config>[],
-];
+  in out Output,
+  in out Init,
+> = [LexicalPlan<Config, Name, Output, Init>, ...Partial<Config>[]];
 
 /**
  * An object that the register method can use to detect unmount and access the
  * configuration for plan dependencies
  */
-export interface RegisterState<Init> {
+export interface PlanInitState {
   /** An AbortSignal that is aborted when the LexicalEditor is disposed */
   signal: AbortSignal;
   /**
    * Get the result of a peerDependency by name, if it exists
    * (must be a peerDependency of this plan)
    */
-  getPeer<Dependency extends AnyLexicalPlan = never>(
+  getPeer: <Dependency extends AnyLexicalPlan = never>(
     name: Dependency["name"],
-  ): undefined | LexicalPlanDependency<Dependency>;
+  ) => undefined | Omit<LexicalPlanDependency<Dependency>, "output">;
   /**
    * Get the configuration of a dependency by plan
    * (must be a direct dependency of this plan)
    */
-  getDependency<Dependency extends AnyLexicalPlan>(
+  getDependency: <Dependency extends AnyLexicalPlan>(
     dep: Dependency,
-  ): LexicalPlanDependency<Dependency>;
+  ) => Omit<LexicalPlanDependency<Dependency>, "output">;
   /**
    * Get the names of any direct dependents of this
    * Plan, typically only used for error messages.
    */
-  getDirectDependentNames(): string[];
+  getDirectDependentNames: () => ReadonlySet<string>;
   /**
    * Get the names of all peer dependencies of this
    * Plan, even if they do not exist in the builder,
    * typically only used for devtools.
    */
-  getPeerNameSet(): Set<string>;
+  getPeerNameSet: () => ReadonlySet<string>;
+}
+
+/**
+ * An object that the register method can use to detect unmount and access the
+ * configuration for plan dependencies
+ */
+export interface PlanRegisterState<Init>
+  extends Omit<PlanInitState, "getPeer" | "getDependency"> {
+  /**
+   * Get the result of a peerDependency by name, if it exists
+   * (must be a peerDependency of this plan)
+   */
+  getPeer: <Dependency extends AnyLexicalPlan = never>(
+    name: Dependency["name"],
+  ) => undefined | LexicalPlanDependency<Dependency>;
+  /**
+   * Get the configuration of a dependency by plan
+   * (must be a direct dependency of this plan)
+   */
+  getDependency: <Dependency extends AnyLexicalPlan>(
+    dep: Dependency,
+  ) => LexicalPlanDependency<Dependency>;
   /**
    * The result of the init function
    */
-  getInitResult(): Init;
+  getInitResult: () => Init;
 }
 
 /**
@@ -93,8 +111,8 @@ export interface RegisterState<Init> {
 export type LexicalPlanArgument<
   Config extends PlanConfigBase,
   Name extends string,
-  Output extends unknown,
-  Init extends unknown,
+  Output,
+  Init,
 > =
   | LexicalPlan<Config, Name, Output, Init>
   | NormalizedLexicalPlanArgument<Config, Name, Output, Init>;
@@ -118,8 +136,8 @@ export type RegisterCleanup<Output> = (() => void) &
 export interface LexicalPlan<
   in out Config extends PlanConfigBase,
   out Name extends string,
-  in out Output extends unknown,
-  in out Init extends unknown,
+  in out Output,
+  in out Init,
 > extends InitialEditorConfig,
     LexicalPlanInternal<Config, Output, Init> {
   /** The name of the Plan, must be unique */
@@ -162,8 +180,8 @@ export interface LexicalPlan<
    * });
    * ```
    *
-   * @param config The current configuration
-   * @param overrides The partial configuration to merge
+   * @param config - The current configuration
+   * @param overrides - The partial configuration to merge
    * @returns The merged configuration
    */
   mergeConfig?: (config: Config, overrides: Partial<Config>) => Config;
@@ -173,16 +191,16 @@ export interface LexicalPlan<
    * this plan have been merged. May be used validate the editor
    * configuration.
    *
-   * @param editorConfig The in-progress editor configuration (mutable)
-   * @param config The merged configuration specific to this plan (mutable)
-   * @param state An object containing an AbortSignal that can be
+   * @param editorConfig - The in-progress editor configuration (mutable)
+   * @param config - The merged configuration specific to this plan (mutable)
+   * @param state - An object containing an AbortSignal that can be
    *   used, and methods for accessing the merged configuration of
    *   dependencies and peerDependencies
    */
   init?: (
     editorConfig: InitialEditorConfig,
     config: Config,
-    state: RegisterState<never>,
+    state: PlanInitState,
   ) => Init;
   /**
    * Add behavior to the editor (register transforms, listeners, etc.) after
@@ -190,9 +208,9 @@ export interface LexicalPlan<
    * The register function may also mutate the config
    * in-place to expose data to other plans that use it as a dependency.
    *
-   * @param editor The editor this Plan is being registered with
-   * @param config The merged configuration specific to this Plan
-   * @param state An object containing an AbortSignal that can be
+   * @param editor - The editor this Plan is being registered with
+   * @param config - The merged configuration specific to this Plan
+   * @param state - An object containing an AbortSignal that can be
    *   used, and methods for accessing the merged configuration of
    *   dependencies and peerDependencies
    * @returns A clean-up function
@@ -200,16 +218,16 @@ export interface LexicalPlan<
   register?: (
     editor: LexicalEditor,
     config: Config,
-    state: RegisterState<Init>,
+    state: PlanRegisterState<Init>,
   ) => RegisterCleanup<Output>;
 
   /**
    * Run any code that must happen after initialization of the
    * editor state (which happens after all register calls).
    *
-   * @param editor The editor this Plan is being registered with
-   * @param config The merged configuration specific to this Plan
-   * @param state An object containing an AbortSignal that can be
+   * @param editor - The editor this Plan is being registered with
+   * @param config - The merged configuration specific to this Plan
+   * @param state - An object containing an AbortSignal that can be
    *   used, and methods for accessing the merged configuration of
    *   dependencies and peerDependencies
    * @returns A clean-up function
@@ -217,7 +235,7 @@ export interface LexicalPlan<
   afterInitialization?: (
     editor: LexicalEditor,
     config: Config,
-    state: RegisterState<Init>,
+    state: PlanRegisterState<Init>,
   ) => () => void;
 }
 
@@ -251,9 +269,12 @@ export type LexicalPlanInit<Plan extends AnyLexicalPlan> = NonNullable<
  * A Plan that has an OutputComponent of the given type (e.g. React.ComponentType)
  */
 export type OutputComponentPlan<ComponentType> = LexicalPlan<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any config
   any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any name
   any,
   { Component: ComponentType },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any init
   any
 >;
 
@@ -319,8 +340,8 @@ export interface InitialEditorConfig {
    * reconciliation and call this. It defaults to
    * `(error) => { throw error }`.
    *
-   * @param error The Error object
-   * @param editor The editor that this error came from
+   * @param error - The Error object
+   * @param editor - The editor that this error came from
    */
   onError?: (error: Error, editor: LexicalEditor) => void;
   /**

@@ -29,7 +29,7 @@ export {
   type LexicalPlanDependency,
   type NormalizedLexicalPlanArgument,
   type PlanConfigBase,
-  type RegisterState,
+  type PlanRegisterState,
   type NormalizedPeerDependency,
 } from "@etrepum/lexical-builder-core";
 export { safeCast } from "@etrepum/lexical-builder-core";

@@ -7,12 +7,10 @@
  */
 
 import type { LexicalEditor } from "lexical";
-
 import { $canShowPlaceholderCurry } from "@lexical/text";
 import { mergeRegister } from "@lexical/utils";
-
 import {
-  RegisterLexicalSubscription,
+  type RegisterLexicalSubscription,
   registerLexicalSubscription,
 } from "./registerSubscription";
 
@@ -30,8 +28,9 @@ function subscribe(
   editor: LexicalEditor,
   onChange: (canShow: boolean) => void,
 ) {
-  const resetCanShowPlaceholder = () =>
+  const resetCanShowPlaceholder = () => {
     onChange(canShowPlaceholderFromCurrentEditorState(editor));
+  };
   return mergeRegister(
     editor.registerUpdateListener(resetCanShowPlaceholder),
     editor.registerEditableListener(resetCanShowPlaceholder),

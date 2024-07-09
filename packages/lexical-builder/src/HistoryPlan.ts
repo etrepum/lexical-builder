@@ -10,9 +10,7 @@ import {
   type HistoryState,
   registerHistory,
 } from "@lexical/history";
-
-import { definePlan } from "@etrepum/lexical-builder-core";
-import { safeCast } from "@etrepum/lexical-builder-core";
+import { definePlan, safeCast } from "@etrepum/lexical-builder-core";
 
 export interface HistoryConfig {
   /**
@@ -28,14 +26,14 @@ export interface HistoryConfig {
 
 /**
  * Registers necessary listeners to manage undo/redo history stack and related
- * editor commands, via the @lexical/history module.
+ * editor commands, via the \@lexical/history module.
  */
 export const HistoryPlan = definePlan({
   config: safeCast<HistoryConfig>({
     createInitialHistoryState: createEmptyHistoryState,
     delay: 300,
   }),
-  name: "@etrepum/lexical-builder/HistoryPlan",
+  name: "@etrepum/lexical-builder/History",
   register(editor, { delay, createInitialHistoryState }) {
     return registerHistory(editor, createInitialHistoryState(), delay);
   },

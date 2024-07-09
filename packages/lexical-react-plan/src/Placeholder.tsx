@@ -5,7 +5,7 @@ import { WithEditable } from "./WithEditable";
 /**
  * A placeholder component that returns the content, or the
  * return value of content(isEditable),
- * when `$canShowPlaceholder` from @lexical/text is true.
+ * when `$canShowPlaceholder` from \@lexical/text is true.
  */
 export function Placeholder({
   content,
@@ -17,7 +17,6 @@ export function Placeholder({
     return null;
   } else if (typeof content === "function") {
     return <WithEditable content={content} />;
-  } else {
-    return content;
   }
+  return content;
 }

@@ -1,8 +1,9 @@
-import { definePlan } from "@etrepum/lexical-builder";
+import { declarePeerDependency, definePlan } from "@etrepum/lexical-builder";
 import { type EditorThemeClasses } from "lexical";
+import type { EmojiPlan } from "@etrepum/lexical-emoji-plan";
 
-// This [&]: is necessary to override the mx-8 from listitem since the theme is not designed for tailwind semantics
-const listItemCommonClasses =
+const checklistItemCommonClasses =
+  // This [&]: is necessary to override the mx-8 from listitem since the theme is not designed for tailwind semantics (both sets of classes are applied)
   "relative [&]:mx-2 px-6 list-none outline-none before:w-4 before:h-4 before:top-0.5 before:left-0 before:cursor-pointer before:block before:bg-color before:absolute rtl:before:left-auto rtl:before:right-0 focus:before:shadow-[0_0_0_2px_#a6cdfe] before:rounded-sm";
 
 const theme: EditorThemeClasses = {
@@ -65,8 +66,8 @@ const theme: EditorThemeClasses = {
   list: {
     checklist: "",
     listitem: "mx-8",
-    listitemChecked: `${listItemCommonClasses} line-through before:border before:border-solid before:border-[rgb(61,135,245)] before:bg-[#3d87f5] before:bg-no-repeat after:cursor-pointer after:border-white after:border-solid after:absolute after:block after:top-1.5 after:width-[3px] after:inset-x-[7px] after:height-1.5 after:rotate-45 after:border-t-0 after:border-r-0.5 after:border-b-0.5 after:border-l-0`,
-    listitemUnchecked: `${listItemCommonClasses} before:border before:border-solid before:border-[#999]`,
+    listitemChecked: `${checklistItemCommonClasses} line-through before:border before:border-solid before:border-[rgb(61,135,245)] before:bg-[#3d87f5] before:bg-no-repeat after:cursor-pointer after:border-white after:border-solid after:absolute after:block after:top-1.5 after:width-[3px] after:inset-x-[7px] after:height-1.5 after:rotate-45 after:border-t-0 after:border-r-0.5 after:border-b-0.5 after:border-l-0`,
+    listitemUnchecked: `${checklistItemCommonClasses} before:border before:border-solid before:border-[#999]`,
     nested: {
       listitem: "list-none before:hidden after:hidden",
     },
@@ -117,4 +118,18 @@ const theme: EditorThemeClasses = {
 export const TailwindPlan = definePlan({
   name: "@etrepum/lexical-tailwind",
   theme,
+  peerDependencies: [
+    declarePeerDependency<typeof EmojiPlan>(
+      "@etrepum/lexical-emoji-plan/Emoji",
+      {
+        // .emoji-node
+        emojiClass:
+          "caret-neutral-950 bg-no-repeat bg-contain inline size-[1em] translate-y-1",
+        // .emoji-node-loaded
+        emojiLoadedClass: "text-transparent",
+        // .emoji-node-loading
+        emojiLoadingClass: "",
+      },
+    ),
+  ],
 });

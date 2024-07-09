@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention, no-redeclare -- weird style requirement for this to work */
 /** @internal */
 export declare const peerDependencySymbol: unique symbol;
 /** @internal */

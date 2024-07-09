@@ -28,9 +28,10 @@ export {
   type LexicalPlanOutput,
   type OutputComponentPlan,
   type LexicalPlanDependency,
-  type NormalizedLexicalPlanArgument,
+  type PlanRegisterState as NormalizedLexicalPlanArgument,
   type PlanConfigBase,
-  type RegisterState,
+  type PlanInitState,
+  type PlanRegisterState,
   type RegisterCleanup,
   type NormalizedPeerDependency,
 } from "./types";

@@ -6,7 +6,7 @@
  * assert(textFromUnifiedId("1F926-200D-2642-FE0F") === "🤦‍♂️");
  * ```
  *
- * @param unifiedID The hyphen delimited hex representation of the UTF-16 code points in the emoji
+ * @param unifiedID - The hyphen delimited hex representation of the UTF-16 code points in the emoji
  * @returns The emoji as a string
  */
 export function textFromUnifiedID(unifiedID: string): string {

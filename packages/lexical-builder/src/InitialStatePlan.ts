@@ -7,7 +7,6 @@
  */
 
 import { definePlan, safeCast } from "@etrepum/lexical-builder-core";
-
 import {
   $createParagraphNode,
   $getRoot,
@@ -16,14 +15,10 @@ import {
   RootNode,
   TabNode,
   TextNode,
-  type LexicalEditor,
   type EditorSetOptions,
-  // TODO https://github.com/facebook/lexical/pull/6332
-  // type EditorUpdateOptions
+  type EditorUpdateOptions,
 } from "lexical";
 
-// TODO https://github.com/facebook/lexical/pull/6332
-type EditorUpdateOptions = NonNullable<Parameters<LexicalEditor["update"]>[1]>;
 const HISTORY_MERGE_OPTIONS = { tag: "history-merge" };
 
 function $defaultInitializer() {
@@ -57,7 +52,9 @@ export const InitialStatePlan = definePlan({
     const $initialEditorState = state.getInitResult();
     switch (typeof $initialEditorState) {
       case "function": {
-        editor.update(() => $initialEditorState(editor), updateOptions);
+        editor.update(() => {
+          $initialEditorState(editor);
+        }, updateOptions);
         break;
       }
       case "string": {
@@ -71,7 +68,12 @@ export const InitialStatePlan = definePlan({
         }
         break;
       }
+      default: {
+        /* noop */
+      }
     }
-    return () => {};
+    return () => {
+      /* noop */
+    };
   },
 });

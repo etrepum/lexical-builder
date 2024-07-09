@@ -38,7 +38,6 @@ import {
 import { LinkPlan } from "./LinkPlan";
 
 type ChangeHandler = (url: string | null, prevUrl: string | null) => void;
-function noop() {}
 
 export interface LinkMatcherResult {
   attributes?: AutoLinkAttributes;

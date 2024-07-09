@@ -1,5 +1,4 @@
-import { AnyLexicalPlanArgument } from "@etrepum/lexical-builder";
-import { LexicalComposerContextWithEditor } from "@lexical/react/LexicalComposerContext";
+import { type LexicalComposerContextWithEditor } from "@lexical/react/LexicalComposerContext";
 
 export interface EditorChildrenComponentProps {
   context: LexicalComposerContextWithEditor;
@@ -53,7 +52,7 @@ export type EditorComponentType = (
 export interface ReactConfig {
   /**
    * The default root element of the editor as JSX. Uses `<ContentEditable />`
-   * from @lexical/react/ContentEditable by default,
+   * from \@lexical/react/ContentEditable by default,
    * but may be null or another component.
    *
    * This component is responsible for calling editor.setRootElement(elem).
@@ -71,7 +70,7 @@ export interface ReactConfig {
     | JSX.Element;
   /**
    * The ErrorBoundary used for rendering decorators in the editor. By default
-   * it is `ErrorBoundary` from @lexical/react/ErrorBoundary.
+   * it is `ErrorBoundary` from \@lexical/react/ErrorBoundary.
    */
   ErrorBoundary: ErrorBoundaryType;
   /**
@@ -103,15 +102,15 @@ export interface ReactOutputs {
    */
   Component: EditorComponentType;
   /**
-   * This is equivalent to useLexicalComposerContext() from @lexical/react/LexicalComposerContext.
+   * This is equivalent to useLexicalComposerContext() from \@lexical/react/LexicalComposerContext.
    */
   context: LexicalComposerContextWithEditor;
 }
 
-export type ErrorBoundaryProps = {
+export interface ErrorBoundaryProps {
   children: JSX.Element;
   onError: (error: Error) => void;
-};
+}
 
 export type ErrorBoundaryType =
   | React.ComponentClass<ErrorBoundaryProps>

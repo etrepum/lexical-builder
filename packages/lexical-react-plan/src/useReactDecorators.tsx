@@ -7,17 +7,16 @@
  */
 
 import type { LexicalEditor, NodeKey } from "lexical";
-
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { createPortal, flushSync } from "react-dom";
 import useLayoutEffect from "./shared/useLayoutEffect";
 import invariant from "./shared/invariant";
-import { ErrorBoundaryType } from "./types";
+import { type ErrorBoundaryType } from "./types";
 
 export function useReactDecorators(
   editor: LexicalEditor,
   ErrorBoundary: ErrorBoundaryType,
-): Array<JSX.Element> {
+): JSX.Element[] {
   const [decorators, setDecorators] = useState<Record<NodeKey, JSX.Element>>(
     () => editor.getDecorators<JSX.Element>(),
   );
@@ -54,7 +53,11 @@ export function useReactDecorators(
 
       if (element !== null) {
         const reactDecorator = (
-          <ErrorBoundary onError={(e) => editor._onError(e)}>
+          <ErrorBoundary
+            onError={(e) => {
+              editor._onError(e);
+            }}
+          >
             <Suspense fallback={null}>{decorators[nodeKey]}</Suspense>
           </ErrorBoundary>
         );

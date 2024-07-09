@@ -6,32 +6,32 @@
  *
  */
 
+import { describe, it, expect } from "vitest";
 import {
   LexicalBuilder,
+  buildEditorFromPlans,
   configPlan,
+  declarePeerDependency,
   definePlan,
   safeCast,
 } from "@etrepum/lexical-builder";
-import { describe, it, expect } from "vitest";
+
+const InitialStatePlanName = "@etrepum/lexical-builder/InitialState";
 
 describe("LexicalBuilder", () => {
   const ConfigPlan = definePlan({
-    name: "configPlan",
+    name: "Config",
     config: safeCast<{ a: 1; b: string | null }>({ a: 1, b: "b" }),
   });
-  it("can be constructed", () => {
-    expect(() => new LexicalBuilder()).not.toThrow();
-  });
   it("merges plan configs", () => {
-    const builder = new LexicalBuilder();
-    builder.addPlan(ConfigPlan);
-    const repPair = builder.planMap.get(ConfigPlan);
-    expect(repPair?.[1]?.plan).toBe(ConfigPlan);
-    const planRep = repPair![1];
-    expect(planRep.configs.size).toBe(0);
-    builder.addPlan(configPlan(ConfigPlan, { b: null }));
-    expect(planRep.configs.size).toBe(1);
-    expect(planRep.getConfig()).toEqual({ a: 1, b: null });
+    const builder = LexicalBuilder.fromEditor(
+      buildEditorFromPlans(ConfigPlan, configPlan(ConfigPlan, { b: null })),
+    );
+    const reps = builder.sortedPlanReps();
+    expect(reps.length).toBe(2);
+    const [rep] = reps.slice(-1);
+    expect(rep.plan).toBe(ConfigPlan);
+    expect(rep.getState().config).toEqual({ a: 1, b: null });
   });
   it("handles circular dependencies", () => {
     const PlanA = definePlan({ name: "A", dependencies: [] });
@@ -39,9 +39,46 @@ describe("LexicalBuilder", () => {
     const PlanC = definePlan({ name: "C", dependencies: [PlanB] });
     // This is silly and hard to do but why not prevent it
     PlanA.dependencies?.push(PlanC);
-    const builder = new LexicalBuilder();
-    expect(() => builder.addPlan(PlanA)).toThrowError(
+    expect(() => buildEditorFromPlans(PlanA)).toThrowError(
       "LexicalBuilder: Circular dependency detected for Plan A from B",
     );
+  });
+  describe("handles peer dependency configuration", () => {
+    const PlanA = definePlan({
+      name: "A",
+      peerDependencies: [
+        declarePeerDependency<typeof ConfigPlan>("Config", { b: "A" }),
+      ],
+    });
+    it("peer-first", () => {
+      const builder = LexicalBuilder.fromEditor(
+        buildEditorFromPlans(PlanA, ConfigPlan),
+      );
+      const reps = builder.sortedPlanReps();
+      expect(reps.map((rep) => rep.plan.name)).toEqual([
+        InitialStatePlanName,
+        "Config",
+        "A",
+      ]);
+      expect(reps[1].getState().config).toEqual({
+        a: 1,
+        b: "A",
+      });
+    });
+    it("peer-last", () => {
+      const builder = LexicalBuilder.fromEditor(
+        buildEditorFromPlans(PlanA, ConfigPlan),
+      );
+      const reps = builder.sortedPlanReps();
+      expect(reps.map((rep) => rep.plan.name)).toEqual([
+        InitialStatePlanName,
+        "Config",
+        "A",
+      ]);
+      expect(reps[1].getState().config).toEqual({
+        a: 1,
+        b: "A",
+      });
+    });
   });
 });

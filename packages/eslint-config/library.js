@@ -10,6 +10,10 @@ module.exports = {
     "@typescript-eslint/prefer-nullish-coalescing": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
+    "turbo/no-undeclared-env-vars": [
+      "warn",
+      { allowList: ["PACKAGE_VERSION"] },
+    ],
     eqeqeq: "off",
   },
   extends: [
@@ -47,7 +51,10 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ["*.js?(x)", "*.ts?(x)"],
+      files: ["*.ts?(x)"],
+      rules: {
+        "eslint/no-undef": "off",
+      },
     },
   ],
 };

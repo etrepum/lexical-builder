@@ -22,7 +22,7 @@ export interface AutoFocusConfig {
  */
 export const AutoFocusPlan = definePlan({
   config: safeCast<AutoFocusConfig>({}),
-  name: "@etrepum/lexical-builder/AutoFocusPlan",
+  name: "@etrepum/lexical-builder/AutoFocus",
   register(editor, { defaultSelection }) {
     return editor.registerRootListener((rootElement) => {
       editor.focus(
