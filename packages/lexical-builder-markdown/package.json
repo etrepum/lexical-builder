@@ -16,7 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "version": "0.0.28",
+  "version": "0.0.29",
   "license": "MIT",
   "repository": {
     "type": "git",
