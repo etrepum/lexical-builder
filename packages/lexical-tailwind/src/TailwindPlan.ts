@@ -124,7 +124,7 @@ export const TailwindPlan = definePlan({
       {
         // .emoji-node
         emojiClass:
-          "caret-neutral-950 bg-no-repeat bg-contain inline size-[1em] translate-y-1",
+          "caret-neutral-950 bg-no-repeat bg-contain bg-[0_0.25em] inline-block",
         // .emoji-node-loaded
         emojiLoadedClass: "text-transparent",
         // .emoji-node-loading

@@ -6,6 +6,7 @@
  *
  */
 import { visit } from "unist-util-visit";
+import type { Root } from "mdast";
 
 /**
  * Resolve links to lexical functions that have $ in them. typedoc labels only allow `[a-z_][a-z0-9_]*`
@@ -15,7 +16,7 @@ import { visit } from "unist-util-visit";
  *
  */
 export function lexicalRemarkSlugifyAnchors() {
-  return (tree: import("mdast").Root) => {
+  return (tree: Root) => {
     visit(tree, (node) => {
       if (node.type === "link") {
         // Fix url anchors with a preceding $, e.g. #$getroot to #getroot
@@ -25,7 +26,7 @@ export function lexicalRemarkSlugifyAnchors() {
           const [child] = node.children;
           if (child.type === "text") {
             child.value = child.value.replace(
-              /^(@etrepum\/lexical-[^!]+)!/,
+              /^(?:@etrepum\/lexical-[^!]+)!/,
               "",
             );
           }

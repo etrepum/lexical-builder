@@ -40,6 +40,10 @@ export interface EmojiPlanConfig {
   emojiLoadedClass: string;
 }
 
+function noop() {
+  /*noop*/
+}
+
 /**
  * A plan to use the emoji-datasource-facebook emoji database to convert
  * short names such as :man-facepalming: or :) to their corresponding
@@ -65,7 +69,8 @@ export const EmojiPlan = definePlan({
   nodes: [EmojiNode],
   register(editor: LexicalEditor, config, state) {
     const nodeCleanup = new Map<NodeKey, () => void>();
-    let cleanup = mergeRegister(
+    let cleanupTransform = noop;
+    const cleanup = mergeRegister(
       // no need for init since we are synchronously registering at editor creation
       editor.registerMutationListener(EmojiNode, (nodes) => {
         // Everything we already need is in the DOM, otherwise we would
@@ -116,18 +121,19 @@ export const EmojiPlan = definePlan({
         }
         nodeCleanup.clear();
       },
+      () => {
+        cleanupTransform();
+      },
     );
     // Defer loading of the transform which needs to load the emoji JSON
     void import("./$textNodeTransform").then(({ $textNodeTransform }) => {
       if (!state.signal.aborted) {
-        cleanup = mergeRegister(
-          cleanup,
-          editor.registerNodeTransform(TextNode, $textNodeTransform),
+        cleanupTransform = editor.registerNodeTransform(
+          TextNode,
+          $textNodeTransform,
         );
       }
     });
-    return () => {
-      cleanup();
-    };
+    return cleanup;
   },
 });
