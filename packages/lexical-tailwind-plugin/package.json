@@ -13,7 +13,7 @@
     "lint": "eslint",
     "dev": "vite"
   },
-  "version": "0.0.29",
+  "version": "0.0.30-nightly.20240711.0",
   "license": "MIT",
   "repository": {
     "type": "git",
