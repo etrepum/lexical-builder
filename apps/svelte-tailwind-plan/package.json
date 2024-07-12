@@ -1,6 +1,6 @@
 {
   "name": "svelte-tailwind-plan",
-  "version": "0.0.29",
+  "version": "0.0.30-nightly.20240712.0",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
