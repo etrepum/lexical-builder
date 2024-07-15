@@ -5,7 +5,6 @@ import {
 import { Suspense, useMemo } from "react";
 import { useReactDecorators } from "./useReactDecorators";
 import { type ReactConfig, type EditorComponentProps } from "./types";
-import { Placeholder } from "./Placeholder";
 
 /** @internal */
 export function buildEditorComponent(
@@ -22,18 +21,17 @@ export function buildEditorComponent(
       EditorChildrenComponent = config.EditorChildrenComponent,
       ErrorBoundary = config.ErrorBoundary,
       contentEditable = config.contentEditable,
-      placeholder = config.placeholder,
       children,
     } = props;
     const decorators = useReactDecorators(editor, ErrorBoundary);
     const configDecorators = useMemo(
       () =>
         rawConfigDecorators.map((decorator, i) => (
-           
           <ErrorBoundary
             onError={(e) => {
               editor._onError(e);
             }}
+            // eslint-disable-next-line react/no-array-index-key -- no natural key
             key={i}
           >
             <Suspense fallback={null}>{decorator}</Suspense>
@@ -46,9 +44,6 @@ export function buildEditorComponent(
         <EditorChildrenComponent
           context={context}
           contentEditable={contentEditable}
-          placeholder={
-            placeholder ? <Placeholder content={placeholder} /> : null
-          }
         >
           {children}
           {configDecorators}

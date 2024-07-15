@@ -98,18 +98,22 @@ export const EmojiPlan = definePlan({
               );
               dom.style.backgroundImage = `url(${imageUrl})`;
               const img = new Image();
-              const callback = () => {
-                removeClassNamesFromElement(dom, config.emojiLoadingClass);
-                addClassNamesToElement(dom, config.emojiLoadedClass);
-                nodeCleanup.delete(nodeKey);
+              const cleanupImg = () => {
+                Object.assign(img, { onload: null, onerror: null });
               };
-              nodeCleanup.set(nodeKey, () => {
-                img.removeEventListener("load", callback);
+              const eagerNodeCleanup = () => {
+                cleanupImg();
+                nodeCleanup.delete(nodeKey);
+                removeClassNamesFromElement(dom, config.emojiLoadingClass);
+              };
+              Object.assign(img, {
+                onerror: eagerNodeCleanup,
+                onload: () => {
+                  eagerNodeCleanup();
+                  addClassNamesToElement(dom, config.emojiLoadedClass);
+                },
               });
-              img.addEventListener("load", callback, {
-                signal: state.signal,
-                once: true,
-              });
+              nodeCleanup.set(nodeKey, cleanupImg);
               img.src = imageUrl;
             }
           }

@@ -148,9 +148,14 @@ import ExampleTheme from "./ExampleTheme";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
 import TreeViewPlugin from "./plugins/TreeViewPlugin";
 
-function Placeholder() {
-  return <div className="editor-placeholder">Enter some rich text...</div>;
-}
+const placeholderText = "Enter some rich text...";
+const contentEditable = (
+  <ContentEditable
+    className="editor-input"
+    aria-placeholder={placeholderText}
+    placeholder={<div className="editor-placeholder">{placeholderText}</div>}
+  />
+);
 
 // highlight-start
 const editorConfig = {
@@ -174,8 +179,7 @@ export default function App() {
         <div className="editor-inner">
           {/* highlight-start */}
           <RichTextPlugin
-            contentEditable={<ContentEditable className="editor-input" />}
-            placeholder={<Placeholder />}
+            contentEditable={contentEditable}
             ErrorBoundary={LexicalErrorBoundary}
           />
           <HistoryPlugin />
@@ -208,9 +212,14 @@ import ExampleTheme from "./ExampleTheme";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
 import TreeViewPlugin from "./plugins/TreeViewPlugin";
 
-function Placeholder() {
-  return <div className="editor-placeholder">Enter some rich text...</div>;
-}
+const placeholderText = "Enter some rich text...";
+const contentEditable = (
+  <ContentEditable
+    className="editor-input"
+    aria-placeholder={placeholderText}
+    placeholder={<div className="editor-placeholder">{placeholderText}</div>}
+  />
+);
 
 // highlight-start
 const editorPlan = definePlan({
@@ -220,11 +229,8 @@ const editorPlan = definePlan({
     AutoFocusPlan,
     RichTextPlan,
     HistoryPlan,
-    configPlan(ReactPlan, {
-      // We specify our own layout for the editor's children
-      contentEditable: null,
-      placeholder: null,
-    }),
+    // We specify our own layout for the editor's children
+    configPlan(ReactPlan, { contentEditable: null }),
   ],
   // The editor theme
   theme: ExampleTheme,
@@ -238,10 +244,8 @@ export default function App() {
       <div className="editor-container">
         <ToolbarPlugin />
         <div className="editor-inner">
-          {/* highlight-start */}
-          <ContentEditable className="editor-input" />
-          <Placeholder />
-          {/* highlight-end */}
+          {/* highlight-next-line */}
+          {contentEditable}
           <TreeViewPlugin />
         </div>
       </div>

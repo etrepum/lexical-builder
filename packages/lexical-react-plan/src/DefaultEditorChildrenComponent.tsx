@@ -1,5 +1,4 @@
 import { type EditorChildrenComponentProps } from "./types";
-import { Placeholder } from "./Placeholder";
 
 /**
  * @example The default EditorChildrenComponent implementation
@@ -7,7 +6,6 @@ import { Placeholder } from "./Placeholder";
  * return (
  *   <>
  *     {contentEditable}
- *     {placeholder && <Placeholder content={placeholder} />}
  *     {children}
  *   </>
  * );
@@ -15,13 +13,11 @@ import { Placeholder } from "./Placeholder";
  */
 export function DefaultEditorChildrenComponent({
   contentEditable,
-  placeholder,
   children,
 }: EditorChildrenComponentProps) {
   return (
     <>
       {contentEditable}
-      {placeholder ? <Placeholder content={placeholder} /> : null}
       {children}
     </>
   );

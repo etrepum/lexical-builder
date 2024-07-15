@@ -2,7 +2,6 @@ import { type LexicalComposerContextWithEditor } from "@lexical/react/LexicalCom
 
 export interface EditorChildrenComponentProps {
   context: LexicalComposerContextWithEditor;
-  placeholder: null | JSX.Element;
   contentEditable: null | JSX.Element;
   children?: React.ReactNode;
 }
@@ -28,13 +27,6 @@ export interface EditorComponentProps {
    */
   children?: React.ReactNode;
   /**
-   * placeholder from the config
-   */
-  placeholder:
-    | ((isEditable: boolean) => null | JSX.Element)
-    | null
-    | JSX.Element;
-  /**
    * contentEditable from the config
    */
   contentEditable: JSX.Element | null;
@@ -55,19 +47,9 @@ export interface ReactConfig {
    * from \@lexical/react/ContentEditable by default,
    * but may be null or another component.
    *
-   * This component is responsible for calling editor.setRootElement(elem).
+   * This component is responsible for calling `editor.setRootElement(elem)`.
    */
   contentEditable: JSX.Element | null;
-  /**
-   * The placeholder or a `(isEditable: boolean) => JSX.Element | null`
-   * function. The default is null. If specified, by default it will be
-   * rendered immediatley after contentEditable, but this may be overridden
-   * with `EditorChildrenComponent`.
-   */
-  placeholder:
-    | ((isEditable: boolean) => null | JSX.Element)
-    | null
-    | JSX.Element;
   /**
    * The ErrorBoundary used for rendering decorators in the editor. By default
    * it is `ErrorBoundary` from \@lexical/react/ErrorBoundary.
@@ -79,7 +61,6 @@ export interface ReactConfig {
    * and renders them in this order:
    *
    * - contentEditable
-   * - placeholder
    * - children
    */
   EditorChildrenComponent: EditorChildrenComponentType;

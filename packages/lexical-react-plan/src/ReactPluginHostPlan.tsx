@@ -206,9 +206,7 @@ export const ReactPluginHostPlan = definePlan({
               "ReactPluginHostPlan: Root is already mounted",
             );
             root = arg.root;
-            root.render(
-              <Component contentEditable={null} placeholder={null} />,
-            );
+            root.render(<Component contentEditable={null} />);
             return true;
           },
           COMMAND_PRIORITY_EDITOR,
