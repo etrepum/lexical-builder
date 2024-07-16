@@ -6,16 +6,14 @@
  *
  */
 import type { Provider } from "@lexical/yjs";
-
 import { definePlan } from "@etrepum/lexical-builder";
 import { LexicalPlanComposer } from "@etrepum/lexical-react-plan";
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import * as Y from "yjs";
-
+import type * as Y from "yjs";
 import { EditorPlan } from "./Editor";
 import ExampleTheme from "./ExampleTheme";
-import { getRandomUserProfile, UserProfile } from "./getRandomUserProfile";
+import { getRandomUserProfile, type UserProfile } from "./getRandomUserProfile";
 import { createWebRTCProvider, createWebsocketProvider } from "./providers";
 
 interface ActiveUserProfile extends UserProfile {
@@ -44,7 +42,7 @@ export default function App() {
   const [activeUsers, setActiveUsers] = useState<ActiveUserProfile[]>([]);
 
   const handleAwarenessUpdate = useCallback(() => {
-    const awareness = yjsProvider!.awareness!;
+    const awareness = yjsProvider!.awareness;
     setActiveUsers(
       Array.from(awareness.getStates().entries()).map(
         ([userId, { color, name }]) => ({
@@ -63,7 +61,7 @@ export default function App() {
     if (connected) {
       yjsProvider.disconnect();
     } else {
-      yjsProvider.connect();
+      void yjsProvider.connect();
     }
   };
 
@@ -74,7 +72,9 @@ export default function App() {
 
     yjsProvider.awareness.on("update", handleAwarenessUpdate);
 
-    return () => yjsProvider.awareness.off("update", handleAwarenessUpdate);
+    return () => {
+      yjsProvider.awareness.off("update", handleAwarenessUpdate);
+    };
   }, [yjsProvider, handleAwarenessUpdate]);
 
   const providerFactory = useCallback(
@@ -94,7 +94,9 @@ export default function App() {
 
       // This is a hack to get reference to provider with standard CollaborationPlugin.
       // To be fixed in future versions of Lexical.
-      setTimeout(() => setYjsProvider(provider), 0);
+      setTimeout(() => {
+        setYjsProvider(provider);
+      }, 0);
 
       return provider;
     },
@@ -118,7 +120,7 @@ export default function App() {
         ) : null}{" "}
         {/* WebRTC provider doesn't implement disconnect correctly */}
         {providerName !== "webrtc" ? (
-          <button onClick={handleConnectionToggle}>
+          <button onClick={handleConnectionToggle} type="button">
             {connected ? "Disconnect" : "Connect"}
           </button>
         ) : null}
@@ -128,16 +130,19 @@ export default function App() {
         <input
           type="text"
           value={userProfile.name}
-          onChange={(e) =>
-            setUserProfile((profile) => ({ ...profile, name: e.target.value }))
-          }
+          onChange={(e) => {
+            setUserProfile((profile) => ({ ...profile, name: e.target.value }));
+          }}
         />{" "}
         <input
           type="color"
           value={userProfile.color}
-          onChange={(e) =>
-            setUserProfile((profile) => ({ ...profile, color: e.target.value }))
-          }
+          onChange={(e) => {
+            setUserProfile((profile) => ({
+              ...profile,
+              color: e.target.value,
+            }));
+          }}
         />
       </p>
       <p>

@@ -5,6 +5,7 @@ const project = resolve(process.cwd(), "tsconfig.json");
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   rules: {
+    "no-nested-ternary": "off",
     "unicorn/filename-case": "off",
     "import/no-default-export": "off",
     "@typescript-eslint/prefer-nullish-coalescing": "off",
