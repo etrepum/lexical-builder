@@ -22,7 +22,6 @@ import { ToolbarPlan } from "./plugins/ToolbarPlugin";
 
 function EditorChildrenComponent({
   contentEditable,
-  placeholder,
   children,
 }: EditorChildrenComponentProps) {
   return (
@@ -30,7 +29,6 @@ function EditorChildrenComponent({
       <UsePlanComponent lexical:plan={ToolbarPlan} />
       <div className="editor-inner">
         {contentEditable}
-        {placeholder}
         <UsePlanComponent lexical:plan={TreeViewPlan} />
       </div>
       {children}
@@ -38,16 +36,22 @@ function EditorChildrenComponent({
   );
 }
 
+const placeholderText = "Enter some rich text...";
+const contentEditable = (
+  <ContentEditable
+    className="editor-input"
+    aria-placeholder={placeholderText}
+    placeholder={<div className="editor-placeholder">{placeholderText}</div>}
+  />
+);
+
 export const EditorPlan = definePlan({
   dependencies: [
     RichTextPlan,
     ToolbarPlan,
     configPlan(ReactPlan, {
       EditorChildrenComponent,
-      contentEditable: <ContentEditable className="editor-input" />,
-      placeholder: (
-        <div className="editor-placeholder">Enter some rich text...</div>
-      ),
+      contentEditable,
     }),
     configPlan(TreeViewPlan, {
       viewClassName: "tree-view-output",

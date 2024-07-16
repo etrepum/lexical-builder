@@ -37,7 +37,6 @@ export {
   ReactPluginHostPlan,
 } from "./ReactPluginHostPlan";
 export { DefaultEditorChildrenComponent } from "./DefaultEditorChildrenComponent";
-export { Placeholder } from "./Placeholder";
 export {
   usePlanDependency,
   usePlanComponent,

@@ -26,7 +26,6 @@ const initialConfig: ReactConfig = {
   ErrorBoundary: LexicalErrorBoundary,
   contentEditable: <ContentEditable />,
   decorators: [],
-  placeholder: null,
 };
 
 /**

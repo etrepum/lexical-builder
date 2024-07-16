@@ -28,8 +28,8 @@
     "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
-    "lexical": ">=0.16.1-nightly.20240626",
-    "@lexical/utils": ">=0.16.1-nightly.20240626",
+    "lexical": ">=0.16.2-nightly.20240716",
+    "@lexical/utils": ">=0.16.2-nightly.20240716",
     "tailwindcss": ">=3.3.0"
   },
   "optionalDependencies": {
