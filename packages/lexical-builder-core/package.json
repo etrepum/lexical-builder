@@ -15,7 +15,7 @@
     "test": "vitest run --typecheck",
     "test:watch": "vitest"
   },
-  "version": "0.0.29",
+  "version": "0.0.30-nightly.20240716.0",
   "license": "MIT",
   "repository": {
     "type": "git",

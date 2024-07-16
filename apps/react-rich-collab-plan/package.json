@@ -1,7 +1,7 @@
 {
   "name": "@etrepum/react-rich-collab-plan",
   "private": true,
-  "version": "0.0.29",
+  "version": "0.0.30-nightly.20240716.0",
   "type": "module",
   "scripts": {
     "server:dev": "vite",
