@@ -10,7 +10,12 @@ import {
   type HistoryState,
   registerHistory,
 } from "@lexical/history";
-import { definePlan, safeCast } from "@etrepum/lexical-builder-core";
+import {
+  definePlan,
+  provideOutput,
+  safeCast,
+} from "@etrepum/lexical-builder-core";
+import { disabledToggle } from "./disabledToggle";
 
 export interface HistoryConfig {
   /**
@@ -22,6 +27,15 @@ export interface HistoryConfig {
    * The initial history state, the default is {@link createEmptyHistoryState}.
    */
   createInitialHistoryState: () => HistoryState;
+  /**
+   * Whether history is disabled or not
+   */
+  disabled: boolean;
+}
+
+export interface HistoryOutput {
+  isDisabled: () => boolean;
+  setDisabled: (disabled: boolean) => void;
 }
 
 /**
@@ -32,9 +46,15 @@ export const HistoryPlan = definePlan({
   config: safeCast<HistoryConfig>({
     createInitialHistoryState: createEmptyHistoryState,
     delay: 300,
+    disabled: false,
   }),
   name: "@etrepum/lexical-builder/History",
-  register(editor, { delay, createInitialHistoryState }) {
-    return registerHistory(editor, createInitialHistoryState(), delay);
-  },
+  register: (editor, { delay, createInitialHistoryState, disabled }) =>
+    provideOutput<HistoryOutput>(
+      ...disabledToggle({
+        disabled,
+        register: () =>
+          registerHistory(editor, createInitialHistoryState(), delay),
+      }),
+    ),
 });

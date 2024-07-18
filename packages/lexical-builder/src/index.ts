@@ -44,7 +44,11 @@ export { InitialStatePlan, type InitialStateConfig } from "./InitialStatePlan";
 // These plan definitions should all be colocated with their implementations, only here for convenience
 export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
 export { type DragonConfig, type DragonOutput, DragonPlan } from "./DragonPlan";
-export { type HistoryConfig, HistoryPlan } from "./HistoryPlan";
+export {
+  type HistoryConfig,
+  type HistoryOutput,
+  HistoryPlan,
+} from "./HistoryPlan";
 export { PlainTextPlan } from "./PlainTextPlan";
 export { RichTextPlan } from "./RichTextPlan";
 export {
