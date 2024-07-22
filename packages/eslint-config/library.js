@@ -52,9 +52,10 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ["*.ts?(x)"],
+      files: ["*.tsx?", "*.ts"],
       rules: {
-        "eslint/no-undef": "off",
+        "no-undef": "off",
+        "no-unused-vars": "off",
       },
     },
   ],

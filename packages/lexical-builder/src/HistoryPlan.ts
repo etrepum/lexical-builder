@@ -15,7 +15,7 @@ import {
   provideOutput,
   safeCast,
 } from "@etrepum/lexical-builder-core";
-import { disabledToggle } from "./disabledToggle";
+import { disabledToggle, type DisabledToggleOutput } from "./disabledToggle";
 
 export interface HistoryConfig {
   /**
@@ -33,9 +33,8 @@ export interface HistoryConfig {
   disabled: boolean;
 }
 
-export interface HistoryOutput {
-  isDisabled: () => boolean;
-  setDisabled: (disabled: boolean) => void;
+export interface HistoryOutput extends DisabledToggleOutput {
+  getHistoryState: () => HistoryState;
 }
 
 /**
@@ -49,12 +48,15 @@ export const HistoryPlan = definePlan({
     disabled: false,
   }),
   name: "@etrepum/lexical-builder/History",
-  register: (editor, { delay, createInitialHistoryState, disabled }) =>
-    provideOutput<HistoryOutput>(
-      ...disabledToggle({
-        disabled,
-        register: () =>
-          registerHistory(editor, createInitialHistoryState(), delay),
-      }),
-    ),
+  register: (editor, { delay, createInitialHistoryState, disabled }) => {
+    const historyState = createInitialHistoryState();
+    const [output, cleanup] = disabledToggle({
+      disabled,
+      register: () => registerHistory(editor, historyState, delay),
+    });
+    return provideOutput<HistoryOutput>(
+      { ...output, getHistoryState: () => historyState },
+      cleanup,
+    );
+  },
 });

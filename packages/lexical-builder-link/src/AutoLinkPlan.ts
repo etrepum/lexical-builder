@@ -5,10 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
 import type { AutoLinkAttributes } from "@lexical/link";
 import type { ElementNode, LexicalNode } from "lexical";
-
 import {
   $createAutoLinkNode,
   $isAutoLinkNode,
@@ -28,13 +26,14 @@ import {
   COMMAND_PRIORITY_LOW,
   TextNode,
 } from "lexical";
-import invariant from "./shared/invariant";
 import {
   definePlan,
   disabledToggle,
+  type DisabledToggleOutput,
   provideOutput,
   safeCast,
 } from "@etrepum/lexical-builder";
+import invariant from "./shared/invariant";
 import { LinkPlan } from "./LinkPlan";
 
 type ChangeHandler = (url: string | null, prevUrl: string | null) => void;
@@ -69,7 +68,7 @@ export function createLinkMatcherWithRegExp(
 
 function findFirstMatch(
   text: string,
-  matchers: Array<LinkMatcher>,
+  matchers: LinkMatcher[],
 ): LinkMatcherResult | null {
   for (const matcher of matchers) {
     const match = matcher(text);
@@ -287,7 +286,7 @@ function $createAutoLinkNode_(
 
 function $handleLinkCreation(
   nodes: TextNode[],
-  matchers: Array<LinkMatcher>,
+  matchers: LinkMatcher[],
   onChange: ChangeHandler,
 ): void {
   let currentNodes = [...nodes];
@@ -298,7 +297,7 @@ function $handleLinkCreation(
   let match;
   let invalidMatchEnd = 0;
 
-  while ((match = findFirstMatch(text, matchers)) && match !== null) {
+  while ((match = findFirstMatch(text, matchers))) {
     const matchStart = match.index;
     const matchLength = match.length;
     const matchEnd = matchStart + matchLength;
@@ -340,7 +339,7 @@ function $handleLinkCreation(
 
 function handleLinkEdit(
   linkNode: AutoLinkNode,
-  matchers: Array<LinkMatcher>,
+  matchers: LinkMatcher[],
   onChange: ChangeHandler,
 ): void {
   // Check children are simple text
@@ -396,7 +395,7 @@ function handleLinkEdit(
 // Given the creation preconditions, these can only be simple text nodes.
 function handleBadNeighbors(
   textNode: TextNode,
-  matchers: Array<LinkMatcher>,
+  matchers: LinkMatcher[],
   onChange: ChangeHandler,
 ): void {
   const previousSibling = textNode.getPreviousSibling();
@@ -424,7 +423,7 @@ function handleBadNeighbors(
   }
 }
 
-function replaceWithChildren(node: ElementNode): Array<LexicalNode> {
+function replaceWithChildren(node: ElementNode): LexicalNode[] {
   const children = node.getChildren();
   const childrenLength = children.length;
 
@@ -461,9 +460,11 @@ export interface AutoLinkConfig {
 }
 
 const URL_REGEX =
+  // eslint-disable-next-line prefer-named-capture-group -- meta style
   /((https?:\/\/(www\.)?)|(www\.))[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)(?<![-.+():%])/;
 
 const EMAIL_REGEX =
+  // eslint-disable-next-line prefer-named-capture-group -- meta style
   /(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
 
 export const DEFAULT_MATCHERS = [
@@ -475,10 +476,7 @@ export const DEFAULT_MATCHERS = [
   }),
 ];
 
-export interface AutoLinkOutput {
-  isDisabled: () => boolean;
-  setDisabled: (disabled: boolean) => void;
-}
+export type AutoLinkOutput = DisabledToggleOutput;
 
 export const AutoLinkPlan = definePlan({
   name: "@etrepum/lexical-builder-link/AutoLink",
@@ -486,7 +484,9 @@ export const AutoLinkPlan = definePlan({
   nodes: [AutoLinkNode],
   config: safeCast<AutoLinkConfig>({
     matchers: DEFAULT_MATCHERS,
-    onChange: (_url, _prevUrl) => {},
+    onChange: (_url, _prevUrl) => {
+      /* noop */
+    },
     disabled: false,
   }),
   register(editor, config) {

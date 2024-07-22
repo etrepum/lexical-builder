@@ -28,6 +28,7 @@ import {
 import {
   definePlan,
   disabledToggle,
+  type DisabledToggleOutput,
   provideOutput,
   safeCast,
 } from "@etrepum/lexical-builder";
@@ -434,10 +435,7 @@ export function registerMarkdownShortcuts(
 export interface MarkdownShortcutsConfig {
   disabled: boolean;
 }
-export interface MarkdownShortcutsOutput {
-  isDisabled: () => boolean;
-  setDisabled: (disabled: boolean) => void;
-}
+export type MarkdownShortcutsOutput = DisabledToggleOutput;
 
 export const MarkdownShortcutsPlan = definePlan({
   name: "@etrepum/lexical-builder-markdown/MarkdownShortcuts",

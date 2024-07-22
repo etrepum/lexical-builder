@@ -12,15 +12,12 @@ import {
   provideOutput,
   safeCast,
 } from "@etrepum/lexical-builder-core";
-import { disabledToggle } from "./disabledToggle";
+import { disabledToggle, type DisabledToggleOutput } from "./disabledToggle";
 
 export interface DragonConfig {
   disabled: boolean;
 }
-export interface DragonOutput {
-  isDisabled: () => boolean;
-  setDisabled: (disabled: boolean) => void;
-}
+export type DragonOutput = DisabledToggleOutput;
 
 /**
  * Add Dragon speech to text input support to the editor, via the

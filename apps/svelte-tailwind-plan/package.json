@@ -19,6 +19,7 @@
     "@etrepum/lexical-tailwind-plugin": "*",
     "@lexical/markdown": "*",
     "@lexical/rich-text": "*",
+    "@lexical/text": "*",
     "@lexical/utils": "*",
     "@sveltejs/adapter-auto": "^3.0.0",
     "@sveltejs/kit": "^2.0.0",

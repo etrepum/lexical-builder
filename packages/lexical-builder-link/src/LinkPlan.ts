@@ -9,6 +9,7 @@
 import {
   definePlan,
   disabledToggle,
+  type DisabledToggleOutput,
   provideOutput,
   safeCast,
 } from "@etrepum/lexical-builder";
@@ -28,10 +29,8 @@ export interface LinkConfig {
   disabled: boolean;
 }
 
-export interface LinkOutput {
+export interface LinkOutput extends DisabledToggleOutput {
   toggleLink: (payload: CommandPayloadType<typeof TOGGLE_LINK_COMMAND>) => void;
-  isDisabled: () => boolean;
-  setDisabled: (disabled: boolean) => void;
 }
 
 export const LinkPlan = definePlan({
@@ -56,11 +55,11 @@ export const LinkPlan = definePlan({
                   return true;
                 }
                 return false;
-              } else {
+              } 
                 const { url, target, rel, title } = payload;
                 $toggleLink(url, { rel, target, title });
                 return true;
-              }
+              
             },
             COMMAND_PRIORITY_LOW,
           ),

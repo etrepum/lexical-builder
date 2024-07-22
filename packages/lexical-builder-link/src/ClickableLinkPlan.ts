@@ -9,8 +9,11 @@
 import {
   definePlan,
   disabledToggle,
+  type DisabledToggleOutput,
   provideOutput,
   safeCast,
+  Store,
+  type WritableStore,
 } from "@etrepum/lexical-builder";
 import { $isLinkNode } from "@lexical/link";
 import { $findMatchingParent, isHTMLAnchorElement } from "@lexical/utils";
@@ -43,11 +46,8 @@ export interface ClickableLinkConfig {
   clickable: boolean;
 }
 
-export interface ClickableLinkOutput {
-  isDisabled: () => boolean;
-  setDisabled: (disabled: boolean) => void;
-  isClickable: () => boolean;
-  setClickable: (clickable: boolean) => void;
+export interface ClickableLinkOutput extends DisabledToggleOutput {
+  clickable: WritableStore<boolean>;
 }
 
 export const ClickableLinkPlan = definePlan({
@@ -58,12 +58,8 @@ export const ClickableLinkPlan = definePlan({
     newTab: true,
     clickable: true,
   }),
-  register(editor, config, state) {
-    let { clickable } = config;
-    const isClickable = () => clickable;
-    function setClickable(nextClickable: boolean): void {
-      clickable = nextClickable;
-    }
+  register(editor, config, _state) {
+    const clickable = new Store<boolean>(config.clickable);
     const [output, cleanup] = disabledToggle({
       disabled: config.disabled,
       register() {
@@ -78,9 +74,9 @@ export const ClickableLinkPlan = definePlan({
           if (nearestEditor === null) {
             return;
           }
+          let url: string | null = null;
+          let urlTarget: string | null = null;
 
-          let url = null;
-          let urlTarget = null;
           nearestEditor.update(() => {
             const clickedNode = $getNearestNodeFromDOMNode(target);
             if (clickedNode !== null) {
@@ -88,7 +84,7 @@ export const ClickableLinkPlan = definePlan({
                 clickedNode,
                 $isElementNode,
               );
-              if (clickable) {
+              if (clickable.get()) {
                 if ($isLinkNode(maybeLinkNode)) {
                   url = maybeLinkNode.sanitizeUrl(maybeLinkNode.getURL());
                   urlTarget = maybeLinkNode.getTarget();
@@ -103,6 +99,7 @@ export const ClickableLinkPlan = definePlan({
             }
           });
 
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- false positive
           if (url === null || url === "") {
             return;
           }
@@ -121,6 +118,7 @@ export const ClickableLinkPlan = definePlan({
               isMiddle ||
               event.metaKey ||
               event.ctrlKey ||
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- false positive
               urlTarget === "_blank"
               ? "_blank"
               : "_self",
@@ -147,7 +145,7 @@ export const ClickableLinkPlan = definePlan({
       },
     });
     return provideOutput<ClickableLinkOutput>(
-      { ...output, isClickable, setClickable },
+      { ...output, clickable },
       cleanup,
     );
   },

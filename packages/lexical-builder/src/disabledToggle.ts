@@ -1,31 +1,30 @@
+import { Store, type WritableStore } from "./Store";
+
 export interface DisabledToggleOptions {
   disabled?: boolean;
   register: () => () => void;
 }
 export interface DisabledToggleOutput {
-  isDisabled: () => boolean;
-  setDisabled: (disabled: boolean) => void;
+  disabled: WritableStore<boolean>;
 }
 export function disabledToggle(
   opts: DisabledToggleOptions,
 ): [DisabledToggleOutput, () => void] {
+  const disabled = new Store(Boolean(opts.disabled));
   let cleanup: null | (() => void) = null;
-  function isDisabled(): boolean {
-    return cleanup !== null;
-  }
-  function setDisabled(disabled: boolean): void {
-    if (!disabled && cleanup === null) {
-      cleanup = opts.register();
-    } else if (disabled && cleanup !== null) {
+  disabled.subscribe((isDisabled) => {
+    if (cleanup) {
       cleanup();
       cleanup = null;
     }
-  }
-  setDisabled(Boolean(opts.disabled));
+    if (!isDisabled) {
+      cleanup = opts.register();
+    }
+  });
   return [
-    { isDisabled, setDisabled },
+    { disabled },
     () => {
-      setDisabled(false);
+      disabled.set(true);
     },
   ];
 }

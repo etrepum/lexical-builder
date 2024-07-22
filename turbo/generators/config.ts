@@ -1,19 +1,19 @@
-import type { PlopTypes } from "@turbo/gen";
 import * as fs from "node:fs";
+import type { PlopTypes } from "@turbo/gen";
 
-function directoryNameToPackageName(directoryName) {
+function directoryNameToPackageName(directoryName: string): string {
   return `@etrepum/${directoryName}`;
 }
 
-function directoryNameToExportName(directoryName) {
+function directoryNameToExportName(directoryName: string): string {
   return directoryName
-    .replace(/^lexical-(builder-)?/, "")
+    .replace(/^lexical-(?:builder-)?/, "")
     .split("-")
     .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
     .join("");
 }
 
-export default function (plop: PlopTypes.NodePlopAPI) {
+export default (plop: PlopTypes.NodePlopAPI) => {
   // create your generators here
   plop.setGenerator("package", {
     description: "new package in repo",
@@ -25,10 +25,18 @@ export default function (plop: PlopTypes.NodePlopAPI) {
       },
     ],
     actions: (data) => {
-      const { directoryName } = data;
+      if (data === undefined || typeof data.directoryName !== "string") {
+        throw new Error("Expecting non-empty answers");
+      }
+      const directoryName: string = data.directoryName;
       data.packageName = directoryNameToPackageName(directoryName);
       data.exportName = directoryNameToExportName(directoryName);
-      data.version = JSON.parse(fs.readFileSync("./package.json")).version;
+      data.dotfile = "";
+      data.version = (
+        JSON.parse(fs.readFileSync("./package.json", "utf-8")) as {
+          version: string;
+        }
+      ).version;
       return [
         {
           type: "addMany",
@@ -40,4 +48,4 @@ export default function (plop: PlopTypes.NodePlopAPI) {
       ];
     },
   });
-}
+};
