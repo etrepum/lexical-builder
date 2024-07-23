@@ -36,13 +36,6 @@
   pointer-events: none;
 }
 
-.sticky-note-container {
-  position: absolute;
-  z-index: 9;
-  width: 120px;
-  display: inline-block;
-}
-
 .sticky-note {
   line-height: 1;
   text-align: left;
@@ -69,32 +62,6 @@
   background: rgba(0, 0, 0, 0.2);
   box-shadow: 2px 15px 5px rgba(0, 0, 0, 0.4);
   transform: matrix(-1, -0.1, 0, 1, 0, 0);
-}
-
-.sticky-note.yellow {
-  border-top: 1px solid #fdfd86;
-  background: linear-gradient(
-    135deg,
-    #ffff88 81%,
-    #ffff88 82%,
-    #ffff88 82%,
-    #ffffc6 100%
-  );
-}
-
-.sticky-note.pink {
-  border-top: 1px solid #e7d1e4;
-  background: linear-gradient(
-    135deg,
-    #f7cbe8 81%,
-    #f7cbe8 82%,
-    #f7cbe8 82%,
-    #e7bfe1 100%
-  );
-}
-
-.sticky-note-container.dragging {
-  transition: none !important;
 }
 
 .sticky-note div {

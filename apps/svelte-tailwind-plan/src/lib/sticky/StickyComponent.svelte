@@ -1,8 +1,9 @@
 <script lang="ts">
+  import "@fontsource/reenie-beanie";
   import { type LexicalEditor } from "lexical";
   import { calculateZoomLevel, mergeRegister } from "@lexical/utils";
   import { $canShowPlaceholder as L$canShowPlaceholder } from "@lexical/text";
-  import { StickyNode } from "./StickyNode";
+  import { StickyNode, type StickyNoteColor } from "./StickyNode";
   /* eslint-disable prefer-const -- svelte runes */
   interface Positioning {
     isDragging: boolean;
@@ -20,18 +21,19 @@
     isDragging: false,
     offsetX: 0,
     offsetY: 0,
-    rootElementRect: null,
+    rootElementRect: editor.getRootElement()?.getBoundingClientRect() ?? null,
     x: node.__x,
     y: node.__y,
   });
 
   let { left, top } = $derived.by(() => {
     const rootElementRect = position.rootElementRect;
-    const rectLeft = rootElementRect !== null ? rootElementRect.left : 0;
-    const rectTop = rootElementRect !== null ? rootElementRect.top : 0;
+    if (rootElementRect === null) {
+      return { top: undefined, left: undefined };
+    }
     return {
-      top: `${String(rectTop + position.y)}px`,
-      left: `${String(rectLeft + position.x)}px`,
+      top: `${String(rootElementRect.top + position.y)}px`,
+      left: `${String(rootElementRect.left + position.x)}px`,
     };
   });
 
@@ -66,7 +68,6 @@
 
   const handlePointerUp = (_event: PointerEvent): void => {
     position.isDragging = false;
-    stickyContainer.classList.remove("dragging");
     editor.update(() => {
       node.setPosition(position.x, position.y);
     });
@@ -101,12 +102,21 @@
     });
   };
 
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      position.rootElementRect = entry.target.getBoundingClientRect();
+    }
+  });
+  const cleanup = editor.registerRootListener((nextRootElem, prevRootElem) => {
+    if (prevRootElem !== null) {
+      resizeObserver.unobserve(prevRootElem);
+    }
+    if (nextRootElem !== null) {
+      resizeObserver.observe(nextRootElem);
+    }
+  });
+  $effect(() => cleanup);
   $effect(() => {
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        position.rootElementRect = entry.target.getBoundingClientRect();
-      }
-    });
     caption.setRootElement(captionRoot);
     return mergeRegister(
       caption.registerEditableListener(() => {
@@ -118,34 +128,34 @@
       () => {
         caption.setRootElement(null);
       },
-      editor.registerRootListener((nextRootElem, prevRootElem) => {
-        if (prevRootElem !== null) {
-          resizeObserver.unobserve(prevRootElem);
-        }
-        if (nextRootElem !== null) {
-          resizeObserver.observe(nextRootElem);
-        }
-      }),
     );
   });
+  const colorClasses: Record<StickyNoteColor, string> = {
+    yellow:
+      "border-[#fdfd86] bg-[linear-gradient(135deg,#ffff88_81%,#ffff88_82%,#ffff88_82%,#ffffc6_100%)]",
+    pink: "border-[#e7d1e4] bg-[linear-gradient(135deg,#f7cbe8_81%,#f7cbe8_82%,#f7cbe8_82%,#e7bfe1_100%)]",
+  };
 </script>
 
 <svelte:window onresize={handleWindowResize} />
 <div class="contents">
   <div
     bind:this={stickyContainer}
-    class="absolute w-[120px] inline-block z-10"
+    class="absolute w-[120px] inline-block z-10 cursor-move m-[25px] border-[#e8e8e8]"
     style:left
     style:top
     style:transition={position.isDragging
       ? undefined
       : "top 0.3s ease 0s, left 0.3s ease 0s"}
   >
-    <div class="sticky-note {color}" onpointerdown={handlePointerDown}>
+    <div
+      class="border-t-1 py-5 px-2.5 {colorClasses[color]}"
+      onpointerdown={handlePointerDown}
+    >
       <button
         onclick={handleDelete}
         type="button"
-        class="absolute top-2 right-2.5 cursor-pointer opacity-50"
+        class="absolute top-2 right-2.5 cursor-pointer opacity-50 text-[10px] hover:opacity-100 hover:font-bold"
         aria-label="Delete sticky note"
         title="Delete"
       >
@@ -154,23 +164,36 @@
       <button
         onclick={handleColorChange}
         type="button"
-        class="absolute top-2 right-[25px] cursor-pointer opacity-50"
+        class="absolute top-2 right-[25px] cursor-pointer opacity-50 text-[10px] hover:opacity-100"
         aria-label="Change sticky note color"
         title="Color"
       >
-        🪣
+        <i class="bucket block size-3 bg-contain"></i>
       </button>
       <div
-        bind:this={captionRoot}
-        contenteditable
-        aria-placeholder={placeholder ? placeholderText : undefined}
-        class="StickyNode__contentEditable"
-      ></div>
-      {#if placeholder}
-        <div aria-hidden="true" class="StickyNode__placeholder">
-          {placeholderText}
-        </div>
-      {/if}
+        class="font-['Reenie_Beanie'] cursor-text leading-none text-[24px] relative"
+      >
+        <div
+          bind:this={captionRoot}
+          contenteditable
+          aria-placeholder={placeholder ? placeholderText : undefined}
+          class="h-full"
+        ></div>
+        {#if placeholder}
+          <div
+            aria-hidden="true"
+            class="absolute left-0 top-0 opacity-50 color-[#999] overflow-hidden text-ellipsis select-none inline-block pointer-events-none"
+          >
+            {placeholderText}
+          </div>
+        {/if}
+      </div>
     </div>
   </div>
 </div>
+
+<style>
+  .bucket {
+    background-image: url("./icons/paint-bucket.svg");
+  }
+</style>

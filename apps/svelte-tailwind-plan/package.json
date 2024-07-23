@@ -14,8 +14,8 @@
     "@etrepum/lexical-builder-link": "*",
     "@etrepum/lexical-builder-list": "*",
     "@etrepum/lexical-builder-markdown": "*",
-    "@etrepum/lexical-tailwind": "*",
     "@etrepum/lexical-emoji-plan": "*",
+    "@etrepum/lexical-tailwind": "*",
     "@etrepum/lexical-tailwind-plugin": "*",
     "@lexical/markdown": "*",
     "@lexical/rich-text": "*",
@@ -41,5 +41,8 @@
     "svelte": "$svelte"
   },
   "main": "./",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@fontsource/reenie-beanie": "^5.0.19"
+  }
 }
