@@ -21,13 +21,14 @@ import {
 } from "@etrepum/lexical-builder-markdown";
 import { TailwindPlan } from "@etrepum/lexical-tailwind";
 import {
-  $isEmojiNode,
+  $isEmojiNode as L$isEmojiNode,
   EmojiNode,
   EmojiPlan,
 } from "@etrepum/lexical-emoji-plan";
-import { $getRoot } from "lexical";
+import { $getRoot as L$getRoot } from "lexical";
 import type { TextMatchTransformer } from "@lexical/markdown";
 import { SlackPastePlan } from "./SlackPastePlan";
+import { StickyPlan } from "./sticky/StickyPlan";
 
 const INITIAL_CONTENT = `
 # Welcome to the Svelte 5 Tailwind example!
@@ -57,7 +58,7 @@ Checklist:
 const NO_MATCH_REGEX = /^(?!)/;
 const EmojiShortcodeTransformer: TextMatchTransformer = {
   dependencies: [EmojiNode],
-  export: (node) => ($isEmojiNode(node) ? node.getShortcode() ?? null : null),
+  export: (node) => (L$isEmojiNode(node) ? node.getShortcode() ?? null : null),
   importRegExp: NO_MATCH_REGEX,
   regExp: NO_MATCH_REGEX,
   replace: () => {
@@ -86,13 +87,14 @@ export function buildEditor(): LexicalEditorWithDispose {
       CheckListPlan,
       SlackPastePlan,
       EmojiPlan,
+      StickyPlan,
     ],
-    $initialEditorState(editor) {
-      const { $markdownImport } = getPlanDependencyFromEditor(
+    $initialEditorState: (editor) => {
+      const { output } = getPlanDependencyFromEditor(
         editor,
         MarkdownTransformersPlan,
-      ).output;
-      $getRoot().append(...$markdownImport(INITIAL_CONTENT));
+      );
+      L$getRoot().append(...output.$markdownImport(INITIAL_CONTENT));
     },
   });
 }

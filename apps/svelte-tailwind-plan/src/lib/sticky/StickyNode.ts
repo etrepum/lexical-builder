@@ -6,7 +6,6 @@
  *
  */
 
-import { addClassNamesToElement } from "@lexical/utils";
 import type {
   EditorConfig,
   LexicalEditor,
@@ -16,7 +15,12 @@ import type {
   SerializedLexicalNode,
   Spread,
 } from "lexical";
-import { $setSelection, createEditor, DecoratorNode } from "lexical";
+import {
+  $applyNodeReplacement,
+  $setSelection,
+  createEditor,
+  DecoratorNode,
+} from "lexical";
 
 export type StickyNoteColor = "pink" | "yellow";
 
@@ -36,7 +40,7 @@ export class StickyNode extends DecoratorNode<null> {
   __color: StickyNoteColor;
   __caption: LexicalEditor;
 
-  static getType(): string {
+  static getType(): "sticky" {
     return "sticky";
   }
 
@@ -50,7 +54,7 @@ export class StickyNode extends DecoratorNode<null> {
     );
   }
   static importJSON(serializedNode: SerializedStickyNode): StickyNode {
-    const stickyNode = new StickyNode(
+    const stickyNode = $createStickyNode(
       serializedNode.xOffset,
       serializedNode.yOffset,
       serializedNode.color,
@@ -90,9 +94,7 @@ export class StickyNode extends DecoratorNode<null> {
   }
 
   createDOM(_config: EditorConfig): HTMLElement {
-    const div = document.createElement("div");
-    addClassNamesToElement(div, "contents");
-    return div;
+    return document.createElement("div");
   }
 
   updateDOM(): false {
@@ -112,6 +114,7 @@ export class StickyNode extends DecoratorNode<null> {
   }
 
   decorate(): null {
+    // see mutation listener
     return null;
   }
 
@@ -127,8 +130,9 @@ export function $isStickyNode(
 }
 
 export function $createStickyNode(
-  xOffset: number,
-  yOffset: number,
+  xOffset = 0,
+  yOffset = 0,
+  color: StickyNoteColor = "yellow",
 ): StickyNode {
-  return new StickyNode(xOffset, yOffset, "yellow");
+  return $applyNodeReplacement(new StickyNode(xOffset, yOffset, color));
 }

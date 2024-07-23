@@ -4,7 +4,6 @@
   import { $canShowPlaceholder as L$canShowPlaceholder } from "@lexical/text";
   import { StickyNode } from "./StickyNode";
   /* eslint-disable prefer-const -- svelte runes */
-
   interface Positioning {
     isDragging: boolean;
     offsetX: number;
@@ -37,66 +36,24 @@
   });
 
   const placeholderText = "What's up?";
-  let placeholder = $state(false);
 
   let { caption, color } = $derived({
     caption: node.__caption,
     color: node.__color,
   });
-  function resetCanShowPlaceholder() {
+  const getCanShowPlaceholder = () =>
     caption
       .getEditorState()
       .read(() => L$canShowPlaceholder(caption.isComposing()));
-  }
+  let placeholder = $state(getCanShowPlaceholder());
 
   // const { isCollabActive } = useCollaborationContext();
-  $effect(() => {
-    caption.setRootElement(captionRoot);
-    return mergeRegister(
-      caption.registerEditableListener(() => {
-        resetCanShowPlaceholder();
-      }),
-      caption.registerUpdateListener(() => {
-        resetCanShowPlaceholder();
-      }),
-      () => {
-        caption.setRootElement(null);
-      },
-    );
-  });
-
-  $effect(() => {
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        position.rootElementRect = entry.target.getBoundingClientRect();
-      }
-    });
-
-    const removeRootListener = editor.registerRootListener(
-      (nextRootElem, prevRootElem) => {
-        if (prevRootElem !== null) {
-          resizeObserver.unobserve(prevRootElem);
-        }
-        if (nextRootElem !== null) {
-          resizeObserver.observe(nextRootElem);
-        }
-      },
-    );
-
-    const handleWindowResize = (): void => {
-      const rootElement = editor.getRootElement();
-      if (rootElement !== null) {
-        position.rootElementRect = rootElement.getBoundingClientRect();
-      }
-    };
-
-    window.addEventListener("resize", handleWindowResize);
-
-    return () => {
-      window.removeEventListener("resize", handleWindowResize);
-      removeRootListener();
-    };
-  });
+  const handleWindowResize = (): void => {
+    const rootElement = editor.getRootElement();
+    if (rootElement !== null) {
+      position.rootElementRect = rootElement.getBoundingClientRect();
+    }
+  };
 
   const handlePointerMove = (event: PointerEvent): void => {
     const rootElementRect = position.rootElementRect;
@@ -117,6 +74,21 @@
     document.removeEventListener("pointerup", handlePointerUp);
   };
 
+  const handlePointerDown = (event: PointerEvent): void => {
+    if (event.button === 2 || event.target !== event.currentTarget) {
+      // Right click or click on editor should not work
+      return;
+    }
+    const { top, left } = stickyContainer.getBoundingClientRect();
+    const zoom = calculateZoomLevel(stickyContainer);
+    position.offsetX = event.clientX / zoom - left;
+    position.offsetY = event.clientY / zoom - top;
+    position.isDragging = true;
+    document.addEventListener("pointermove", handlePointerMove);
+    document.addEventListener("pointerup", handlePointerUp);
+    event.preventDefault();
+  };
+
   const handleDelete = (): void => {
     editor.update(() => {
       node.remove();
@@ -128,61 +100,77 @@
       node.toggleColor();
     });
   };
+
+  $effect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        position.rootElementRect = entry.target.getBoundingClientRect();
+      }
+    });
+    caption.setRootElement(captionRoot);
+    return mergeRegister(
+      caption.registerEditableListener(() => {
+        placeholder = getCanShowPlaceholder();
+      }),
+      caption.registerUpdateListener(() => {
+        placeholder = getCanShowPlaceholder();
+      }),
+      () => {
+        caption.setRootElement(null);
+      },
+      editor.registerRootListener((nextRootElem, prevRootElem) => {
+        if (prevRootElem !== null) {
+          resizeObserver.unobserve(prevRootElem);
+        }
+        if (nextRootElem !== null) {
+          resizeObserver.observe(nextRootElem);
+        }
+      }),
+    );
+  });
 </script>
 
-<div
-  bind:this={stickyContainer}
-  class="sticky-note-container"
-  class:dragging={position.isDragging}
-  style:left
-  style:top
-  style:transition="top 0.3s ease 0s, left 0.3s ease 0s"
->
+<svelte:window onresize={handleWindowResize} />
+<div class="contents">
   <div
-    class={`sticky-note ${color}`}
-    onpointerdown={(event) => {
-      if (event.button === 2 || event.target !== event.currentTarget) {
-        // Right click or click on editor should not work
-        return;
-      }
-      const { top, left } = stickyContainer.getBoundingClientRect();
-      const zoom = calculateZoomLevel(stickyContainer);
-      position.offsetX = event.clientX / zoom - left;
-      position.offsetY = event.clientY / zoom - top;
-      position.isDragging = true;
-      document.addEventListener("pointermove", handlePointerMove);
-      document.addEventListener("pointerup", handlePointerUp);
-      event.preventDefault();
-    }}
+    bind:this={stickyContainer}
+    class="absolute w-[120px] inline-block z-10"
+    style:left
+    style:top
+    style:transition={position.isDragging
+      ? undefined
+      : "top 0.3s ease 0s, left 0.3s ease 0s"}
   >
-    <button
-      onclick={handleDelete}
-      type="button"
-      class="delete"
-      aria-label="Delete sticky note"
-      title="Delete"
-    >
-      X
-    </button>
-    <button
-      onclick={handleColorChange}
-      type="button"
-      class="color"
-      aria-label="Change sticky note color"
-      title="Color"
-    >
-      <i class="bucket"></i>
-    </button>
-    <div
-      bind:this={captionRoot}
-      contenteditable
-      aria-placeholder={placeholder ? placeholderText : undefined}
-      class="StickyNode__contentEditable"
-    ></div>
-    {#if placeholder}
-      <div aria-hidden="true" class="StickyNode__placeholder">
-        {placeholderText}
-      </div>
-    {/if}
+    <div class="sticky-note {color}" onpointerdown={handlePointerDown}>
+      <button
+        onclick={handleDelete}
+        type="button"
+        class="absolute top-2 right-2.5 cursor-pointer opacity-50"
+        aria-label="Delete sticky note"
+        title="Delete"
+      >
+        X
+      </button>
+      <button
+        onclick={handleColorChange}
+        type="button"
+        class="absolute top-2 right-[25px] cursor-pointer opacity-50"
+        aria-label="Change sticky note color"
+        title="Color"
+      >
+        🪣
+      </button>
+      <div
+        bind:this={captionRoot}
+        contenteditable
+        aria-placeholder={placeholder ? placeholderText : undefined}
+        class="StickyNode__contentEditable"
+      ></div>
+      {#if placeholder}
+        <div aria-hidden="true" class="StickyNode__placeholder">
+          {placeholderText}
+        </div>
+      {/if}
+    </div>
   </div>
 </div>
