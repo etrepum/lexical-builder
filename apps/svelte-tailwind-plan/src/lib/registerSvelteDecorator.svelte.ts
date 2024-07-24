@@ -82,9 +82,7 @@ export function registerSvelteDecorator<T extends DecoratorNode<null>>(
         }
       },
       {
-        // TODO: waiting for https://github.com/facebook/lexical/pull/6444
-        // but doesn't need lazy init either way
-        skipInitialization: true,
+        skipInitialization: false,
       },
     ),
   );
