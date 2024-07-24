@@ -28,8 +28,8 @@
     "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
-    "lexical": ">=0.16.2-nightly.20240716",
-    "@lexical/utils": ">=0.16.2-nightly.20240716",
+    "lexical": ">=0.16.2-nightly.20240724",
+    "@lexical/utils": ">=0.16.2-nightly.20240724",
     "tailwindcss": ">=3.3.0"
   },
   "optionalDependencies": {
@@ -42,8 +42,8 @@
     "eslint": "^8.57.0",
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
-    "vite-plugin-dts": "^3.9.1",
-    "vite-plugin-package-version": "^1.1.0"
+    "vite-plugin-dts": "*",
+    "vite-plugin-package-version": "*"
   },
   "main": "dist/index.js",
   "module": "dist/index.js",

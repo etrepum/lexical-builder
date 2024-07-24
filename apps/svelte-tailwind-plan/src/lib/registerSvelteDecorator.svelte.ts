@@ -49,20 +49,17 @@ export function registerSvelteDecorator<T extends DecoratorNode<null>>(
                 `Expecting a mounted instance of ${Klass.name} (with type ${Klass.getType()})`,
               );
             }
+            // We don't need to worry about $state.frozen or whatever because these
+            // are both class instances which is a 'barrier'
             // eslint-disable-next-line no-undef -- false positive
-            let node = $state.frozen(initialNode);
+            const props = $state({ node: initialNode, editor });
             const component = mount(Component, {
               target: el,
-              props: {
-                editor,
-                get node() {
-                  return node;
-                },
-              },
+              props,
             });
             mountMap.set(nodeKey, (nextNode: T | null) => {
               if (nextNode) {
-                node = nextNode;
+                props.node = nextNode;
               } else {
                 unmount(component);
               }
