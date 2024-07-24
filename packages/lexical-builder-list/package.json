@@ -30,8 +30,8 @@
     "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
-    "lexical": ">=0.16.2-nightly.20240716",
-    "@lexical/list": ">=0.16.2-nightly.20240716"
+    "lexical": ">=0.16.2-nightly.20240724",
+    "@lexical/list": ">=0.16.2-nightly.20240724"
   },
   "sideEffects": false,
   "devDependencies": {
@@ -44,9 +44,9 @@
     "tslib": "^2.6.2",
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
-    "vite-plugin-dts": "^3.9.1",
-    "vite-plugin-package-version": "^1.1.0",
-    "vitest": "^1.6.0"
+    "vite-plugin-dts": "*",
+    "vite-plugin-package-version": "*",
+    "vitest": "*"
   },
   "module": "dist/index.js",
   "types": "dist/index.d.ts",

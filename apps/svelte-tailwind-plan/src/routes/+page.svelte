@@ -49,7 +49,7 @@
 </header>
 <main class="m-4">
   <div
-    class="border p-4 border-solid container mx-auto"
+    class="border p-4 border-solid container mx-auto relative"
     bind:this={editorRef}
     contenteditable
   ></div>
