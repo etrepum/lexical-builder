@@ -1,3 +1,18 @@
+## v0.0.31 (2024-07-23
+
+2024-07-23
+2024-07-23
+2024-07-23)
+
+- Merge pull request #44 from etrepum/nested-editors Bob Ippolito
+- parentEditor support Bob Ippolito
+- WIP css Bob Ippolito
+- WIP svelte 5 Bob Ippolito
+- WIP store Bob Ippolito
+- disabled toggle for history Bob Ippolito
+- WIP Set up for nested editors Bob Ippolito
+- Merge pull request #43 from etrepum/0.0.30release Bob Ippolito
+
 ## v0.0.30 (2024-07-15
 
 2024-07-15
