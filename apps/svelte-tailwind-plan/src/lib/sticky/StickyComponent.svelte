@@ -149,7 +149,7 @@
       : "top 0.3s ease 0s, left 0.3s ease 0s"}
   >
     <div
-      class="border-t-1 py-5 px-2.5 {colorClasses[color]}"
+      class="relative border-t-1 py-5 px-2.5 {colorClasses[color]}"
       onpointerdown={handlePointerDown}
     >
       <button
@@ -171,18 +171,18 @@
         <i class="bucket block size-3 bg-contain"></i>
       </button>
       <div
-        class="font-['Reenie_Beanie'] cursor-text leading-none text-[24px] relative"
+        class="font-['Reenie_Beanie'] cursor-text leading-none text-[24px] relative m-5"
       >
         <div
           bind:this={captionRoot}
           contenteditable
           aria-placeholder={placeholder ? placeholderText : undefined}
-          class="h-full"
+          class="border-0 resize-none min-h-5 caret-[#050505] relative outline-0 select-text whitespace-pre-wrap break-words"
         ></div>
         {#if placeholder}
           <div
             aria-hidden="true"
-            class="absolute left-0 top-0 opacity-50 color-[#999] overflow-hidden text-ellipsis select-none inline-block pointer-events-none"
+            class="absolute left-0 top-0 text-[#999] overflow-hidden text-ellipsis select-none inline-block pointer-events-none"
           >
             {placeholderText}
           </div>

@@ -405,6 +405,9 @@ export class LexicalBuilder {
       if (plan.disableEvents !== undefined) {
         config.disableEvents = plan.disableEvents;
       }
+      if (plan.parentEditor !== undefined) {
+        config.parentEditor = plan.parentEditor;
+      }
       if (plan.editable !== undefined) {
         config.editable = plan.editable;
       }

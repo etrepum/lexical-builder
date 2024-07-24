@@ -5,17 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import { type LexicalEditor } from "lexical";
 import {
   createEmptyHistoryState,
   type HistoryState,
   registerHistory,
 } from "@lexical/history";
 import {
+  configPlan,
   definePlan,
   provideOutput,
   safeCast,
 } from "@etrepum/lexical-builder-core";
 import { disabledToggle, type DisabledToggleOutput } from "./disabledToggle";
+import { getPeerDependencyFromEditor } from "./getPeerDependencyFromEditor";
 
 export interface HistoryConfig {
   /**
@@ -26,7 +29,7 @@ export interface HistoryConfig {
   /**
    * The initial history state, the default is {@link createEmptyHistoryState}.
    */
-  createInitialHistoryState: () => HistoryState;
+  createInitialHistoryState: (editor: LexicalEditor) => HistoryState;
   /**
    * Whether history is disabled or not
    */
@@ -49,7 +52,7 @@ export const HistoryPlan = definePlan({
   }),
   name: "@etrepum/lexical-builder/History",
   register: (editor, { delay, createInitialHistoryState, disabled }) => {
-    const historyState = createInitialHistoryState();
+    const historyState = createInitialHistoryState(editor);
     const [output, cleanup] = disabledToggle({
       disabled,
       register: () => registerHistory(editor, historyState, delay),
@@ -58,5 +61,44 @@ export const HistoryPlan = definePlan({
       { ...output, getHistoryState: () => historyState },
       cleanup,
     );
+  },
+});
+
+function getHistoryPeer(editor: LexicalEditor | null | undefined) {
+  return editor
+    ? getPeerDependencyFromEditor<typeof HistoryPlan>(editor, HistoryPlan.name)
+    : null;
+}
+
+/**
+ * Registers necessary listeners to manage undo/redo history stack and related
+ * editor commands, via the \@lexical/history module, only if the parent editor
+ * has a history plugin implementation.
+ */
+export const SharedHistoryPlan = definePlan({
+  name: "@etrepum/lexical-builder/SharedHistory",
+  dependencies: [configPlan(HistoryPlan, { disabled: true })],
+  init(editorConfig, _config, state) {
+    // Configure the peer dependency based on the parent editor's history
+    const { config } = state.getDependency(HistoryPlan);
+    const parentPeer = getHistoryPeer(editorConfig.parentEditor);
+    // Default is disabled by config above, we will enable it based
+    // on the parent editor's history plan
+    if (parentPeer) {
+      config.delay = parentPeer.config.delay;
+      config.createInitialHistoryState = () =>
+        parentPeer.output.getHistoryState();
+    }
+    return parentPeer;
+  },
+  register(_editor, _config, state) {
+    const parentPeer = state.getInitResult();
+    if (!parentPeer) {
+      return () => {
+        /* noop */
+      };
+    }
+    const disabled = state.getDependency(HistoryPlan).output.disabled;
+    return parentPeer.output.disabled.subscribe(disabled.set.bind(disabled));
   },
 });

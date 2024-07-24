@@ -48,11 +48,13 @@ export {
   type HistoryConfig,
   type HistoryOutput,
   HistoryPlan,
+  SharedHistoryPlan,
 } from "./HistoryPlan";
 export { PlainTextPlan } from "./PlainTextPlan";
 export { RichTextPlan } from "./RichTextPlan";
 export {
   disabledToggle,
+  registerDisabled,
   type DisabledToggleOutput,
   type DisabledToggleOptions,
 } from "./disabledToggle";

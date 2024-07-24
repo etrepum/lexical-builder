@@ -1,21 +1,33 @@
 import {
-  declarePeerDependency,
+  buildEditorFromPlans,
   definePlan,
-  type HistoryPlan,
+  provideOutput,
+  RichTextPlan,
+  SharedHistoryPlan,
 } from "@etrepum/lexical-builder";
 import "./StickyNode.css";
+import { type LexicalEditor } from "lexical";
 import { registerSvelteDecorator } from "../registerSvelteDecorator.svelte";
 import { StickyNode } from "./StickyNode";
 import StickyComponent from "./StickyComponent.svelte";
 
+export interface StickyOutput {
+  $createCaptionEditor: () => LexicalEditor;
+}
+
 export const StickyPlan = definePlan({
   name: "Sticky",
   nodes: [StickyNode],
-  peerDependencies: [
-    declarePeerDependency<typeof HistoryPlan>(
-      "@etrepum/lexical-builder/History",
-    ),
-  ],
   register: (editor) =>
-    registerSvelteDecorator(editor, StickyNode, StickyComponent),
+    provideOutput<StickyOutput>(
+      {
+        $createCaptionEditor: () =>
+          buildEditorFromPlans({
+            name: "Sticky/NestedSticky",
+            parentEditor: editor,
+            dependencies: [RichTextPlan, SharedHistoryPlan],
+          }),
+      },
+      registerSvelteDecorator(editor, StickyNode, StickyComponent),
+    ),
 });

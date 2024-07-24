@@ -17,10 +17,12 @@ import type {
 } from "lexical";
 import {
   $applyNodeReplacement,
+  $getEditor,
   $setSelection,
-  createEditor,
   DecoratorNode,
 } from "lexical";
+import { getPeerDependencyFromEditorOrThrow } from "@etrepum/lexical-builder";
+import type { StickyOutput, StickyPlan } from "./StickyPlan";
 
 export type StickyNoteColor = "pink" | "yellow";
 
@@ -78,7 +80,7 @@ export class StickyNode extends DecoratorNode<null> {
     super(key);
     this.__x = x;
     this.__y = y;
-    this.__caption = caption ?? createEditor();
+    this.__caption = caption ?? $getOutput().$createCaptionEditor();
     this.__color = color;
   }
 
@@ -121,6 +123,13 @@ export class StickyNode extends DecoratorNode<null> {
   isIsolated(): true {
     return true;
   }
+}
+
+function $getOutput(editor?: LexicalEditor): StickyOutput {
+  return getPeerDependencyFromEditorOrThrow<typeof StickyPlan>(
+    editor ?? $getEditor(),
+    "Sticky",
+  ).output;
 }
 
 export function $isStickyNode(

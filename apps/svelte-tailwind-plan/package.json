@@ -18,6 +18,7 @@
     "@etrepum/lexical-tailwind": "*",
     "@etrepum/lexical-tailwind-plugin": "*",
     "@lexical/markdown": "*",
+    "@lexical/history": "*",
     "@lexical/rich-text": "*",
     "@lexical/text": "*",
     "@lexical/utils": "*",
