@@ -39,6 +39,6 @@ module.exports = {
   ],
   overrides: [
     // Force ESLint to detect .tsx files
-    { files: ["*.js?(x)", "*.ts?(x)"] },
+    { files: ["*.jsx?", "*.tsx?"] },
   ],
 };

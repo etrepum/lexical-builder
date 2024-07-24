@@ -6,7 +6,7 @@
  *
  */
 
-import { Provider } from "@lexical/yjs";
+import { type Provider } from "@lexical/yjs";
 import { WebrtcProvider } from "y-webrtc";
 import { WebsocketProvider } from "y-websocket";
 import * as Y from "yjs";
@@ -24,7 +24,7 @@ export function createWebRTCProvider(
   const doc = getDocFromMap(id, yjsDocMap);
 
   // localStorage.log = 'true' in browser console to enable logging
-  const provider = new WebrtcProvider(`${id}/${idSuffix++}`, doc, {
+  const provider = new WebrtcProvider(`${id}/${String(idSuffix++)}`, doc, {
     peerOpts: {
       reconnectTimer: 100,
     },

@@ -53,6 +53,13 @@ This editor is based on Lexical, but provides its own mechanism for plugins
 based on a third party state management library. These plugins don't
 really expose any type-safe configuration.
 
+### [@payloadcms/richtext-lexical](https://www.npmjs.com/package/@payloadcms/richtext-lexical)
+
+Another Lexical based editor framework for use inside the
+[Payload](https://payloadcms.com/) CMS. It also doesn't really expose type-safe
+configuration, but it does seem to have quite a lot of features and seems
+well-designed for laziness and SSR. Features are conceptually similar to Plans.
+
 ### [Effect](https://effect.website/)
 
 This library is pretty much state of the art for type safety with a focus on

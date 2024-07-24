@@ -1,7 +1,7 @@
-import { AliasOptions, type UserConfig } from "vite";
 import { fileURLToPath } from "node:url";
 import * as path from "node:path";
 import * as fs from "node:fs";
+import { type AliasOptions, type UserConfig } from "vite";
 import { globSync } from "glob";
 
 function readPackageJson(base: string | URL) {

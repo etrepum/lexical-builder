@@ -14,11 +14,13 @@
     "@etrepum/lexical-builder-link": "*",
     "@etrepum/lexical-builder-list": "*",
     "@etrepum/lexical-builder-markdown": "*",
-    "@etrepum/lexical-tailwind": "*",
     "@etrepum/lexical-emoji-plan": "*",
+    "@etrepum/lexical-tailwind": "*",
     "@etrepum/lexical-tailwind-plugin": "*",
     "@lexical/markdown": "*",
+    "@lexical/history": "*",
     "@lexical/rich-text": "*",
+    "@lexical/text": "*",
     "@lexical/utils": "*",
     "@sveltejs/adapter-auto": "^3.0.0",
     "@sveltejs/kit": "^2.0.0",
@@ -40,5 +42,8 @@
     "svelte": "$svelte"
   },
   "main": "./",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@fontsource/reenie-beanie": "^5.0.19"
+  }
 }

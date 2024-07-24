@@ -18,15 +18,16 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@lexical/eslint-plugin": "0.16.2-nightly.20240716.0",
     "@lexical/list": "0.16.2-nightly.20240716.0",
     "@lexical/react": "0.16.2-nightly.20240716.0",
     "@lexical/selection": "0.16.2-nightly.20240716.0",
     "@lexical/table": "0.16.2-nightly.20240716.0",
     "@lexical/utils": "0.16.2-nightly.20240716.0",
-    "@lexical/eslint-plugin": "0.16.2-nightly.20240716.0",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@turbo/gen": "^2.0.3",
+    "@vitejs/plugin-react": "^4.3.1",
     "child-process-promise": "^2.2.1",
     "eslint": "^8.57.0",
     "glob": "^10.4.1",

@@ -45,7 +45,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ["*.js?(x)", "*.ts?(x)"],
+      files: ["*.jsx?", "*.tsx?"],
     },
     {
       files: ["*.svelte"],

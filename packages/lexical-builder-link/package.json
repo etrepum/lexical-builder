@@ -31,7 +31,8 @@
   },
   "peerDependencies": {
     "lexical": ">=0.16.2-nightly.20240716",
-    "@lexical/link": ">=0.16.2-nightly.20240716"
+    "@lexical/link": ">=0.16.2-nightly.20240716",
+    "@lexical/utils": ">=0.16.2-nightly.20240716"
   },
   "sideEffects": false,
   "devDependencies": {

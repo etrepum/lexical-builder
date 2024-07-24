@@ -7,7 +7,9 @@
     type LexicalEditorWithDispose,
   } from "@etrepum/lexical-builder";
   import { MarkdownTransformersPlan } from "@etrepum/lexical-builder-markdown";
+  import { $getRoot as L$getRoot } from "lexical";
   import { buildEditor } from "$lib/buildEditor";
+  import { $createStickyNode as L$createStickyNode } from "$lib/sticky/StickyNode";
 
   let editorRef: HTMLElement;
   let stateRef: HTMLElement;
@@ -30,6 +32,12 @@
     editor.setRootElement(editorRef);
     return cleanup;
   });
+
+  function handleAddSticky() {
+    editor.update(() => {
+      L$getRoot().append(L$createStickyNode());
+    });
+  }
 </script>
 
 <svelte:head>
@@ -46,6 +54,11 @@
     contenteditable
   ></div>
 </main>
+<button
+  type="button"
+  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+  onclick={handleAddSticky}>Add sticky</button
+>
 <footer class="my-4">
   <h2 class="m-4 text-lg font-bold">Markdown Export:</h2>
   <div
