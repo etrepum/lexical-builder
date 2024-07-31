@@ -141,7 +141,7 @@
 <div class="contents">
   <div
     bind:this={stickyContainer}
-    class="absolute w-[120px] inline-block z-10 cursor-move m-[25px] border-[#e8e8e8]"
+    class="absolute z-10 cursor-move m-[25px] border-[#e8e8e8]"
     style:left
     style:top
     style:transition={position.isDragging
@@ -149,7 +149,7 @@
       : "top 0.3s ease 0s, left 0.3s ease 0s"}
   >
     <div
-      class="relative border-t-1 py-5 px-2.5 {colorClasses[color]}"
+      class="relative flex border-t-1 {colorClasses[color]}"
       onpointerdown={handlePointerDown}
     >
       <button
@@ -171,7 +171,7 @@
         <i class="bucket block size-3 bg-contain"></i>
       </button>
       <div
-        class="font-['Reenie_Beanie'] cursor-text leading-none text-[24px] relative m-5"
+        class="font-['Reenie_Beanie'] cursor-text leading-none text-[24px] relative my-[30px] mx-[20px] w-[120px]"
       >
         <div
           bind:this={captionRoot}
