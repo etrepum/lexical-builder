@@ -32,12 +32,12 @@
     "@etrepum/lexical-builder-list": "*"
   },
   "peerDependencies": {
-    "@lexical/code": ">=0.16.2-nightly.20240724",
-    "@lexical/list": ">=0.16.2-nightly.20240724",
-    "@lexical/markdown": ">=0.16.2-nightly.20240724",
-    "@lexical/rich-text": ">=0.16.2-nightly.20240724",
-    "@lexical/utils": ">=0.16.2-nightly.20240724",
-    "lexical": ">=0.16.2-nightly.20240724"
+    "@lexical/code": ">=0.17.0-0",
+    "@lexical/list": ">=0.17.0-0",
+    "@lexical/markdown": ">=0.17.0-0",
+    "@lexical/rich-text": ">=0.17.0-0",
+    "@lexical/utils": ">=0.17.0-0",
+    "lexical": ">=0.17.0-0"
   },
   "sideEffects": false,
   "devDependencies": {

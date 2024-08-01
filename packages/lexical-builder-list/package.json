@@ -30,9 +30,9 @@
     "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
-    "lexical": ">=0.16.2-nightly.20240724",
-    "@lexical/list": ">=0.16.2-nightly.20240724",
-    "@lexical/utils": ">=0.16.2-nightly.20240724"
+    "lexical": ">=0.17.0-0",
+    "@lexical/list": ">=0.17.0-0",
+    "@lexical/utils": ">=0.17.0-0"
   },
   "sideEffects": false,
   "devDependencies": {
