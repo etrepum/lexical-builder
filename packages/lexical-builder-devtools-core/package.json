@@ -36,10 +36,10 @@
     "pako": "^2.1.0"
   },
   "peerDependencies": {
-    "@lexical/react": ">=0.16.2-nightly.20240724",
-    "@lexical/text": ">=0.16.2-nightly.20240724",
-    "@lexical/utils": ">=0.16.2-nightly.20240724",
-    "lexical": ">=0.16.2-nightly.20240724",
+    "@lexical/react": ">=0.17.0-0",
+    "@lexical/text": ">=0.17.0-0",
+    "@lexical/utils": ">=0.17.0-0",
+    "lexical": ">=0.17.0-0",
     "react": ">=18"
   },
   "sideEffects": false,

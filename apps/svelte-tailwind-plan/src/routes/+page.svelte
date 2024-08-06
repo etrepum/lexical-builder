@@ -53,12 +53,14 @@
     bind:this={editorRef}
     contenteditable
   ></div>
+  <div class="mt-4 mx-auto container">
+    <button
+      type="button"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+      onclick={handleAddSticky}>Add sticky</button
+    >
+  </div>
 </main>
-<button
-  type="button"
-  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-  onclick={handleAddSticky}>Add sticky</button
->
 <footer class="my-4">
   <h2 class="m-4 text-lg font-bold">Markdown Export:</h2>
   <div

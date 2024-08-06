@@ -8,7 +8,6 @@
 
 import type { ListItemNode } from "@lexical/list";
 import type { LexicalEditor } from "lexical";
-
 import {
   $isListItemNode,
   $isListNode,
@@ -205,7 +204,7 @@ function handleCheckItemEvent(event: PointerEvent, callback: () => void) {
 
   const parentNode = target.parentNode;
 
-  // @ts-ignore internal field
+  // @ts-expect-error internal field
   if (!parentNode || parentNode.__lexicalListType !== "check") {
     return;
   }
@@ -222,12 +221,12 @@ function handleCheckItemEvent(event: PointerEvent, callback: () => void) {
 }
 
 function getActiveCheckListItem(): HTMLElement | null {
-  const activeElement = document.activeElement as HTMLElement;
+  const activeElement = document.activeElement as HTMLElement | null;
 
   return activeElement != null &&
     activeElement.tagName === "LI" &&
     activeElement.parentNode != null &&
-    // @ts-ignore internal field
+    // @ts-expect-error internal field
     activeElement.parentNode.__lexicalListType === "check"
     ? activeElement
     : null;

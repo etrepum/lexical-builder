@@ -1,40 +1,33 @@
 <script lang="ts">
   import "@fontsource/reenie-beanie";
   import { type LexicalEditor } from "lexical";
-  import { calculateZoomLevel, mergeRegister } from "@lexical/utils";
+  import { mergeRegister } from "@lexical/utils";
   import { $canShowPlaceholder as L$canShowPlaceholder } from "@lexical/text";
+  import { draggable } from "@neodrag/svelte";
+  import type { DragOptions } from "@neodrag/svelte";
   import { StickyNode, type StickyNoteColor } from "./StickyNode";
   /* eslint-disable prefer-const -- svelte runes */
-  interface Positioning {
-    isDragging: boolean;
-    offsetX: number;
-    offsetY: number;
-    rootElementRect: null | DOMRect;
-    x: number;
-    y: number;
-  }
-
-  let stickyContainer: HTMLDivElement;
   let captionRoot: HTMLDivElement;
   let { node, editor }: { node: StickyNode; editor: LexicalEditor } = $props();
-  let position = $state<Positioning>({
-    isDragging: false,
-    offsetX: 0,
-    offsetY: 0,
-    rootElementRect: editor.getRootElement()?.getBoundingClientRect() ?? null,
-    x: node.__x,
-    y: node.__y,
-  });
-
-  let { left, top } = $derived.by(() => {
-    const rootElementRect = position.rootElementRect;
-    if (rootElementRect === null) {
-      return { top: undefined, left: undefined };
-    }
-    return {
-      top: `${String(rootElementRect.top + position.y)}px`,
-      left: `${String(rootElementRect.left + position.x)}px`,
-    };
+  let isDragging = $state(false);
+  let position = $derived({ x: node.__x, y: node.__y });
+  let dragOptions: DragOptions = $derived({
+    axis: "both",
+    bounds: editor.getRootElement() ?? "parent",
+    position,
+    onDragStart: () => {
+      isDragging = true;
+    },
+    onDrag: ({ offsetX, offsetY }) => {
+      position.x = offsetX;
+      position.y = offsetY;
+    },
+    onDragEnd: ({ offsetX, offsetY }) => {
+      isDragging = false;
+      editor.update(() => {
+        node.setPosition(offsetX, offsetY);
+      });
+    },
   });
 
   const placeholderText = "What's up?";
@@ -49,47 +42,6 @@
       .read(() => L$canShowPlaceholder(caption.isComposing()));
   let placeholder = $state(getCanShowPlaceholder());
 
-  // const { isCollabActive } = useCollaborationContext();
-  const handleWindowResize = (): void => {
-    const rootElement = editor.getRootElement();
-    if (rootElement !== null) {
-      position.rootElementRect = rootElement.getBoundingClientRect();
-    }
-  };
-
-  const handlePointerMove = (event: PointerEvent): void => {
-    const rootElementRect = position.rootElementRect;
-    const zoom = calculateZoomLevel(stickyContainer);
-    if (position.isDragging && rootElementRect !== null) {
-      position.x = event.pageX / zoom - position.offsetX - rootElementRect.left;
-      position.y = event.pageY / zoom - position.offsetY - rootElementRect.top;
-    }
-  };
-
-  const handlePointerUp = (_event: PointerEvent): void => {
-    position.isDragging = false;
-    editor.update(() => {
-      node.setPosition(position.x, position.y);
-    });
-    document.removeEventListener("pointermove", handlePointerMove);
-    document.removeEventListener("pointerup", handlePointerUp);
-  };
-
-  const handlePointerDown = (event: PointerEvent): void => {
-    if (event.button === 2 || event.target !== event.currentTarget) {
-      // Right click or click on editor should not work
-      return;
-    }
-    const { top, left } = stickyContainer.getBoundingClientRect();
-    const zoom = calculateZoomLevel(stickyContainer);
-    position.offsetX = event.clientX / zoom - left;
-    position.offsetY = event.clientY / zoom - top;
-    position.isDragging = true;
-    document.addEventListener("pointermove", handlePointerMove);
-    document.addEventListener("pointerup", handlePointerUp);
-    event.preventDefault();
-  };
-
   const handleDelete = (): void => {
     editor.update(() => {
       node.remove();
@@ -102,20 +54,6 @@
     });
   };
 
-  const resizeObserver = new ResizeObserver((entries) => {
-    for (const entry of entries) {
-      position.rootElementRect = entry.target.getBoundingClientRect();
-    }
-  });
-  const cleanup = editor.registerRootListener((nextRootElem, prevRootElem) => {
-    if (prevRootElem !== null) {
-      resizeObserver.unobserve(prevRootElem);
-    }
-    if (nextRootElem !== null) {
-      resizeObserver.observe(nextRootElem);
-    }
-  });
-  $effect(() => cleanup);
   $effect(() => {
     caption.setRootElement(captionRoot);
     return mergeRegister(
@@ -137,21 +75,16 @@
   };
 </script>
 
-<svelte:window onresize={handleWindowResize} />
-<div class="contents">
+<div class="absolute top-0 left-0">
   <div
-    bind:this={stickyContainer}
-    class="absolute w-[120px] inline-block z-10 cursor-move m-[25px] border-[#e8e8e8]"
-    style:left
-    style:top
-    style:transition={position.isDragging
+    class="absolute z-10 cursor-move m-[25px] border-[#e8e8e8]"
+    use:draggable={dragOptions}
+    style:user-select={isDragging ? "none" : undefined}
+    style:transition={isDragging
       ? undefined
       : "top 0.3s ease 0s, left 0.3s ease 0s"}
   >
-    <div
-      class="relative border-t-1 py-5 px-2.5 {colorClasses[color]}"
-      onpointerdown={handlePointerDown}
-    >
+    <div class="relative flex border-t-1 {colorClasses[color]}">
       <button
         onclick={handleDelete}
         type="button"
@@ -171,7 +104,7 @@
         <i class="bucket block size-3 bg-contain"></i>
       </button>
       <div
-        class="font-['Reenie_Beanie'] cursor-text leading-none text-[24px] relative m-5"
+        class="font-['Reenie_Beanie'] cursor-text leading-none text-[24px] relative my-[30px] mx-[20px] w-[120px]"
       >
         <div
           bind:this={captionRoot}
