@@ -5,7 +5,6 @@ import {
   RichTextPlan,
   SharedHistoryPlan,
 } from "@etrepum/lexical-builder";
-import "./StickyNode.css";
 import { type LexicalEditor } from "lexical";
 import { registerSvelteDecorator } from "../registerSvelteDecorator.svelte";
 import { StickyNode } from "./StickyNode";

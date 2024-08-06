@@ -17,8 +17,8 @@
     "@etrepum/lexical-emoji-plan": "*",
     "@etrepum/lexical-tailwind": "*",
     "@etrepum/lexical-tailwind-plugin": "*",
-    "@lexical/markdown": "*",
     "@lexical/history": "*",
+    "@lexical/markdown": "*",
     "@lexical/rich-text": "*",
     "@lexical/text": "*",
     "@lexical/utils": "*",
@@ -44,6 +44,7 @@
   "main": "./",
   "type": "module",
   "dependencies": {
-    "@fontsource/reenie-beanie": "^5.0.19"
+    "@fontsource/reenie-beanie": "^5.0.19",
+    "@neodrag/svelte": "^2.0.6"
   }
 }
