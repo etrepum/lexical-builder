@@ -15,7 +15,7 @@
     "test:watch": "vitest",
     "lint": "eslint"
   },
-  "version": "0.0.31",
+  "version": "0.0.32-nightly.20240808.0",
   "license": "MIT",
   "repository": {
     "type": "git",
