@@ -9,7 +9,8 @@
   import { MarkdownTransformersPlan } from "@etrepum/lexical-builder-markdown";
   import { $getRoot as L$getRoot } from "lexical";
   import { prerenderEditorHtml } from "@etrepum/lexical-builder-ssr";
-  import { buildEditor } from "$lib/buildEditor";
+  import { $generateNodesFromDOM as L$generateNodesFromDOM } from "@lexical/html";
+  import { buildEditor, INITIAL_CONTENT } from "$lib/buildEditor";
   import { $createStickyNode as L$createStickyNode } from "$lib/sticky/StickyNode";
 
   let editorRef: HTMLElement;
@@ -18,16 +19,50 @@
     editor,
     MarkdownTransformersPlan,
   ).output;
-  // As an exercise to the reader: we should be able to hydrate the editor by importing
-  // the prerendered DOM rather than building up the state in $initialEditorState
-  // on both client and server, but that would require importDOM to work perfectly.
+
+  function fromInitialContent() {
+    editor.update(
+      () => {
+        const { output } = getPlanDependencyFromEditor(
+          editor,
+          MarkdownTransformersPlan,
+        );
+        L$getRoot().splice(0, 0, output.$markdownImport(INITIAL_CONTENT));
+      },
+      { discrete: true, tag: "history-merge" },
+    );
+  }
+
+  if (typeof window === "undefined") {
+    fromInitialContent();
+  }
   const initialHtml =
     typeof window === "undefined" ? prerenderEditorHtml(editor) : "";
+
   let currentEditorState = $state(editor.getEditorState());
   const currentMarkdown = $derived.by(() =>
     currentEditorState.read(() => transformers.$markdownExport(), { editor }),
   );
   $effect(() => {
+    if (!editor.getRootElement()) {
+      if (editorRef.firstElementChild !== null) {
+        editor.update(
+          () => {
+            const dom = new DOMParser().parseFromString(
+              editorRef.innerHTML,
+              "text/html",
+            );
+            const nodes = L$generateNodesFromDOM(editor, dom);
+            return L$getRoot().splice(0, 0, nodes);
+          },
+          { discrete: true, tag: "history-merge" },
+        );
+      } else {
+        // This can happen on HMR
+        fromInitialContent();
+      }
+      currentEditorState = editor.getEditorState();
+    }
     editor.setRootElement(editorRef);
     const cleanup = mergeRegister(
       () => editor.dispose(),

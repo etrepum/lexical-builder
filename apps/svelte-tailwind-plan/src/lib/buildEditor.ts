@@ -10,7 +10,6 @@ import {
   RichTextPlan,
   HistoryPlan,
   type LexicalEditorWithDispose,
-  getPlanDependencyFromEditor,
   configPlan,
 } from "@etrepum/lexical-builder";
 import { AutoLinkPlan, ClickableLinkPlan } from "@etrepum/lexical-builder-link";
@@ -21,19 +20,19 @@ import {
 } from "@etrepum/lexical-builder-markdown";
 import { TailwindPlan } from "@etrepum/lexical-tailwind";
 import {
-  $isEmojiNode as L$isEmojiNode,
+  $isEmojiNode,
   EmojiNode,
   EmojiPlan,
 } from "@etrepum/lexical-emoji-plan";
-import { $getRoot as L$getRoot } from "lexical";
 import type { TextMatchTransformer } from "@lexical/markdown";
 import { SlackPastePlan } from "./SlackPastePlan";
 import { StickyPlan } from "./sticky/StickyPlan";
 
-const INITIAL_CONTENT = `
+export const INITIAL_CONTENT = `
 # Welcome to the Svelte 5 Tailwind example!
 
-This example uses *markdown*, **markdown shortcuts**, _history_, emoji and the link plan!
+This example uses *markdown*, **markdown shortcuts**, _history_, emoji and
+the link plan! SSR is used for the editor.
 
 It also has a basic sticky note implementation that demonstrates the use of
 nested editors.
@@ -61,8 +60,7 @@ Checklist:
 const NO_MATCH_REGEX = /^(?!)/;
 const EmojiShortcodeTransformer: TextMatchTransformer = {
   dependencies: [EmojiNode],
-  export: (node) =>
-    L$isEmojiNode(node) ? (node.getShortcode() ?? null) : null,
+  export: (node) => ($isEmojiNode(node) ? (node.getShortcode() ?? null) : null),
   importRegExp: NO_MATCH_REGEX,
   regExp: NO_MATCH_REGEX,
   replace: () => {
@@ -75,6 +73,8 @@ const EmojiShortcodeTransformer: TextMatchTransformer = {
 export function buildEditor(): LexicalEditorWithDispose {
   return buildEditorFromPlans({
     name: "[root]",
+    // We are doing this elsewhere for SSR reasons
+    $initialEditorState: null,
     dependencies: [
       RichTextPlan,
       configPlan(MarkdownTransformersPlan, {
@@ -93,12 +93,5 @@ export function buildEditor(): LexicalEditorWithDispose {
       EmojiPlan,
       StickyPlan,
     ],
-    $initialEditorState: (editor) => {
-      const { output } = getPlanDependencyFromEditor(
-        editor,
-        MarkdownTransformersPlan,
-      );
-      L$getRoot().append(...output.$markdownImport(INITIAL_CONTENT));
-    },
   });
 }

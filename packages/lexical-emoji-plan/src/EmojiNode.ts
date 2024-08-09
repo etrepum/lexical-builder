@@ -9,6 +9,7 @@
 import { getPeerDependencyFromEditorOrThrow } from "@etrepum/lexical-builder";
 import { addClassNamesToElement } from "@lexical/utils";
 import type {
+  DOMConversionMap,
   EditorConfig,
   LexicalEditor,
   LexicalNode,
@@ -57,6 +58,28 @@ export class EmojiNode extends TextNode {
 
   static importJSON(serializedNode: SerializedEmojiNode): EmojiNode {
     return $createEmojiNode(serializedNode.text, serializedNode.shortcode);
+  }
+
+  static override importDOM(): DOMConversionMap | null {
+    return {
+      span: (el: HTMLElement) => {
+        return {
+          conversion: () => {
+            const {
+              textContent,
+              dataset: { emojiShortcode },
+            } = el;
+            if (textContent && emojiShortcode) {
+              return {
+                node: $createEmojiNode(textContent, el.dataset.emojiShortcode),
+              };
+            }
+            return null;
+          },
+          priority: 1,
+        };
+      },
+    };
   }
 
   updateDOM(prevNode: this, dom: HTMLElement, config: EditorConfig): boolean {
