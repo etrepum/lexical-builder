@@ -1,0 +1,55 @@
+{
+  "name": "@etrepum/lexical-builder-ssr",
+  "description": "[EXPERIMENTAL] Lexical Builder @etrepum/lexical-builder-ssr",
+  "type": "module",
+  "keywords": [
+    "lexical",
+    "lexical-builder",
+    "plug-in",
+    "plan"
+  ],
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint"
+  },
+  "version": "0.0.31",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etrepum/lexical-builder.git",
+    "directory": "packages/lexical-builder-ssr"
+  },
+  "bugs": {
+    "url": "https://github.com/etrepum/lexical-builder/issues"
+  },
+  "homepage": "https://github.com/etrepum/lexical-builder",
+  "dependencies": {
+    "@etrepum/lexical-builder": "*"
+  },
+  "peerDependencies": {
+    "lexical": ">=0.16.2-nightly.20240716"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "@testing-library/dom": "*",
+    "@testing-library/jest-dom": "*",
+    "@testing-library/user-event": "*",
+    "@repo/eslint-config": "*",
+    "eslint": "*",
+    "jsdom": "*",
+    "tslib": "*",
+    "typescript": "*",
+    "vite": "*",
+    "vite-plugin-dts": "*",
+    "vite-plugin-package-version": "*",
+    "vitest": "*"
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ]
+}
