@@ -54,7 +54,7 @@ export const ClickableLinkPlan = definePlan({
   name: "@etrepum/lexical-builder-link/ClickableLink",
   dependencies: [LinkPlan],
   config: safeCast<ClickableLinkConfig>({
-    disabled: false,
+    disabled: typeof window === "undefined",
     newTab: true,
     clickable: true,
   }),

@@ -13,14 +13,15 @@
 
   let editorRef: HTMLElement;
   let stateRef: HTMLElement;
-  let editor: LexicalEditorWithDispose;
+  const editor: LexicalEditorWithDispose = buildEditor();
+  const transformers = getPlanDependencyFromEditor(
+    editor,
+    MarkdownTransformersPlan,
+  ).output;
+  const initialHtml = typeof window === "undefined" ? "" : "";
 
   $effect(() => {
-    editor = buildEditor();
-    const transformers = getPlanDependencyFromEditor(
-      editor,
-      MarkdownTransformersPlan,
-    ).output;
+    editor.setRootElement(editorRef);
     const cleanup = mergeRegister(
       () => editor.dispose(),
       editor.registerUpdateListener(({ editorState }) => {
@@ -29,7 +30,6 @@
         );
       }),
     );
-    editor.setRootElement(editorRef);
     return cleanup;
   });
 
@@ -52,7 +52,9 @@
     class="border p-4 border-solid container mx-auto relative"
     bind:this={editorRef}
     contenteditable
-  ></div>
+  >
+    {@html initialHtml}
+  </div>
   <div class="mt-4 mx-auto container">
     <button
       type="button"

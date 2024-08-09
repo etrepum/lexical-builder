@@ -48,7 +48,7 @@ export const HistoryPlan = definePlan({
   config: safeCast<HistoryConfig>({
     createInitialHistoryState: createEmptyHistoryState,
     delay: 300,
-    disabled: false,
+    disabled: typeof window === "undefined",
   }),
   name: "@etrepum/lexical-builder/History",
   register: (editor, { delay, createInitialHistoryState, disabled }) => {

@@ -1,5 +1,5 @@
 /**
- * We set up the editor outside of .svelte files to avoid the
+ * We set up the editor (mostly) outside of .svelte files to avoid the
  * svelte/dollar_prefix_invalid compiler error because svelte
  * assigns special meaning that prefix and Lexical also has its
  * conventions around it.
@@ -35,6 +35,9 @@ const INITIAL_CONTENT = `
 
 This example uses *markdown*, **markdown shortcuts**, _history_, emoji and the link plan!
 
+It also has a basic sticky note implementation that demonstrates the use of
+nested editors.
+
 > Quotes are supported
 
 CSS is provided by the Tailwind plan which has default styles for most built-in
@@ -58,7 +61,8 @@ Checklist:
 const NO_MATCH_REGEX = /^(?!)/;
 const EmojiShortcodeTransformer: TextMatchTransformer = {
   dependencies: [EmojiNode],
-  export: (node) => (L$isEmojiNode(node) ? node.getShortcode() ?? null : null),
+  export: (node) =>
+    L$isEmojiNode(node) ? (node.getShortcode() ?? null) : null,
   importRegExp: NO_MATCH_REGEX,
   regExp: NO_MATCH_REGEX,
   replace: () => {

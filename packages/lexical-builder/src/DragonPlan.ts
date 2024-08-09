@@ -25,7 +25,7 @@ export type DragonOutput = DisabledToggleOutput;
  */
 export const DragonPlan = definePlan({
   name: "@lexical/dragon",
-  config: safeCast<DragonConfig>({ disabled: false }),
+  config: safeCast<DragonConfig>({ disabled: typeof window === "undefined" }),
   register: (editor, config) =>
     provideOutput<DragonOutput>(
       ...disabledToggle({
