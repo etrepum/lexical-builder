@@ -14,13 +14,15 @@ import packageVersion from "vite-plugin-package-version";
 export default defineConfig({
   build: {
     lib: {
-      fileName: "index",
-      entry: path.resolve(__dirname, "src/index.ts"),
+      fileName: (_format, entry) => `${entry}.js`,
+      entry: ["index", "dom", "dom.node"].map((fn) =>
+        path.resolve(__dirname, `src/${fn}.ts`),
+      ),
       formats: ["es"],
     },
     rollupOptions: {
       // Anything that does not start with . or / is external
-      external: /^[^./]/,
+      external: /^(?:[^./])/,
     },
   },
   plugins: [packageVersion(), dts({ include: ["src"] })],

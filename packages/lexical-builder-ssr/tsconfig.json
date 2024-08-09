@@ -1,5 +1,10 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "include": ["src"],
+  "compilerOptions": {
+    "paths": {
+      "@etrepum/lexical-builder-ssr/dom": ["./src/dom.ts"]
+    }
+  },
   "references": [{ "path": "./tsconfig.test.json" }]
 }

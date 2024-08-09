@@ -8,26 +8,31 @@
   } from "@etrepum/lexical-builder";
   import { MarkdownTransformersPlan } from "@etrepum/lexical-builder-markdown";
   import { $getRoot as L$getRoot } from "lexical";
+  import { prerenderEditorHtml } from "@etrepum/lexical-builder-ssr";
   import { buildEditor } from "$lib/buildEditor";
   import { $createStickyNode as L$createStickyNode } from "$lib/sticky/StickyNode";
 
   let editorRef: HTMLElement;
-  let stateRef: HTMLElement;
   const editor: LexicalEditorWithDispose = buildEditor();
   const transformers = getPlanDependencyFromEditor(
     editor,
     MarkdownTransformersPlan,
   ).output;
-  const initialHtml = typeof window === "undefined" ? "" : "";
-
+  // As an exercise to the reader: we should be able to hydrate the editor by importing
+  // the prerendered DOM rather than building up the state in $initialEditorState
+  // on both client and server, but that would require importDOM to work perfectly.
+  const initialHtml =
+    typeof window === "undefined" ? prerenderEditorHtml(editor) : "";
+  let currentEditorState = $state(editor.getEditorState());
+  const currentMarkdown = $derived.by(() =>
+    currentEditorState.read(() => transformers.$markdownExport(), { editor }),
+  );
   $effect(() => {
     editor.setRootElement(editorRef);
     const cleanup = mergeRegister(
       () => editor.dispose(),
       editor.registerUpdateListener(({ editorState }) => {
-        stateRef!.textContent = editorState.read(() =>
-          transformers.$markdownExport(),
-        );
+        currentEditorState = editorState;
       }),
     );
     return cleanup;
@@ -65,8 +70,7 @@
 </main>
 <footer class="my-4">
   <h2 class="m-4 text-lg font-bold">Markdown Export:</h2>
-  <div
-    bind:this={stateRef}
-    class="w-full whitespace-pre-wrap font-mono container mx-auto"
-  ></div>
+  <div class="w-full whitespace-pre-wrap font-mono container mx-auto">
+    {currentMarkdown}
+  </div>
 </footer>

@@ -52,8 +52,15 @@
     "vite-plugin-static-copy": "^1.0.5",
     "vitest": "*"
   },
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./loadTextNodeTransform": {
+      "browser": "./dist/loadTextNodeTransform.js",
+      "default": "./dist/loadTextNodeTransform.node.js"
+    },
+    "./dist/emoji/*.png": "./dist/emoji/*.png",
+    "./dist/emoji/": "./dist/emoji/"
+  },
   "files": [
     "dist"
   ]

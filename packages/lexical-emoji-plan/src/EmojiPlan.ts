@@ -13,6 +13,7 @@ import {
   removeClassNamesFromElement,
 } from "@lexical/utils";
 import { type LexicalEditor, type NodeKey, TextNode } from "lexical";
+import { loadTextNodeTransform } from "@etrepum/lexical-emoji-plan/loadTextNodeTransform";
 import { EmojiNode } from "./EmojiNode";
 import { unifiedIDFromText } from "./unifiedID";
 
@@ -43,6 +44,17 @@ export interface EmojiPlanConfig {
 function noop() {
   /*noop*/
 }
+
+// eslint-disable-next-line @typescript-eslint/ban-types -- transform is a function
+function resolve<T extends Function>(arg: Promise<T> | T, fn: (v: T) => void) {
+  typeof arg === "function"
+    ? fn(arg)
+    : void arg.then((v) => {
+        fn(v);
+      });
+}
+
+const ssr = typeof window === "undefined";
 
 /**
  * A plan to use the emoji-datasource-facebook emoji database to convert
@@ -85,36 +97,38 @@ export const EmojiPlan = definePlan({
             }
           } else {
             const dom = editor.getElementByKey(nodeKey);
-            if (dom) {
+            if (dom?.textContent) {
               // A possible future enhancement would be to allow both image
               // emojis and plain text emojis that we do not have images for,
               // in which case we would want to have a separate class and not
               // use a background image if we don't have one.
-              const imageUrl = `${config.emojiBaseUrl}/${unifiedIDFromText(dom.innerText)}.png`;
+              const imageUrl = `${config.emojiBaseUrl}/${unifiedIDFromText(dom.textContent)}.png`;
               addClassNamesToElement(
                 dom,
                 config.emojiClass,
                 config.emojiLoadingClass,
               );
               dom.style.backgroundImage = `url(${imageUrl})`;
-              const img = new Image();
-              const cleanupImg = () => {
-                Object.assign(img, { onload: null, onerror: null });
-              };
-              const eagerNodeCleanup = () => {
-                cleanupImg();
-                nodeCleanup.delete(nodeKey);
-                removeClassNamesFromElement(dom, config.emojiLoadingClass);
-              };
-              Object.assign(img, {
-                onerror: eagerNodeCleanup,
-                onload: () => {
-                  eagerNodeCleanup();
-                  addClassNamesToElement(dom, config.emojiLoadedClass);
-                },
-              });
-              nodeCleanup.set(nodeKey, cleanupImg);
-              img.src = imageUrl;
+              if (!ssr) {
+                const img = new Image();
+                const cleanupImg = () => {
+                  Object.assign(img, { onload: null, onerror: null });
+                };
+                const eagerNodeCleanup = () => {
+                  cleanupImg();
+                  nodeCleanup.delete(nodeKey);
+                  removeClassNamesFromElement(dom, config.emojiLoadingClass);
+                };
+                Object.assign(img, {
+                  onerror: eagerNodeCleanup,
+                  onload: () => {
+                    eagerNodeCleanup();
+                    addClassNamesToElement(dom, config.emojiLoadedClass);
+                  },
+                });
+                nodeCleanup.set(nodeKey, cleanupImg);
+                img.src = imageUrl;
+              }
             }
           }
         }
@@ -130,7 +144,7 @@ export const EmojiPlan = definePlan({
       },
     );
     // Defer loading of the transform which needs to load the emoji JSON
-    void import("./$textNodeTransform").then(({ $textNodeTransform }) => {
+    resolve(loadTextNodeTransform(), ($textNodeTransform) => {
       if (!state.signal.aborted) {
         cleanupTransform = editor.registerNodeTransform(
           TextNode,

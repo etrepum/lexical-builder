@@ -30,16 +30,17 @@
     "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
+    "jsdom": ">=20.0.0",
     "lexical": ">=0.16.2-nightly.20240716"
   },
   "sideEffects": false,
   "devDependencies": {
+    "@repo/eslint-config": "*",
     "@testing-library/dom": "*",
     "@testing-library/jest-dom": "*",
     "@testing-library/user-event": "*",
-    "@repo/eslint-config": "*",
+    "@types/jsdom": "^21.1.7",
     "eslint": "*",
-    "jsdom": "*",
     "tslib": "*",
     "typescript": "*",
     "vite": "*",
@@ -47,8 +48,13 @@
     "vite-plugin-package-version": "*",
     "vitest": "*"
   },
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./dom": {
+      "browser": "./dist/dom.js",
+      "default": "./dist/dom.node.js"
+    }
+  },
   "files": [
     "dist"
   ]
