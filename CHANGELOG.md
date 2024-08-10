@@ -1,3 +1,23 @@
+## v0.0.32 (2024-08-09
+
+2024-08-09
+2024-08-09
+2024-08-09
+2024-08-09
+2024-08-09
+2024-08-08
+2024-08-08
+2024-08-08)
+
+- Merge pull request #47 from etrepum/sticky Bob Ippolito
+- clean up sticky example Bob Ippolito
+- npx turbo/codemodlatest update Bob Ippolito
+- update to v0.17.0 Bob Ippolito
+- npx turbo/codemodlatest update Bob Ippolito
+- lint Bob Ippolito
+- wip css Bob Ippolito
+- Merge pull request #46 from etrepum/0.0.31release Bob Ippolito
+
 ## v0.0.31 (2024-07-23
 
 2024-07-23
