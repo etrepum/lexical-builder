@@ -3,9 +3,8 @@
   "include": ["src"],
   "compilerOptions": {
     "paths": {
-      "@etrepum/lexical-emoji-plan/loadTextNodeTransform": [
-        "./src/loadTextNodeTransform.ts"
-      ]
+      "@etrepum/lexical-builder-ssr/dom": ["./src/dom.ts"]
     }
-  }
+  },
+  "references": [{ "path": "./tsconfig.test.json" }]
 }

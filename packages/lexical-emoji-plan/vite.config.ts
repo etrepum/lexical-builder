@@ -19,8 +19,11 @@ const require = createRequire(import.meta.url);
 export default defineConfig({
   build: {
     lib: {
-      fileName: "index",
-      entry: path.resolve(__dirname, "src/index.ts"),
+      entry: [
+        "index",
+        "loadTextNodeTransform",
+        "loadTextNodeTransform.node",
+      ].map((fn) => path.resolve(__dirname, `src/${fn}.ts`)),
       formats: ["es"],
     },
     rollupOptions: {

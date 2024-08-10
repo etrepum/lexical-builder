@@ -58,5 +58,12 @@ module.exports = {
         "no-unused-vars": "off",
       },
     },
+    {
+      files: ["vitest.config.ts"],
+      rules: {
+        // import { defineTestConfig } from "../lexical-builder/tests/shared/defineTestConfig";
+        "import/no-relative-packages": "off",
+      },
+    },
   ],
 };

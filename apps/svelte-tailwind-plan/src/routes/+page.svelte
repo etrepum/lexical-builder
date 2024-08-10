@@ -8,28 +8,68 @@
   } from "@etrepum/lexical-builder";
   import { MarkdownTransformersPlan } from "@etrepum/lexical-builder-markdown";
   import { $getRoot as L$getRoot } from "lexical";
-  import { buildEditor } from "$lib/buildEditor";
+  import { prerenderEditorHtml } from "@etrepum/lexical-builder-ssr";
+  import { $generateNodesFromDOM as L$generateNodesFromDOM } from "@lexical/html";
+  import { buildEditor, INITIAL_CONTENT } from "$lib/buildEditor";
   import { $createStickyNode as L$createStickyNode } from "$lib/sticky/StickyNode";
 
   let editorRef: HTMLElement;
-  let stateRef: HTMLElement;
-  let editor: LexicalEditorWithDispose;
+  const editor: LexicalEditorWithDispose = buildEditor();
+  const transformers = getPlanDependencyFromEditor(
+    editor,
+    MarkdownTransformersPlan,
+  ).output;
 
+  function fromInitialContent() {
+    editor.update(
+      () => {
+        const { output } = getPlanDependencyFromEditor(
+          editor,
+          MarkdownTransformersPlan,
+        );
+        L$getRoot().splice(0, 0, output.$markdownImport(INITIAL_CONTENT));
+      },
+      { discrete: true, tag: "history-merge" },
+    );
+  }
+
+  if (typeof window === "undefined") {
+    fromInitialContent();
+  }
+  const initialHtml =
+    typeof window === "undefined" ? prerenderEditorHtml(editor) : "";
+
+  let currentEditorState = $state(editor.getEditorState());
+  const currentMarkdown = $derived.by(() =>
+    currentEditorState.read(() => transformers.$markdownExport(), { editor }),
+  );
   $effect(() => {
-    editor = buildEditor();
-    const transformers = getPlanDependencyFromEditor(
-      editor,
-      MarkdownTransformersPlan,
-    ).output;
+    if (!editor.getRootElement()) {
+      if (editorRef.firstElementChild !== null) {
+        editor.update(
+          () => {
+            const dom = new DOMParser().parseFromString(
+              editorRef.innerHTML,
+              "text/html",
+            );
+            const nodes = L$generateNodesFromDOM(editor, dom);
+            return L$getRoot().splice(0, 0, nodes);
+          },
+          { discrete: true, tag: "history-merge" },
+        );
+      } else {
+        // This can happen on HMR
+        fromInitialContent();
+      }
+      currentEditorState = editor.getEditorState();
+    }
+    editor.setRootElement(editorRef);
     const cleanup = mergeRegister(
       () => editor.dispose(),
       editor.registerUpdateListener(({ editorState }) => {
-        stateRef!.textContent = editorState.read(() =>
-          transformers.$markdownExport(),
-        );
+        currentEditorState = editorState;
       }),
     );
-    editor.setRootElement(editorRef);
     return cleanup;
   });
 
@@ -52,7 +92,9 @@
     class="border p-4 border-solid container mx-auto relative"
     bind:this={editorRef}
     contenteditable
-  ></div>
+  >
+    {@html initialHtml}
+  </div>
   <div class="mt-4 mx-auto container">
     <button
       type="button"
@@ -63,8 +105,7 @@
 </main>
 <footer class="my-4">
   <h2 class="m-4 text-lg font-bold">Markdown Export:</h2>
-  <div
-    bind:this={stateRef}
-    class="w-full whitespace-pre-wrap font-mono container mx-auto"
-  ></div>
+  <div class="w-full whitespace-pre-wrap font-mono container mx-auto">
+    {currentMarkdown}
+  </div>
 </footer>
