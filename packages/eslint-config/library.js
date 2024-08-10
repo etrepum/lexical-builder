@@ -59,7 +59,7 @@ module.exports = {
       },
     },
     {
-      files: ["packages/*/vitest.config.ts"],
+      files: ["vitest.config.ts"],
       rules: {
         // import { defineTestConfig } from "../lexical-builder/tests/shared/defineTestConfig";
         "import/no-relative-packages": "off",
