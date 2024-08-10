@@ -5,22 +5,37 @@ import { type AliasOptions, type UserConfig } from "vite";
 import { globSync } from "glob";
 
 function readPackageJson(base: string | URL) {
-  return JSON.parse(fs.readFileSync(new URL("./package.json", base), "utf8"));
+  return JSON.parse(
+    fs.readFileSync(new URL("./package.json", base), "utf8"),
+  ) as {
+    name: string;
+    devDependencies?: Record<string, string>;
+    exports?: Record<string, string | Record<string, string>>;
+  };
 }
 
 function buildResolveAlias(base: string | URL): AliasOptions {
-  return Object.fromEntries(
-    globSync(
-      fileURLToPath(
-        new URL("../lexical-*/src/index.{ts,tsx}", base),
-      ).replaceAll("\\", "/"),
-    ).map((entry) => [
-      readPackageJson(
-        new URL(`../${path.basename(path.resolve(entry, "..", ".."))}/`, base),
-      ).name,
-      entry,
-    ]),
-  );
+  const alias: Record<string, string> = {};
+  for (const indexFn of globSync(
+    fileURLToPath(new URL("../lexical-*/src/index.{ts,tsx}", base)).replace(
+      /\\/g,
+      "/",
+    ),
+  )) {
+    const pkgDir = path.resolve(indexFn, "..", "..");
+    const json = readPackageJson(new URL(`../${path.basename(pkgDir)}/`, base));
+    for (const [k, v] of Object.entries(json.exports || {})) {
+      // eslint-disable-next-line prefer-named-capture-group -- index is fine
+      const sub = /^\.(\/.+)/.exec(k)?.[1];
+      const subPath = typeof v == "string" ? v : v.default;
+      if (sub && subPath) {
+        alias[`${json.name}${sub}`] = path.resolve(pkgDir, subPath);
+      }
+    }
+    // This has to go last otherwise it takes precedence
+    alias[json.name] = indexFn;
+  }
+  return alias;
 }
 
 export async function defineTestConfig(
