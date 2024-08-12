@@ -44,13 +44,13 @@
     "eslint": "^8.57.0",
     "jsdom": "^24.1.0",
     "tslib": "^2.6.2",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.11",
+    "typescript": "^5.5.2",
+    "vite": "^5.4.0",
     "vite-plugin-data": "^0.2.5",
-    "vite-plugin-dts": "*",
-    "vite-plugin-package-version": "*",
+    "vite-plugin-dts": "^4.0.2",
+    "vite-plugin-package-version": "^1.1.0",
     "vite-plugin-static-copy": "^1.0.5",
-    "vitest": "*"
+    "vitest": "^2.0.5"
   },
   "exports": {
     ".": "./dist/index.js",

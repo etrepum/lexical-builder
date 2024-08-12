@@ -40,10 +40,10 @@
     "@etrepum/lexical-tailwind-plugin": "*",
     "@repo/eslint-config": "*",
     "eslint": "^8.57.0",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.11",
-    "vite-plugin-dts": "*",
-    "vite-plugin-package-version": "*"
+    "typescript": "^5.5.2",
+    "vite": "^5.4.0",
+    "vite-plugin-dts": "^4.0.2",
+    "vite-plugin-package-version": "^1.1.0"
   },
   "main": "dist/index.js",
   "module": "dist/index.js",
