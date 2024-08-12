@@ -1,5 +1,5 @@
-import { mergeRegister } from "@lexical/utils";
-import { Store, type WritableStore, type ReadableStore } from "./Store";
+import { Store, type WritableStore } from "./Store";
+import { registerStoreToggle } from "./registerStoreToggle";
 
 export interface DisabledToggleOptions {
   disabled?: boolean;
@@ -12,29 +12,8 @@ export function disabledToggle(
   opts: DisabledToggleOptions,
 ): [DisabledToggleOutput, () => void] {
   const disabled = new Store(Boolean(opts.disabled));
-  return [{ disabled }, registerDisabled(disabled, opts.register)];
-}
-
-export function registerDisabled(
-  disabledStore: ReadableStore<boolean>,
-  register: () => () => void,
-): () => void {
-  let cleanup: null | (() => void) = null;
-  return mergeRegister(
-    () => {
-      if (cleanup) {
-        cleanup();
-        cleanup = null;
-      }
-    },
-    disabledStore.subscribe((isDisabled) => {
-      if (cleanup) {
-        cleanup();
-        cleanup = null;
-      }
-      if (!isDisabled) {
-        cleanup = register();
-      }
-    }),
-  );
+  return [
+    { disabled },
+    registerStoreToggle(disabled, (v) => !v, opts.register),
+  ];
 }
