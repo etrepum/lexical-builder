@@ -1,3 +1,10 @@
+## v0.0.33 (2024-08-11
+
+2024-08-11
+2024-08-11)
+
+- Merge pull request #49 from etrepum/0.0.32release Bob Ippolito
+
 ## v0.0.32 (2024-08-09
 
 2024-08-09
