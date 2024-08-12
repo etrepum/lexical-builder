@@ -1,3 +1,13 @@
+## v0.0.35 (2024-08-12
+
+2024-08-12
+2024-08-12)
+
+- Merge pull request #54 from etrepum/update-version Bob Ippolito
+- fix hydration warning Bob Ippolito
+- update deps Bob Ippolito
+- Merge pull request #53 from etrepum/0.0.34release Bob Ippolito
+
 ## v0.0.34 (2024-08-12
 
 2024-08-12)
