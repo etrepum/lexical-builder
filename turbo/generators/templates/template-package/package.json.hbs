@@ -47,8 +47,11 @@
     "vite-plugin-package-version": "*",
     "vitest": "*"
   },
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ]
