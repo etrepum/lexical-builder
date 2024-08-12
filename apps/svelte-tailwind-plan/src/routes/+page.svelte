@@ -13,6 +13,7 @@
   import { INSERT_TABLE_COMMAND } from "@lexical/table";
   import { buildEditor, INITIAL_CONTENT } from "$lib/buildEditor";
   import { $createStickyNode as L$createStickyNode } from "$lib/sticky/StickyNode";
+  import { browser } from "$app/environment";
 
   let editorRef: HTMLElement;
   const editor: LexicalEditorWithDispose = buildEditor();
@@ -34,11 +35,9 @@
     );
   }
 
-  if (typeof window === "undefined") {
+  if (!browser) {
     fromInitialContent();
   }
-  const initialHtml =
-    typeof window === "undefined" ? prerenderEditorHtml(editor) : "";
 
   let currentEditorState = $state(editor.getEditorState());
   const currentMarkdown = $derived.by(() =>
@@ -49,12 +48,15 @@
       if (editorRef.firstElementChild !== null) {
         editor.update(
           () => {
+            // Hydrate from HTML
             const dom = new DOMParser().parseFromString(
               editorRef.innerHTML,
               "text/html",
             );
             const nodes = L$generateNodesFromDOM(editor, dom);
-            return L$getRoot().splice(0, 0, nodes);
+            return L$getRoot()
+              .clear()
+              .append(...nodes);
           },
           { discrete: true, tag: "history-merge" },
         );
@@ -102,7 +104,8 @@
     bind:this={editorRef}
     contenteditable
   >
-    {@html initialHtml}
+    <!-- svelte-ignore hydration_html_changed -->
+    {@html browser ? "<!-- server hydrated -->" : prerenderEditorHtml(editor)}
   </div>
   <div class="mt-4 mx-auto container">
     <button
