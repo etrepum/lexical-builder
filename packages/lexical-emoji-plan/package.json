@@ -53,8 +53,12 @@
     "vitest": "^2.0.5"
   },
   "exports": {
-    ".": "./dist/index.js",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./loadTextNodeTransform": {
+      "types": "./dist/loadTextNodeTransform.d.ts",
       "browser": "./dist/loadTextNodeTransform.js",
       "default": "./dist/loadTextNodeTransform.node.js"
     },

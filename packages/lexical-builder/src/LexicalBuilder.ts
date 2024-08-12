@@ -11,6 +11,7 @@ import type {
   LexicalEditorWithDispose,
   InitialEditorConfig,
   LexicalPlanConfig,
+  AnyNormalizedLexicalPlanArgument,
 } from "@etrepum/lexical-builder-core";
 import {
   type LexicalEditor,
@@ -22,7 +23,6 @@ import {
   type LexicalNode,
 } from "lexical";
 import { mergeRegister } from "@lexical/utils";
-import { configPlan } from "@etrepum/lexical-builder-core";
 import invariant from "./shared/invariant";
 import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
 import {
@@ -94,11 +94,10 @@ function maybeWithBuilder(editor: LexicalEditor): LexicalEditor & WithBuilder {
   return editor;
 }
 
-type AnyNormalizedLexicalPlanArgument = ReturnType<
-  typeof normalizePlanArgument
->;
-function normalizePlanArgument(arg: AnyLexicalPlanArgument) {
-  return Array.isArray(arg) ? arg : configPlan(arg);
+function normalizePlanArgument(
+  arg: AnyLexicalPlanArgument,
+): AnyNormalizedLexicalPlanArgument {
+  return Array.isArray(arg) ? arg : [arg];
 }
 
 /** @internal */
