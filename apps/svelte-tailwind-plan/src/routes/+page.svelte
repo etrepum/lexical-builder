@@ -10,6 +10,7 @@
   import { $getRoot as L$getRoot } from "lexical";
   import { prerenderEditorHtml } from "@etrepum/lexical-builder-ssr";
   import { $generateNodesFromDOM as L$generateNodesFromDOM } from "@lexical/html";
+  import { INSERT_TABLE_COMMAND } from "@lexical/table";
   import { buildEditor, INITIAL_CONTENT } from "$lib/buildEditor";
   import { $createStickyNode as L$createStickyNode } from "$lib/sticky/StickyNode";
 
@@ -78,6 +79,14 @@
       L$getRoot().append(L$createStickyNode());
     });
   }
+
+  function handleAddTable() {
+    editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+      columns: String(3),
+      includeHeaders: true,
+      rows: String(3),
+    });
+  }
 </script>
 
 <svelte:head>
@@ -100,6 +109,11 @@
       type="button"
       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
       onclick={handleAddSticky}>Add sticky</button
+    >
+    <button
+      type="button"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+      onclick={handleAddTable}>Add table</button
     >
   </div>
 </main>

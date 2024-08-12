@@ -87,22 +87,24 @@ const theme: EditorThemeClasses = {
   quote:
     "m-0 ml-5 mb-2.5 text-[15px] text-gray-500 border-slate-300 border-l-4 border-solid pl-4",
   rtl: "text-right",
-  // table: 'PlaygroundEditorTheme__table',
-  // tableAddColumns: 'PlaygroundEditorTheme__tableAddColumns',
+  table:
+    "border-collapse border-spacing-0 overflow-scroll table-fixed w-max mt-0 mr-[25px] mb-[30px] ml-0",
+  tableCell:
+    "border border-solid border-[#bbb] w-[75px] min-w-[75px] align-top text-start py-[6px] px-2 relative outline-none",
+  tableCellEditing: "shadow-[0_0_5px_rgba(0,0,0,0.4)] rounded-[3px]",
+  tableCellHeader: "bg-[#f2f3f5] text-start",
+  tableSelection: "selection:bg-transparent",
+  // tableAddColumns: 'absolute bg-[#eee] h-full border-0 cursor-pointer animate-lexical-table-controls',
   // tableAddRows: 'PlaygroundEditorTheme__tableAddRows',
-  // tableCell: 'PlaygroundEditorTheme__tableCell',
   // tableCellActionButton: 'PlaygroundEditorTheme__tableCellActionButton',
   // tableCellActionButtonContainer:
   //   'PlaygroundEditorTheme__tableCellActionButtonContainer',
-  // tableCellEditing: 'PlaygroundEditorTheme__tableCellEditing',
-  // tableCellHeader: 'PlaygroundEditorTheme__tableCellHeader',
   // tableCellPrimarySelected: 'PlaygroundEditorTheme__tableCellPrimarySelected',
   // tableCellResizer: 'PlaygroundEditorTheme__tableCellResizer',
   // tableCellSelected: 'PlaygroundEditorTheme__tableCellSelected',
   // tableCellSortedIndicator: 'PlaygroundEditorTheme__tableCellSortedIndicator',
   // tableResizeRuler: 'PlaygroundEditorTheme__tableCellResizeRuler',
   // tableSelected: 'PlaygroundEditorTheme__tableSelected',
-  // tableSelection: 'PlaygroundEditorTheme__tableSelection',
   text: {
     bold: "font-bold",
     code: "font-mono text-[94%] py-px px-1 background-color: bg-slate-100",

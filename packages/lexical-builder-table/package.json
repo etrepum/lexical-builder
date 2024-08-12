@@ -1,6 +1,6 @@
 {
-  "name": "{{{ packageName }}}",
-  "description": "[EXPERIMENTAL] Lexical Builder {{{ packageName }}}",
+  "name": "@etrepum/lexical-builder-table",
+  "description": "[EXPERIMENTAL] Lexical Builder @etrepum/lexical-builder-table",
   "type": "module",
   "keywords": [
     "lexical",
@@ -15,12 +15,12 @@
     "test:watch": "vitest",
     "lint": "eslint"
   },
-  "version": "{{{ version }}}",
+  "version": "0.0.32",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/etrepum/lexical-builder.git",
-    "directory": "packages/{{{ directoryName }}}"
+    "directory": "packages/lexical-builder-table"
   },
   "bugs": {
     "url": "https://github.com/etrepum/lexical-builder/issues"
@@ -30,7 +30,9 @@
     "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
-    "lexical": "{{{ lexicalPeer }}}"
+    "lexical": ">=0.17.0-0",
+    "@lexical/table": ">=0.17.0-0",
+    "@lexical/utils": ">=0.17.0-0"
   },
   "sideEffects": false,
   "devDependencies": {

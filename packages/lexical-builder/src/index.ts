@@ -54,10 +54,10 @@ export { PlainTextPlan } from "./PlainTextPlan";
 export { RichTextPlan } from "./RichTextPlan";
 export {
   disabledToggle,
-  registerDisabled,
   type DisabledToggleOutput,
   type DisabledToggleOptions,
 } from "./disabledToggle";
+export { registerStoreToggle } from "./registerStoreToggle";
 export {
   type WritableStore,
   type ReadableStore,

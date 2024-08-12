@@ -25,6 +25,7 @@ import {
   EmojiPlan,
 } from "@etrepum/lexical-emoji-plan";
 import type { TextMatchTransformer } from "@lexical/markdown";
+import { TablePlan } from "@etrepum/lexical-builder-table";
 import { SlackPastePlan } from "./SlackPastePlan";
 import { StickyPlan } from "./sticky/StickyPlan";
 
@@ -92,6 +93,7 @@ export function buildEditor(): LexicalEditorWithDispose {
       SlackPastePlan,
       EmojiPlan,
       StickyPlan,
+      TablePlan,
     ],
   });
 }

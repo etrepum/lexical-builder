@@ -32,11 +32,18 @@ export default (plop: PlopTypes.NodePlopAPI) => {
       data.packageName = directoryNameToPackageName(directoryName);
       data.exportName = directoryNameToExportName(directoryName);
       data.dotfile = "";
-      data.version = (
-        JSON.parse(fs.readFileSync("./package.json", "utf-8")) as {
-          version: string;
-        }
-      ).version;
+      const rootPkgJson = JSON.parse(
+        fs.readFileSync("./package.json", "utf-8"),
+      ) as {
+        version: string;
+      };
+      const mainPkgJson = JSON.parse(
+        fs.readFileSync("./packages/lexical-builder/package.json", "utf-8"),
+      ) as {
+        peerDependencies: Record<"lexical", string>;
+      };
+      data.version = rootPkgJson.version;
+      data.lexicalPeer = mainPkgJson.peerDependencies.lexical;
       return [
         {
           type: "addMany",

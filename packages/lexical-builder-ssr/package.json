@@ -31,7 +31,7 @@
   },
   "peerDependencies": {
     "jsdom": ">=20.0.0",
-    "lexical": ">=0.16.2-nightly.20240716"
+    "lexical": ">=0.17.0-0"
   },
   "sideEffects": false,
   "devDependencies": {

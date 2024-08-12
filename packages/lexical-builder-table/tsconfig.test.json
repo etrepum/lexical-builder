@@ -1,0 +1,7 @@
+{
+  "extends": "@repo/typescript-config/react-tests.json",
+  "include": ["tests/**/*.ts", "tests/**/*.tsx"],
+  "compilerOptions": {
+    "composite": true
+  }
+}
