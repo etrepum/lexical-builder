@@ -20,9 +20,9 @@
     "@etrepum/lexical-builder": "*",
     "@etrepum/lexical-builder-devtools-core": "*",
     "@etrepum/lexical-react-plan": "*",
-    "@lexical/react": "*",
+    "@lexical/react": "0.17.0",
     "@lexical/yjs": "*",
-    "lexical": "*",
+    "lexical": "0.17.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "y-webrtc": "^10.3.0",
@@ -33,11 +33,11 @@
     "@repo/eslint-config": "*",
     "@types/react": "^18.2.59",
     "@types/react-dom": "^18.2.19",
-    "@vitejs/plugin-react": "*",
+    "@vitejs/plugin-react": "^4.3.1",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.1.4"
+    "typescript": "^5.5.2",
+    "vite": "^5.4.0"
   }
 }

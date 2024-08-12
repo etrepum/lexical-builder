@@ -40,13 +40,13 @@
     "@testing-library/jest-dom": "*",
     "@testing-library/user-event": "*",
     "@types/jsdom": "^21.1.7",
-    "eslint": "*",
+    "eslint": "^8.57.0",
     "tslib": "*",
-    "typescript": "*",
-    "vite": "*",
-    "vite-plugin-dts": "*",
-    "vite-plugin-package-version": "*",
-    "vitest": "*"
+    "typescript": "^5.5.2",
+    "vite": "^5.4.0",
+    "vite-plugin-dts": "^4.0.2",
+    "vite-plugin-package-version": "^1.1.0",
+    "vitest": "^2.0.5"
   },
   "exports": {
     ".": "./dist/index.js",
