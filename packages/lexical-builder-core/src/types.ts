@@ -23,8 +23,9 @@ export type AnyLexicalPlan = LexicalPlan<any, string, any, any>;
 /**
  * Any {@link LexicalPlan} or {@link NormalizedLexicalPlanArgument}
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
-export type AnyLexicalPlanArgument = LexicalPlanArgument<any, string, any, any>;
+export type AnyLexicalPlanArgument =
+  | AnyLexicalPlan
+  | AnyNormalizedLexicalPlanArgument;
 /**
  * The default plan configuration of an empty object
  */
@@ -36,7 +37,7 @@ export type NormalizedPeerDependency<Plan extends AnyLexicalPlan> = [
 ] & { readonly [peerDependencySymbol]: Plan };
 
 /**
- * A tuple of [plan, ...configOverrides]
+ * Any {@link NormalizedLexicalPlanArgument}
  */
 export type NormalizedLexicalPlanArgument<
   in out Config extends PlanConfigBase,
@@ -44,6 +45,19 @@ export type NormalizedLexicalPlanArgument<
   in out Output,
   in out Init,
 > = [LexicalPlan<Config, Name, Output, Init>, ...Partial<Config>[]];
+
+/**
+ * A tuple of [plan, ...configOverrides]
+ */
+export type AnyNormalizedLexicalPlanArgument = NormalizedLexicalPlanArgument<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
+  any,
+  string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
+  any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
+  any
+>;
 
 /**
  * An object that the register method can use to detect unmount and access the

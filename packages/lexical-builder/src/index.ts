@@ -12,9 +12,8 @@ export {
   definePlan,
   provideOutput,
   declarePeerDependency,
-} from "@etrepum/lexical-builder-core";
-export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
-export {
+  safeCast,
+  shallowMergeConfig,
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
   type LexicalEditorWithDispose,
@@ -32,8 +31,7 @@ export {
   type PlanRegisterState,
   type NormalizedPeerDependency,
 } from "@etrepum/lexical-builder-core";
-export { safeCast } from "@etrepum/lexical-builder-core";
-export { shallowMergeConfig } from "@etrepum/lexical-builder-core";
+export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
 export { getPlanDependencyFromEditor } from "./getPlanDependencyFromEditor";
 export {
   getPeerDependencyFromEditor,

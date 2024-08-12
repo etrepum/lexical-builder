@@ -17,6 +17,7 @@ export {
 export {
   type AnyLexicalPlan,
   type AnyLexicalPlanArgument,
+  type AnyNormalizedLexicalPlanArgument,
   type LexicalEditorWithDispose,
   type InitialEditorConfig,
   type InitialEditorStateType,
@@ -28,7 +29,7 @@ export {
   type LexicalPlanOutput,
   type OutputComponentPlan,
   type LexicalPlanDependency,
-  type PlanRegisterState as NormalizedLexicalPlanArgument,
+  type NormalizedLexicalPlanArgument,
   type PlanConfigBase,
   type PlanInitState,
   type PlanRegisterState,
