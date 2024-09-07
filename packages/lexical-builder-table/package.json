@@ -30,16 +30,16 @@
     "@etrepum/lexical-builder": "*"
   },
   "peerDependencies": {
-    "lexical": ">=0.17.0-0",
-    "@lexical/table": ">=0.17.0-0",
-    "@lexical/utils": ">=0.17.0-0"
+    "@lexical/table": ">=0.17.2-nightly.20240906.0",
+    "@lexical/utils": ">=0.17.2-nightly.20240906.0",
+    "lexical": ">=0.17.2-nightly.20240906.0"
   },
   "sideEffects": false,
   "devDependencies": {
+    "@repo/eslint-config": "*",
     "@testing-library/dom": "*",
     "@testing-library/jest-dom": "*",
     "@testing-library/user-event": "*",
-    "@repo/eslint-config": "*",
     "eslint": "^8.57.0",
     "jsdom": "*",
     "tslib": "*",
