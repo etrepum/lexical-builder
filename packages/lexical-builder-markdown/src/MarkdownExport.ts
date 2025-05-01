@@ -110,7 +110,7 @@ function exportChildren(
 
   mainLoop: for (const child of children) {
     for (const transformer of textMatchTransformers) {
-      const result = transformer.export(
+      const result = transformer.export?.(
         child,
         (parentNode) =>
           exportChildren(

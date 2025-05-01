@@ -126,7 +126,7 @@ function runTextMatchTransformers(
     );
 
     replaceNode.selectNext(0, 0);
-    transformer.replace(replaceNode, match);
+    transformer.replace?.(replaceNode, match);
     return true;
   }
 
@@ -341,7 +341,10 @@ export function registerMarkdownShortcuts(
     ({ tag }) => tag[tag.length - 1]!,
   );
   const textMatchTransformersIndex = indexBy(
-    byType.textMatch,
+    byType.textMatch.filter(
+      (v): v is TransformersByType["textMatch"][number] & { trigger: string } =>
+        Boolean(v.trigger),
+    ),
     ({ trigger }) => trigger,
   );
 
