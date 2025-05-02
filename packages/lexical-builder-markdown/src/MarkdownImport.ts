@@ -303,7 +303,8 @@ function importTextMatchTransformers(
   mainLoop: while (textNode) {
     const textContent = textNode.getTextContent();
     for (const transformer of textMatchTransformers) {
-      const match = textContent.match(transformer.importRegExp);
+      const match =
+        transformer.importRegExp && textContent.match(transformer.importRegExp);
 
       if (!match) {
         continue;
@@ -331,7 +332,7 @@ function importTextMatchTransformers(
         }
       }
 
-      transformer.replace(replaceNode, match);
+      transformer.replace?.(replaceNode, match);
       continue mainLoop;
     }
 

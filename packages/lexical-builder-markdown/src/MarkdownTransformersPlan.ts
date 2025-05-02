@@ -10,11 +10,13 @@ import {
 import {
   ELEMENT_TRANSFORMERS,
   type ElementTransformer,
+  MULTILINE_ELEMENT_TRANSFORMERS,
   TEXT_FORMAT_TRANSFORMERS,
   TEXT_MATCH_TRANSFORMERS,
   type TextMatchTransformer,
   CHECK_LIST,
   UNORDERED_LIST,
+  type MultilineElementTransformer,
 } from "@lexical/markdown";
 import { type CheckListPlan } from "@etrepum/lexical-builder-list";
 import { createMarkdownImport } from "./MarkdownImport";
@@ -26,7 +28,10 @@ export type MarkdownTransformersConfig = MarkdownTransformerOptions & {
   [K in keyof TransformersByType as `${K}Transformers`]: TransformersByType[K];
 };
 function filterDependencies<
-  T extends ElementTransformer | TextMatchTransformer,
+  T extends
+    | ElementTransformer
+    | TextMatchTransformer
+    | MultilineElementTransformer,
 >({ nodes }: KnownTypesAndNodes, transforms: T[]) {
   // Remove transforms that depend on nodes that are not in this config
   const hasNode = nodes.has.bind(nodes);
@@ -53,6 +58,7 @@ export const MarkdownTransformersPlan = definePlan({
     elementTransformers: ELEMENT_TRANSFORMERS,
     textFormatTransformers: TEXT_FORMAT_TRANSFORMERS,
     textMatchTransformers: TEXT_MATCH_TRANSFORMERS,
+    multilineElementTransformers: MULTILINE_ELEMENT_TRANSFORMERS,
     shouldPreserveNewlines: false,
   }),
   // For now we replace the transformer arrays with the default
@@ -78,6 +84,10 @@ export const MarkdownTransformersPlan = definePlan({
       // Only register transforms for nodes that are configured
       element: elementTransformers,
       textMatch: filterDependencies(known, config.textMatchTransformers),
+      multilineElement: filterDependencies(
+        known,
+        config.multilineElementTransformers,
+      ),
       textFormat: config.textFormatTransformers,
     };
     const $markdownImport = $wrapWithIgnoreSelection(
