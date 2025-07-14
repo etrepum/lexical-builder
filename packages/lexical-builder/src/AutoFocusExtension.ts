@@ -17,7 +17,7 @@ export interface AutoFocusConfig {
 }
 
 /**
- * A Extension to focus the LexicalEditor when the root element is set
+ * An Extension to focus the LexicalEditor when the root element is set
  * (typically only when the editor is first created).
  */
 export const AutoFocusExtension = defineExtension({

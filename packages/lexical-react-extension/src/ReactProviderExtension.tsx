@@ -1,7 +1,7 @@
 import { defineExtension } from "@etrepum/lexical-builder";
 
 /**
- * A extension used to declare that there is a LexicalExtensionComposer or
+ * An extension used to declare that there is a LexicalExtensionComposer or
  * ReactPluginHostExtension available so that we can issue runtime warnings
  * when plugins that depend on React are hosted in an environment
  * where it is not ever going to be rendered.

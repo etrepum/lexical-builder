@@ -60,7 +60,7 @@ export function defineExtension<
 }
 
 /**
- * Override a partial of the configuration of a Extension, to be used
+ * Override a partial of the configuration of an Extension, to be used
  * in the dependencies array of another extension, or as
  * an argument to {@link buildEditorFromExtensions}.
  *
@@ -68,7 +68,7 @@ export function defineExtension<
  * extension.mergeConfig(extension, config) or {@link shallowMergeConfig} if
  * this is not directly implemented by the Extension.
  *
- * @param args - A extension followed by one or more config partials for that extension
+ * @param args - An extension followed by one or more config partials for that extension
  * @returns [extension, config, ...configs]
  *
  * @example
@@ -95,7 +95,7 @@ export function configExtension<
 }
 
 /**
- * Provide output from the register function of a Extension
+ * Provide output from the register function of an Extension
  *
  * @returns A cleanup function
  *
@@ -161,7 +161,7 @@ export const OutputTypeId: unique symbol = Symbol.for(
 );
 
 /**
- * Used to declare a peer dependency of a extension in a type-safe way,
+ * Used to declare a peer dependency of an extension in a type-safe way,
  * requires the type parameter. The most common use case for peer dependencies
  * is to avoid a direct import dependency, so you would want to use a
  * type import or the import type (shown in below examples).

@@ -20,7 +20,7 @@ export interface LexicalExtensionComposerProps {
 }
 
 /**
- * The equivalent of LexicalComposer for a extension. Make sure that your extension
+ * The equivalent of LexicalComposer for an extension. Make sure that your extension
  * argument is stable (e.g. using module scope or useMemo) so
  * that you are not re-creating the editor on every render!
  *

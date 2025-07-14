@@ -13,7 +13,7 @@ it internally such as `LexicalExtensionComposer`).
 
 See the [Migration Guide](./migration) for more detailed examples!
 
-## Why is it called a Extension instead of a Plugin?
+## Why is it called an Extension instead of a Plugin?
 
 Legacy reasons. Historically, Lexical has used the term Plugin to refer
 to a React component that adds behavior to the editor. Transitioning
@@ -47,10 +47,10 @@ Vanilla JS and React have first class support in Lexical. Lexical Builder
 provides a path for Extensions written for either of these to be loaded into
 any editor regardless of what framework the page is using.
 
-When you depend on a Extension that depends on `ReactExtension`, you will get a runtime
+When you depend on an Extension that depends on `ReactExtension`, you will get a runtime
 error if a React provider is not present (`LexicalExtensionComposer` or
 `ReactPluginHostExtension`). Think of it like an unsatisfied but required peer
-dependency. This way you won't get confused if you add a extension that requires
+dependency. This way you won't get confused if you add an extension that requires
 React but it never renders correctly because React isn't set up properly.
 
 Other frameworks can use the functionality exposed by Lexical Builder

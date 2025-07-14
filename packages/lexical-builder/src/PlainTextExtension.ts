@@ -10,7 +10,7 @@ import { defineExtension } from "@etrepum/lexical-builder-core";
 import { DragonExtension } from "./DragonExtension";
 
 /**
- * A extension to register \@lexical/plain-text behavior
+ * An extension to register \@lexical/plain-text behavior
  */
 export const PlainTextExtension = defineExtension({
   conflictsWith: ["@lexical/rich-text"],

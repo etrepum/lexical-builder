@@ -57,7 +57,7 @@ function resolve<T extends Function>(arg: Promise<T> | T, fn: (v: T) => void) {
 const ssr = typeof window === "undefined";
 
 /**
- * A extension to use the emoji-datasource-facebook emoji database to convert
+ * An extension to use the emoji-datasource-facebook emoji database to convert
  * short names such as :man-facepalming: or :) to their corresponding
  * emoji, and uses an img from the same package rather than the current
  * font to display it so that the display is consistent regardless of the

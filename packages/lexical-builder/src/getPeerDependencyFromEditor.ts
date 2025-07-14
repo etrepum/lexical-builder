@@ -7,7 +7,7 @@ import { LexicalBuilder } from "./LexicalBuilder";
 import invariant from "./shared/invariant";
 
 /**
- * Get the finalized config and output of a Extension that was used to build the
+ * Get the finalized config and output of an Extension that was used to build the
  * editor by name.
  *
  * This can be used from the implementation of a LexicalNode or in other
@@ -42,7 +42,7 @@ export function getPeerDependencyFromEditor<
 }
 
 /**
- * Get the finalized config and output of a Extension that was used to build the
+ * Get the finalized config and output of an Extension that was used to build the
  * editor by name.
  *
  * This can be used from the implementation of a LexicalNode or in other

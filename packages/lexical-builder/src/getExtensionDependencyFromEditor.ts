@@ -7,7 +7,7 @@ import { LexicalBuilder } from "./LexicalBuilder";
 import invariant from "./shared/invariant";
 
 /**
- * Get the finalized config and output of a Extension that was used to build the editor.
+ * Get the finalized config and output of an Extension that was used to build the editor.
  *
  * This is useful in the implementation of a LexicalNode or in other
  * situations where you have an editor reference but it's not easy to
@@ -16,7 +16,7 @@ import invariant from "./shared/invariant";
  * It will throw if the Editor was not built using this Extension.
  *
  * @param editor - The editor that was built using extension
- * @param extension - The concrete reference to a Extension used to build this editor
+ * @param extension - The concrete reference to an Extension used to build this editor
  * @returns The config and output for that Extension
  */
 export function getExtensionDependencyFromEditor<Extension extends AnyLexicalExtension>(

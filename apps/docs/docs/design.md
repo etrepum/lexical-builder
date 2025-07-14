@@ -17,9 +17,9 @@ which specifies the initial configuration.
 Almost anything that you do with the editor or a legacy React plug-in should
 just work. Upgrading to use a `Extension` should be a simple change.
 
-### Minimize change required to add a Extension
+### Minimize change required to add an Extension
 
-Ideally, adding a extension should be two or three lines of code:
+Ideally, adding an extension should be two or three lines of code:
 
 - Import it
 - Add it as a dependency (with config if necessary)
@@ -28,7 +28,7 @@ Ideally, adding a extension should be two or three lines of code:
 ### Avoid invalid states
 
 TypeScript goes a long way here, but it's only as good as the API design.
-For example, splitting up the workflow for a Extension to have separate `Config`,
+For example, splitting up the workflow for an Extension to have separate `Config`,
 `Init` and `Output` types was something that evolved over time. In earlier
 prototypes, `Config` was overloaded to maintain all of that state, but it
 required a lot more runtime support and type assertions to check that
@@ -88,10 +88,10 @@ The features that this blocks are:
   undertaking in TypeScript. This is automatically detected at runtime by
   the builder.
 - Compile-time support for required configuration without defaults.
-  A extension can implement this at runtime in `init` or `register`.
+  An extension can implement this at runtime in `init` or `register`.
 - Compile-time support for required peer dependencies. A use case for this
   would be the requirement of a `RectProviderExtension` provided by either
-  `LexicalExtensionComposer` or `ReactPluginHost`. A extension can implement this
+  `LexicalExtensionComposer` or `ReactPluginHost`. An extension can implement this
   at runtime in `init` or `register`.
 
 Generally speaking, all of these are already surfaced as runtime errors

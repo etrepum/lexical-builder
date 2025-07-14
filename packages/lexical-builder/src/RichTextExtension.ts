@@ -11,7 +11,7 @@ import { defineExtension } from "@etrepum/lexical-builder-core";
 import { DragonExtension } from "./DragonExtension";
 
 /**
- * A extension to register \@lexical/rich-text behavior and nodes
+ * An extension to register \@lexical/rich-text behavior and nodes
  * ({@link HeadingNode}, {@link QuoteNode})
  */
 export const RichTextExtension = defineExtension({

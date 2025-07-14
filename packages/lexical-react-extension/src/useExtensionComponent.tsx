@@ -18,7 +18,7 @@ export function useExtensionDependency<Extension extends AnyLexicalExtension>(
  * Use a Component from the given Extension that uses the ReactExtension convention
  * of exposing a Component property in its output.
  *
- * @param extension - A extension with a Component property in the output
+ * @param extension - An extension with a Component property in the output
  * @returns `getExtensionConfigFromEditor(useLexicalComposerContext()[0], extension).Component`
  */
 export function useExtensionComponent<
@@ -47,7 +47,7 @@ export type UseExtensionComponentProps<Extension extends AnyLexicalExtension> = 
   : never);
 
 /**
- * A convenient way to get a Extension's output Component with {@link useExtensionComponent}
+ * A convenient way to get an Extension's output Component with {@link useExtensionComponent}
  * and construct it in one step.
  *
  * @example Usage

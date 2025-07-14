@@ -157,7 +157,7 @@ export default function App() {
       <LexicalExtensionComposer extension={extension}>
         {/*
           With CollaborationPlugin - we MUST NOT use @lexical/react/LexicalHistoryPlugin.
-          This plug-in could probably be offered as a Extension with no React dependency, but
+          This plug-in could probably be offered as an Extension with no React dependency, but
           this also demonstrates compatibility with existing plug-ins.
         */}
         <CollaborationPlugin

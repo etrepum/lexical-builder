@@ -29,7 +29,7 @@ const initialConfig: ReactConfig = {
 };
 
 /**
- * A extension to use or configure React for use with Lexical. In an editor, you
+ * An extension to use or configure React for use with Lexical. In an editor, you
  * would typically use {@link LexicalExtensionComposer} (for React projects) or
  * {@link ReactPluginHostExtension} (to use React Extensions and plug-ins in a non-React
  * project).
@@ -37,7 +37,7 @@ const initialConfig: ReactConfig = {
  * See {@link ReactConfig} for more detailed exextensionations of how to use
  * the config for this Extension.
  *
- * For a Extension developer, you can defineConfig() override the extension with
+ * For an Extension developer, you can defineConfig() override the extension with
  * decorators to add JSX inside the editor context that is not
  * location-dependent (e.g. floating UI that does not need to be mounted in
  * some specific location, or effects that return null).

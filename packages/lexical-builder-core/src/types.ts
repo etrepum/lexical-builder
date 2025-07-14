@@ -140,11 +140,11 @@ export type RegisterCleanup<Output> = (() => void) &
   (unknown extends Output ? { output?: Output } : { output: Output });
 
 /**
- * A Extension is a composable unit of LexicalEditor configuration
+ * An Extension is a composable unit of LexicalEditor configuration
  * (nodes, theme, etc) used to create an editor, plus runtime behavior
  * that is registered after the editor is created.
  *
- * A Extension may depend on other Extensions, and provide functionality to other
+ * An Extension may depend on other Extensions, and provide functionality to other
  * extensions through its config.
  */
 export interface LexicalExtension<
@@ -254,33 +254,33 @@ export interface LexicalExtension<
 }
 
 /**
- * Extract the Config type from a Extension
+ * Extract the Config type from an Extension
  */
 export type LexicalExtensionConfig<Extension extends AnyLexicalExtension> = NonNullable<
   Extension[configTypeSymbol]
 >;
 
 /**
- * Extract the Name type from a Extension
+ * Extract the Name type from an Extension
  */
 export type LexicalExtensionName<Extension extends AnyLexicalExtension> = Extension["name"];
 
 /**
- * Extract the Output type from a Extension
+ * Extract the Output type from an Extension
  */
 export type LexicalExtensionOutput<Extension extends AnyLexicalExtension> = NonNullable<
   Extension[outputTypeSymbol]
 >;
 
 /**
- * Extract the Init type from a Extension
+ * Extract the Init type from an Extension
  */
 export type LexicalExtensionInit<Extension extends AnyLexicalExtension> = NonNullable<
   Extension[initTypeSymbol]
 >;
 
 /**
- * A Extension that has an OutputComponent of the given type (e.g. React.ComponentType)
+ * An Extension that has an OutputComponent of the given type (e.g. React.ComponentType)
  */
 export type OutputComponentExtension<ComponentType> = LexicalExtension<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any config

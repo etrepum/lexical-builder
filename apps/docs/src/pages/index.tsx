@@ -70,7 +70,7 @@ export default function Home(): JSX.Element {
             vice versa.
           </Solution>
           <Solution title="Hassle-free dependencies">
-            A Extension is completely self-contained, and specifies all dependencies
+            An Extension is completely self-contained, and specifies all dependencies
             to make it work. If you want checklists, add CheckListExtension as a
             dependency to your editor's extension. No more missing Node errors or
             silently absent behavior.
@@ -104,7 +104,7 @@ export default function Home(): JSX.Element {
             workaround.
           </Solution>
           <Solution title="Outputs">
-            A Extension can specify type-safe outputs, which are computed when the
+            An Extension can specify type-safe outputs, which are computed when the
             extension is registered to the editor (so can take configuration, the
             editor, and dependencies into account). These can be used by
             dependencies, or anywhere you have an editor reference. Think of it
