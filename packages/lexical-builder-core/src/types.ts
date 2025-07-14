@@ -40,24 +40,25 @@ export type NormalizedPeerDependency<Extension extends AnyLexicalExtension> = [
  * Any {@link NormalizedLexicalExtensionArgument}
  */
 export type NormalizedLexicalExtensionArgument<
-  in out Config extends ExtensionConfigBase,
-  out Name extends string,
-  in out Output,
-  in out Init,
+  Config extends ExtensionConfigBase,
+  Name extends string,
+  Output,
+  Init,
 > = [LexicalExtension<Config, Name, Output, Init>, ...Partial<Config>[]];
 
 /**
  * A tuple of [extension, ...configOverrides]
  */
-export type AnyNormalizedLexicalExtensionArgument = NormalizedLexicalExtensionArgument<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
-  any,
-  string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
-  any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
-  any
->;
+export type AnyNormalizedLexicalExtensionArgument =
+  NormalizedLexicalExtensionArgument<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
+    any,
+    string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
+    any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any
+    any
+  >;
 
 /**
  * An object that the register method can use to detect unmount and access the
@@ -131,7 +132,9 @@ export type LexicalExtensionArgument<
   | LexicalExtension<Config, Name, Output, Init>
   | NormalizedLexicalExtensionArgument<Config, Name, Output, Init>;
 
-export interface LexicalExtensionDependency<out Dependency extends AnyLexicalExtension> {
+export interface LexicalExtensionDependency<
+  out Dependency extends AnyLexicalExtension,
+> {
   config: LexicalExtensionConfig<Dependency>;
   output: LexicalExtensionOutput<Dependency>;
 }
@@ -256,28 +259,26 @@ export interface LexicalExtension<
 /**
  * Extract the Config type from an Extension
  */
-export type LexicalExtensionConfig<Extension extends AnyLexicalExtension> = NonNullable<
-  Extension[configTypeSymbol]
->;
+export type LexicalExtensionConfig<Extension extends AnyLexicalExtension> =
+  NonNullable<Extension[configTypeSymbol]>;
 
 /**
  * Extract the Name type from an Extension
  */
-export type LexicalExtensionName<Extension extends AnyLexicalExtension> = Extension["name"];
+export type LexicalExtensionName<Extension extends AnyLexicalExtension> =
+  Extension["name"];
 
 /**
  * Extract the Output type from an Extension
  */
-export type LexicalExtensionOutput<Extension extends AnyLexicalExtension> = NonNullable<
-  Extension[outputTypeSymbol]
->;
+export type LexicalExtensionOutput<Extension extends AnyLexicalExtension> =
+  NonNullable<Extension[outputTypeSymbol]>;
 
 /**
  * Extract the Init type from an Extension
  */
-export type LexicalExtensionInit<Extension extends AnyLexicalExtension> = NonNullable<
-  Extension[initTypeSymbol]
->;
+export type LexicalExtensionInit<Extension extends AnyLexicalExtension> =
+  NonNullable<Extension[initTypeSymbol]>;
 
 /**
  * An Extension that has an OutputComponent of the given type (e.g. React.ComponentType)
