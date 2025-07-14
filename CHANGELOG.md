@@ -1,3 +1,23 @@
+## v0.0.36 (2025-07-13
+
+2025-07-13
+2025-07-13
+2025-07-13)
+
+- npx turbo/codemodlatest update Bob Ippolito
+- npm run pin-lexical-version 0.33.1 Bob Ippolito
+- Merge pull request #60 from etrepum/upgrades Bob Ippolito
+- markdown migration Bob Ippolito
+- npx turbo/codemodlatest update Bob Ippolito
+- npm run pin-lexical-version 0.31.0 Bob Ippolito
+- Update README.md Bob Ippolito
+- npx turbo/codemodlatest update Bob Ippolito
+- Merge pull request #58 from etrepum/pin-lexical-version Bob Ippolito
+- npm run pin-lexical-version 0.17.2-nightly.20240906.0 Bob Ippolito
+- Merge pull request #57 from etrepum/example-url Bob Ippolito
+- fix example url Bob Ippolito
+- Merge pull request #56 from etrepum/0.0.35release Bob Ippolito
+
 ## v0.0.35 (2024-08-12
 
 2024-08-12
