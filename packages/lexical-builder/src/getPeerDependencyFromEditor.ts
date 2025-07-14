@@ -81,11 +81,14 @@ export function getPeerDependencyFromEditor<
  */
 export function getPeerDependencyFromEditorOrThrow<
   Extension extends AnyLexicalExtension = never,
->(editor: LexicalEditor, extensionName: Extension["name"]): LexicalExtensionDependency<Extension> {
+>(
+  editor: LexicalEditor,
+  extensionName: Extension["name"],
+): LexicalExtensionDependency<Extension> {
   const dep = getPeerDependencyFromEditor<Extension>(editor, extensionName);
   invariant(
     dep !== undefined,
-    "getPeerDependencyFromEditorOrThrow: Editor was not build with Extension %s",
+    "getPeerDependencyFromEditorOrThrow: Editor was not built with Extension %s",
     extensionName,
   );
   return dep;
