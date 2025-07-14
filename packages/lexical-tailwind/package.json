@@ -6,7 +6,7 @@
     "lexical",
     "lexical-builder",
     "plug-in",
-    "plan"
+    "extension"
   ],
   "scripts": {
     "build": "tsc --noEmit && vite build",
@@ -33,7 +33,7 @@
     "tailwindcss": ">=3.3.0"
   },
   "optionalDependencies": {
-    "@etrepum/lexical-emoji-plan": "*"
+    "@etrepum/lexical-emoji-extension": "*"
   },
   "sideEffects": false,
   "devDependencies": {

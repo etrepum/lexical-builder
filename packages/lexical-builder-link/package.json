@@ -6,7 +6,7 @@
     "lexical",
     "lexical-builder",
     "plug-in",
-    "plan"
+    "extension"
   ],
   "scripts": {
     "build": "tsc --noEmit && vite build",

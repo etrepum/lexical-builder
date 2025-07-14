@@ -7,4 +7,4 @@
  */
 
 export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
-export { TailwindPlan } from "./TailwindPlan";
+export { TailwindExtension } from "./TailwindExtension";

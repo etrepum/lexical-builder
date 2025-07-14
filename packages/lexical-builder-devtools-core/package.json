@@ -7,7 +7,7 @@
     "lexical-builder",
     "devtools",
     "plug-in",
-    "plan"
+    "extension"
   ],
   "scripts": {
     "build": "tsc --noEmit && vite build",
@@ -30,7 +30,7 @@
   "dependencies": {
     "@docusaurus/theme-mermaid": "^3.4.0",
     "@etrepum/lexical-builder": "*",
-    "@etrepum/lexical-react-plan": "*",
+    "@etrepum/lexical-react-extension": "*",
     "js-base64": "^3.7.7",
     "mermaid": "^10.9.1",
     "pako": "^2.1.0"

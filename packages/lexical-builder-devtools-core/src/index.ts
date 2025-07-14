@@ -13,5 +13,5 @@ export {
   type BuilderGraphComponentProps,
 } from "./BuilderGraphComponent";
 export { buildGraph } from "./buildGraph";
-export { BuilderGraphPlan } from "./BuilderGraphPlan";
+export { BuilderGraphExtension } from "./BuilderGraphExtension";
 export { getMermaidLiveUrl } from "./getMermaidLiveUrl";

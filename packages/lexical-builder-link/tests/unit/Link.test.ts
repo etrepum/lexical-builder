@@ -1,10 +1,10 @@
 import {
-  definePlan,
-  RichTextPlan,
-  buildEditorFromPlans,
-  getPlanDependencyFromEditor,
+  defineExtension,
+  RichTextExtension,
+  buildEditorFromExtensions,
+  getExtensionDependencyFromEditor,
 } from "@etrepum/lexical-builder";
-import { LinkPlan } from "@etrepum/lexical-builder-link";
+import { LinkExtension } from "@etrepum/lexical-builder-link";
 import { describe, it, expect } from "vitest";
 import {
   $createParagraphNode,
@@ -15,9 +15,9 @@ import {
 import { $isLinkNode, LinkNode } from "@lexical/link";
 
 describe("Link", () => {
-  const plan = definePlan({
+  const extension = defineExtension({
     name: "[root]",
-    dependencies: [LinkPlan, RichTextPlan],
+    dependencies: [LinkExtension, RichTextExtension],
     $initialEditorState: () => {
       const p = $createParagraphNode();
       p.append($createTextNode("Hello"));
@@ -25,8 +25,8 @@ describe("Link", () => {
     },
   });
   it("can convert a text node to a link with toggleLink", () => {
-    const editor = buildEditorFromPlans(plan);
-    const { toggleLink } = getPlanDependencyFromEditor(editor, LinkPlan).output;
+    const editor = buildEditorFromExtensions(extension);
+    const { toggleLink } = getExtensionDependencyFromEditor(editor, LinkExtension).output;
     editor.update(
       () => {
         const textNode: TextNode = $getRoot().getLastDescendant();

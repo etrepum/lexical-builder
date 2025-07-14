@@ -8,5 +8,5 @@
 
 export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;
 
-export { ListPlan } from "./ListPlan";
-export { CheckListPlan } from "./CheckListPlan";
+export { ListExtension } from "./ListExtension";
+export { CheckListExtension } from "./CheckListExtension";

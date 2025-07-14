@@ -1,12 +1,12 @@
-import { RichTextPlan, buildEditorFromPlans } from "@etrepum/lexical-builder";
+import { RichTextExtension, buildEditorFromExtensions } from "@etrepum/lexical-builder";
 import { describe, it, expect } from "vitest";
 import { buildGraph } from "@etrepum/lexical-builder-devtools-core";
 
 describe("BuilderGraph", () => {
   it("can build a graph", () => {
-    const editor = buildEditorFromPlans({
+    const editor = buildEditorFromExtensions({
       name: "[root]",
-      dependencies: [RichTextPlan],
+      dependencies: [RichTextExtension],
     });
     expect(buildGraph(editor)).toEqual(`flowchart TB
   P0["InitialState"]

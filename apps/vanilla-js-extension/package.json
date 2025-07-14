@@ -1,0 +1,32 @@
+{
+  "name": "@etrepum/vanilla-js-extension-example",
+  "private": true,
+  "version": "0.0.35",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build-prod": "npm run build -- --minify",
+    "preview": "vite preview",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@etrepum/lexical-builder": "*",
+    "@etrepum/lexical-builder-devtools-core": "*",
+    "@etrepum/lexical-emoji-extension": "*",
+    "@etrepum/lexical-react-extension": "*",
+    "@lexical/react": "0.33.1",
+    "@lexical/utils": "0.33.1",
+    "lexical": "0.33.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "eslint": "^8.57.0",
+    "import-meta-resolve": "^4.1.0",
+    "typescript": "^5.5.2",
+    "vite": "^5.4.0",
+    "vite-plugin-static-copy": "^1.0.5"
+  }
+}

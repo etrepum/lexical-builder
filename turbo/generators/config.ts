@@ -21,7 +21,7 @@ export default (plop: PlopTypes.NodePlopAPI) => {
       {
         type: "input",
         name: "directoryName",
-        message: "Package directory name (e.g. lexical-custom-plan): ",
+        message: "Package directory name (e.g. lexical-custom-extension): ",
       },
     ],
     actions: (data) => {
