@@ -19,7 +19,9 @@ import invariant from "./shared/invariant";
  * @param extension - The concrete reference to an Extension used to build this editor
  * @returns The config and output for that Extension
  */
-export function getExtensionDependencyFromEditor<Extension extends AnyLexicalExtension>(
+export function getExtensionDependencyFromEditor<
+  Extension extends AnyLexicalExtension,
+>(
   editor: LexicalEditor,
   extension: Extension,
 ): LexicalExtensionDependency<Extension> {
@@ -27,7 +29,7 @@ export function getExtensionDependencyFromEditor<Extension extends AnyLexicalExt
   const rep = builder.getExtensionRep(extension);
   invariant(
     rep !== undefined,
-    "getExtensionFromEditor: Extension %s was not built when creating this editor",
+    "getExtensionDependencyFromEditor: Extension %s was not built when creating this editor",
     extension.name,
   );
   return rep.getExtensionDependency();

@@ -71,19 +71,19 @@ export type ExtensionRepState<Extension extends AnyLexicalExtension> =
   | RegisteredState<Extension>
   | AfterInitializationState<Extension>;
 
-export function isExactlyUnmarkedExtensionRepState<Extension extends AnyLexicalExtension>(
-  state: ExtensionRepState<Extension>,
-): state is UnmarkedState {
+export function isExactlyUnmarkedExtensionRepState<
+  Extension extends AnyLexicalExtension,
+>(state: ExtensionRepState<Extension>): state is UnmarkedState {
   return state.id === ExtensionRepStateIds.unmarked;
 }
-function isExactlyTemporaryExtensionRepState<Extension extends AnyLexicalExtension>(
-  state: ExtensionRepState<Extension>,
-): state is TemporaryState {
+function isExactlyTemporaryExtensionRepState<
+  Extension extends AnyLexicalExtension,
+>(state: ExtensionRepState<Extension>): state is TemporaryState {
   return state.id === ExtensionRepStateIds.temporary;
 }
-export function isExactlyPermanentExtensionRepState<Extension extends AnyLexicalExtension>(
-  state: ExtensionRepState<Extension>,
-): state is PermanentState {
+export function isExactlyPermanentExtensionRepState<
+  Extension extends AnyLexicalExtension,
+>(state: ExtensionRepState<Extension>): state is PermanentState {
   return state.id === ExtensionRepStateIds.permanent;
 }
 function isInitializedExtensionRepState<Extension extends AnyLexicalExtension>(
@@ -118,7 +118,9 @@ export function applyTemporaryMark<Extension extends AnyLexicalExtension>(
 ): TemporaryState {
   invariant(
     isExactlyUnmarkedExtensionRepState(state),
-    "LexicalBuilder: Can not apply a temporary mark to state",
+    "LexicalBuilder: Can not apply a temporary mark from state id %s (expected %s unmarked)",
+    String(state.id),
+    String(ExtensionRepStateIds.unmarked),
   );
   return Object.assign(state, { id: ExtensionRepStateIds.temporary });
 }
@@ -127,7 +129,9 @@ export function applyPermanentMark<Extension extends AnyLexicalExtension>(
 ): PermanentState {
   invariant(
     isExactlyTemporaryExtensionRepState(state),
-    "LexicalBuilder: Can not apply a permanent mark to state",
+    "LexicalBuilder: Can not apply a permanent mark from state id %s (expected %s temporary)",
+    String(state.id),
+    String(ExtensionRepStateIds.temporary),
   );
   return Object.assign(state, { id: ExtensionRepStateIds.permanent });
 }
@@ -162,9 +166,9 @@ export function applyRegisteredState<Extension extends AnyLexicalExtension>(
     output: cleanup ? cleanup.output : undefined,
   });
 }
-export function applyAfterInitializationState<Extension extends AnyLexicalExtension>(
-  state: RegisteredState<Extension>,
-): AfterInitializationState<Extension> {
+export function applyAfterInitializationState<
+  Extension extends AnyLexicalExtension,
+>(state: RegisteredState<Extension>): AfterInitializationState<Extension> {
   return Object.assign(state, { id: ExtensionRepStateIds.afterInitialization });
 }
 
@@ -230,7 +234,7 @@ export class ExtensionRep<Extension extends AnyLexicalExtension> {
     const initialState = this.state;
     invariant(
       isExactlyPermanentExtensionRepState(initialState),
-      "LexicalBuilder: Can not configure from state id %s",
+      "ExtensionRep: Can not configure from state id %s",
       String(initialState.id),
     );
     const initState: ExtensionInitState = {
@@ -287,11 +291,14 @@ export class ExtensionRep<Extension extends AnyLexicalExtension> {
     return rep ? rep.getExtensionInitDependency() : undefined;
   }
 
-  getExtensionInitDependency(): Omit<LexicalExtensionDependency<Extension>, "output"> {
+  getExtensionInitDependency(): Omit<
+    LexicalExtensionDependency<Extension>,
+    "output"
+  > {
     const state = this.state;
     invariant(
       isConfiguredExtensionRepState(state),
-      "LexicalExtensionBuilder: getExtensionInitDependency called in state id %s (expected >= %s configured)",
+      "ExtensionRep: getExtensionInitDependency called in state id %s (expected >= %s configured)",
       String(state.id),
       String(ExtensionRepStateIds.configured),
     );
@@ -351,7 +358,9 @@ export class ExtensionRep<Extension extends AnyLexicalExtension> {
   getPeerNameSet(): ReadonlySet<string> {
     let s = this._peerNameSet;
     if (!s) {
-      s = new Set((this.extension.peerDependencies || []).map(([name]) => name));
+      s = new Set(
+        (this.extension.peerDependencies || []).map(([name]) => name),
+      );
       this._peerNameSet = s;
     }
     return s;
