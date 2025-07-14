@@ -1,4 +1,4 @@
-import { type AnyLexicalPlan, LexicalBuilder } from "@etrepum/lexical-builder";
+import { type AnyLexicalExtension, LexicalBuilder } from "@etrepum/lexical-builder";
 import { type LexicalEditor } from "lexical";
 import { displayName } from "./displayName";
 
@@ -8,24 +8,24 @@ export function buildGraph(editor: LexicalEditor): string {
   function emit(s: string) {
     output.push(s);
   }
-  const planReps = builder.sortedPlanReps();
+  const extensionReps = builder.sortedExtensionReps();
   const nameToId: Record<string, string> = {};
-  for (let i = 0; i < planReps.length; i++) {
-    nameToId[planReps[i]!.plan.name] = `P${String(i)}`;
+  for (let i = 0; i < extensionReps.length; i++) {
+    nameToId[extensionReps[i]!.extension.name] = `P${String(i)}`;
   }
-  function q(plan: AnyLexicalPlan): string {
-    return nameToId[plan.name]!;
+  function q(extension: AnyLexicalExtension): string {
+    return nameToId[extension.name]!;
   }
-  for (const rep of planReps) {
-    const { plan } = rep;
-    emit(`${q(plan)}["${displayName(plan)}"]`);
-    for (const dep of plan.dependencies || []) {
-      emit(`${q(plan)} --> ${q(Array.isArray(dep) ? dep[0] : dep)}`);
+  for (const rep of extensionReps) {
+    const { extension } = rep;
+    emit(`${q(extension)}["${displayName(extension)}"]`);
+    for (const dep of extension.dependencies || []) {
+      emit(`${q(extension)} --> ${q(Array.isArray(dep) ? dep[0] : dep)}`);
     }
-    for (const [name] of plan.peerDependencies || []) {
-      const peer = builder.planNameMap.get(name);
+    for (const [name] of extension.peerDependencies || []) {
+      const peer = builder.extensionNameMap.get(name);
       if (peer) {
-        emit(`${q(plan)} -.-> ${q(peer.plan)}`);
+        emit(`${q(extension)} -.-> ${q(peer.extension)}`);
       }
     }
   }

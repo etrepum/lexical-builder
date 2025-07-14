@@ -171,8 +171,8 @@
 
 2024-06-07)
 
-- Merge pull request #17 from etrepum/simplify-root-plan Bob Ippolito
-- Simplify root plan Bob Ippolito
+- Merge pull request #17 from etrepum/simplify-root-extension Bob Ippolito
+- Simplify root extension Bob Ippolito
 - Merge pull request #16 from etrepum/0.0.15release Bob Ippolito
 
 ## v0.0.15 (2024-06-06
@@ -189,9 +189,9 @@
 
 ## v0.0.13 (2024-06-05)
 
-- Refactor LexicalPlanComposer Bob Ippolito
+- Refactor LexicalExtensionComposer Bob Ippolito
 - more api Bob Ippolito
-- refactor react plan into more files Bob Ippolito
+- refactor react extension into more files Bob Ippolito
 - Remove console.log Bob Ippolito
 - add semver to cache Bob Ippolito
 - Merge pull request #12 from etrepum0.0.12release Bob Ippolito
@@ -236,13 +236,13 @@
 
 - format and start docs Bob Ippolito
 - move tests around Bob Ippolito
-- refactor react plan to separate package Bob Ippolito
+- refactor react extension to separate package Bob Ippolito
 - update CHANGELOG.md Bob Ippolito
 - Merge pull request #4 from etrepum0.0.5release Bob Ippolito
 
 ## v0.0.5 (2024-06-02)
 
-- plan and emoji refactor Bob Ippolito
+- extension and emoji refactor Bob Ippolito
 - emoji tests Bob Ippolito
 - format Bob Ippolito
 - Merge pull request #3 from etrepum0.0.4release Bob Ippolito
@@ -255,13 +255,13 @@
 - add otp to release script Bob Ippolito
 - Merge pull request #2 from etrepum0.0.3release Bob Ippolito
 - v0.0.3 Lexical Builder GitHub Actions Bot
-- add lexical-emoji-plan package Bob Ippolito
+- add lexical-emoji-extension package Bob Ippolito
 
 ## v0.0.3 (2024-06-02)
 
 - emoji refactor Bob Ippolito
 - use stackblitz config correctly Bob Ippolito
-- refactor ReactPlan initialization Bob Ippolito
+- refactor ReactExtension initialization Bob Ippolito
 - allow nightly release to be created from workflow dispatch Bob Ippolito
 - Merge pull request #1 from etrepum0.0.2release Bob Ippolito
 - v0.0.2 Lexical Builder GitHub Actions Bot

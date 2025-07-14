@@ -8,48 +8,48 @@
 
 export { PACKAGE_VERSION } from "./PACKAGE_VERSION";
 export {
-  configPlan,
-  definePlan,
+  configExtension,
+  defineExtension,
   provideOutput,
   declarePeerDependency,
   safeCast,
   shallowMergeConfig,
-  type AnyLexicalPlan,
-  type AnyLexicalPlanArgument,
+  type AnyLexicalExtension,
+  type AnyLexicalExtensionArgument,
   type LexicalEditorWithDispose,
   type InitialEditorStateType,
-  type LexicalPlan,
-  type LexicalPlanArgument,
-  type LexicalPlanConfig,
-  type LexicalPlanName,
-  type LexicalPlanOutput,
-  type LexicalPlanInit,
-  type OutputComponentPlan,
-  type LexicalPlanDependency,
-  type NormalizedLexicalPlanArgument,
-  type PlanConfigBase,
-  type PlanRegisterState,
+  type LexicalExtension,
+  type LexicalExtensionArgument,
+  type LexicalExtensionConfig,
+  type LexicalExtensionName,
+  type LexicalExtensionOutput,
+  type LexicalExtensionInit,
+  type OutputComponentExtension,
+  type LexicalExtensionDependency,
+  type NormalizedLexicalExtensionArgument,
+  type ExtensionConfigBase,
+  type ExtensionRegisterState,
   type NormalizedPeerDependency,
 } from "@etrepum/lexical-builder-core";
-export { LexicalBuilder, buildEditorFromPlans } from "./LexicalBuilder";
-export { getPlanDependencyFromEditor } from "./getPlanDependencyFromEditor";
+export { LexicalBuilder, buildEditorFromExtensions } from "./LexicalBuilder";
+export { getExtensionDependencyFromEditor } from "./getExtensionDependencyFromEditor";
 export {
   getPeerDependencyFromEditor,
   getPeerDependencyFromEditorOrThrow,
 } from "./getPeerDependencyFromEditor";
 export { getKnownTypesAndNodes, type KnownTypesAndNodes } from "./config";
-export { InitialStatePlan, type InitialStateConfig } from "./InitialStatePlan";
-// These plan definitions should all be colocated with their implementations, only here for convenience
-export { type AutoFocusConfig, AutoFocusPlan } from "./AutoFocusPlan";
-export { type DragonConfig, type DragonOutput, DragonPlan } from "./DragonPlan";
+export { InitialStateExtension, type InitialStateConfig } from "./InitialStateExtension";
+// These extension definitions should all be colocated with their implementations, only here for convenience
+export { type AutoFocusConfig, AutoFocusExtension } from "./AutoFocusExtension";
+export { type DragonConfig, type DragonOutput, DragonExtension } from "./DragonExtension";
 export {
   type HistoryConfig,
   type HistoryOutput,
-  HistoryPlan,
-  SharedHistoryPlan,
-} from "./HistoryPlan";
-export { PlainTextPlan } from "./PlainTextPlan";
-export { RichTextPlan } from "./RichTextPlan";
+  HistoryExtension,
+  SharedHistoryExtension,
+} from "./HistoryExtension";
+export { PlainTextExtension } from "./PlainTextExtension";
+export { RichTextExtension } from "./RichTextExtension";
 export {
   disabledToggle,
   type DisabledToggleOutput,

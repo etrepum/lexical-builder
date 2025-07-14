@@ -1,9 +1,9 @@
 import {
-  RichTextPlan,
-  buildEditorFromPlans,
-  definePlan,
+  RichTextExtension,
+  buildEditorFromExtensions,
+  defineExtension,
 } from "@etrepum/lexical-builder";
-import { CheckListPlan, ListPlan } from "@etrepum/lexical-builder-list";
+import { CheckListExtension, ListExtension } from "@etrepum/lexical-builder-list";
 import {
   $createListItemNode,
   $createListNode,
@@ -13,10 +13,10 @@ import { $createTextNode, $getRoot } from "lexical";
 import { describe, it, expect } from "vitest";
 
 // TODO: write more tests here
-describe("ListPlan", () => {
-  const plan = definePlan({
+describe("ListExtension", () => {
+  const extension = defineExtension({
     name: "[root]",
-    dependencies: [ListPlan, RichTextPlan],
+    dependencies: [ListExtension, RichTextExtension],
     $initialEditorState: () => {
       $getRoot().append(
         $createListNode("number").append(
@@ -27,7 +27,7 @@ describe("ListPlan", () => {
     },
   });
   it("Creates the list", () => {
-    const editor = buildEditorFromPlans(plan);
+    const editor = buildEditorFromExtensions(extension);
     editor.update(
       () => {
         const ol = $getRoot().getFirstChildOrThrow();
@@ -38,10 +38,10 @@ describe("ListPlan", () => {
     editor.dispose();
   });
 });
-describe("CheckListPlan", () => {
-  const plan = definePlan({
+describe("CheckListExtension", () => {
+  const extension = defineExtension({
     name: "[root]",
-    dependencies: [CheckListPlan, RichTextPlan],
+    dependencies: [CheckListExtension, RichTextExtension],
     $initialEditorState: () => {
       $getRoot().append(
         $createListNode("check").append(
@@ -52,7 +52,7 @@ describe("CheckListPlan", () => {
     },
   });
   it("Creates the list", () => {
-    const editor = buildEditorFromPlans(plan);
+    const editor = buildEditorFromExtensions(extension);
     editor.update(
       () => {
         const ul = $getRoot().getFirstChildOrThrow();

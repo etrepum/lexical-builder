@@ -6,12 +6,12 @@
  *
  */
 import type {
-  AnyLexicalPlan,
-  AnyLexicalPlanArgument,
+  AnyLexicalExtension,
+  AnyLexicalExtensionArgument,
   LexicalEditorWithDispose,
   InitialEditorConfig,
-  LexicalPlanConfig,
-  AnyNormalizedLexicalPlanArgument,
+  LexicalExtensionConfig,
+  AnyNormalizedLexicalExtensionArgument,
 } from "@etrepum/lexical-builder-core";
 import {
   type LexicalEditor,
@@ -26,33 +26,33 @@ import { mergeRegister } from "@lexical/utils";
 import invariant from "./shared/invariant";
 import { deepThemeMergeInPlace } from "./deepThemeMergeInPlace";
 import {
-  PlanRep,
+  ExtensionRep,
   applyPermanentMark,
   applyTemporaryMark,
-  isExactlyPermanentPlanRepState,
-  isExactlyUnmarkedPlanRepState,
-} from "./PlanRep";
+  isExactlyPermanentExtensionRepState,
+  isExactlyUnmarkedExtensionRepState,
+} from "./ExtensionRep";
 import { PACKAGE_VERSION } from "./PACKAGE_VERSION";
-import { InitialStatePlan } from "./InitialStatePlan";
+import { InitialStateExtension } from "./InitialStateExtension";
 
 /** @internal Use a well-known symbol for dev tools purposes */
 export const builderSymbol = Symbol.for("@etrepum/lexical-builder");
 
 /**
- * Build a LexicalEditor by combining together one or more plans, optionally
+ * Build a LexicalEditor by combining together one or more extensions, optionally
  * overriding some of their configuration.
  *
- * @param plans - Plan arguments (plans or plans with config overrides)
+ * @param extensions - Extension arguments (extensions or extensions with config overrides)
  * @returns An editor handle
  *
- * @example A single root plan with multiple dependencies
+ * @example A single root extension with multiple dependencies
  * ```ts
- * const editor = buildEditorFromPlans(
- *   definePlan({
+ * const editor = buildEditorFromExtensions(
+ *   defineExtension({
  *     name: "[root]",
  *     dependencies: [
- *       RichTextPlan,
- *       configPlan(EmojiPlan, { emojiBaseUrl: "/assets/emoji" }),
+ *       RichTextExtension,
+ *       configExtension(EmojiExtension, { emojiBaseUrl: "/assets/emoji" }),
  *     ],
  *     register: (editor: LexicalEditor) => {
  *       console.log("Editor Created");
@@ -63,16 +63,16 @@ export const builderSymbol = Symbol.for("@etrepum/lexical-builder");
  * ```
  * @example A very similar minimal configuration without the register hook
  * ```ts
- * const editor = buildEditorFromPlans(
- *   RichTextPlan,
- *   configPlan(EmojiPlan, { emojiBaseUrl: "/assets/emoji" }),
+ * const editor = buildEditorFromExtensions(
+ *   RichTextExtension,
+ *   configExtension(EmojiExtension, { emojiBaseUrl: "/assets/emoji" }),
  * );
  * ```
  */
-export function buildEditorFromPlans(
-  ...plans: AnyLexicalPlanArgument[]
+export function buildEditorFromExtensions(
+  ...extensions: AnyLexicalExtensionArgument[]
 ): LexicalEditorWithDispose {
-  return LexicalBuilder.fromPlans(plans).buildEditor();
+  return LexicalBuilder.fromExtensions(extensions).buildEditor();
 }
 
 /** @internal */
@@ -94,41 +94,41 @@ function maybeWithBuilder(editor: LexicalEditor): LexicalEditor & WithBuilder {
   return editor;
 }
 
-function normalizePlanArgument(
-  arg: AnyLexicalPlanArgument,
-): AnyNormalizedLexicalPlanArgument {
+function normalizeExtensionArgument(
+  arg: AnyLexicalExtensionArgument,
+): AnyNormalizedLexicalExtensionArgument {
   return Array.isArray(arg) ? arg : [arg];
 }
 
 /** @internal */
 export class LexicalBuilder {
-  roots: readonly AnyNormalizedLexicalPlanArgument[];
-  planNameMap: Map<string, PlanRep<AnyLexicalPlan>>;
+  roots: readonly AnyNormalizedLexicalExtensionArgument[];
+  extensionNameMap: Map<string, ExtensionRep<AnyLexicalExtension>>;
   outgoingConfigEdges: Map<
     string,
-    Map<string, LexicalPlanConfig<AnyLexicalPlan>[]>
+    Map<string, LexicalExtensionConfig<AnyLexicalExtension>[]>
   >;
   incomingEdges: Map<string, Set<string>>;
   conflicts: Map<string, string>;
-  _sortedPlanReps?: readonly PlanRep<AnyLexicalPlan>[];
+  _sortedExtensionReps?: readonly ExtensionRep<AnyLexicalExtension>[];
   PACKAGE_VERSION: string;
 
-  constructor(roots: AnyNormalizedLexicalPlanArgument[]) {
+  constructor(roots: AnyNormalizedLexicalExtensionArgument[]) {
     this.outgoingConfigEdges = new Map();
     this.incomingEdges = new Map();
-    this.planNameMap = new Map();
+    this.extensionNameMap = new Map();
     this.conflicts = new Map();
     this.PACKAGE_VERSION = PACKAGE_VERSION;
     this.roots = roots;
-    for (const plan of roots) {
-      this.addPlan(plan);
+    for (const extension of roots) {
+      this.addExtension(extension);
     }
   }
 
-  static fromPlans(plans: AnyLexicalPlanArgument[]): LexicalBuilder {
-    const roots = [normalizePlanArgument(InitialStatePlan)];
-    for (const plan of plans) {
-      roots.push(normalizePlanArgument(plan));
+  static fromExtensions(extensions: AnyLexicalExtensionArgument[]): LexicalBuilder {
+    const roots = [normalizeExtensionArgument(InitialStateExtension)];
+    for (const extension of extensions) {
+      roots.push(normalizeExtensionArgument(extension));
     }
     return new LexicalBuilder(roots);
   }
@@ -194,138 +194,138 @@ export class LexicalBuilder {
     return editor;
   }
 
-  getPlanRep<Plan extends AnyLexicalPlan>(
-    plan: Plan,
-  ): PlanRep<Plan> | undefined {
-    const rep = this.planNameMap.get(plan.name);
+  getExtensionRep<Extension extends AnyLexicalExtension>(
+    extension: Extension,
+  ): ExtensionRep<Extension> | undefined {
+    const rep = this.extensionNameMap.get(extension.name);
     if (rep) {
       invariant(
-        rep.plan === plan,
-        "LexicalBuilder: A registered plan with name %s exists but does not match the given plan",
-        plan.name,
+        rep.extension === extension,
+        "LexicalBuilder: A registered extension with name %s exists but does not match the given extension",
+        extension.name,
       );
-      return rep as PlanRep<Plan>;
+      return rep as ExtensionRep<Extension>;
     }
   }
 
   addEdge(
-    fromPlanName: string,
-    toPlanName: string,
-    configs: LexicalPlanConfig<AnyLexicalPlan>[],
+    fromExtensionName: string,
+    toExtensionName: string,
+    configs: LexicalExtensionConfig<AnyLexicalExtension>[],
   ) {
-    const outgoing = this.outgoingConfigEdges.get(fromPlanName);
+    const outgoing = this.outgoingConfigEdges.get(fromExtensionName);
     if (outgoing) {
-      outgoing.set(toPlanName, configs);
+      outgoing.set(toExtensionName, configs);
     } else {
       this.outgoingConfigEdges.set(
-        fromPlanName,
-        new Map([[toPlanName, configs]]),
+        fromExtensionName,
+        new Map([[toExtensionName, configs]]),
       );
     }
-    const incoming = this.incomingEdges.get(toPlanName);
+    const incoming = this.incomingEdges.get(toExtensionName);
     if (incoming) {
-      incoming.add(fromPlanName);
+      incoming.add(fromExtensionName);
     } else {
-      this.incomingEdges.set(toPlanName, new Set([fromPlanName]));
+      this.incomingEdges.set(toExtensionName, new Set([fromExtensionName]));
     }
   }
 
-  addPlan(arg: AnyLexicalPlanArgument) {
+  addExtension(arg: AnyLexicalExtensionArgument) {
     invariant(
-      this._sortedPlanReps === undefined,
-      "LexicalBuilder: addPlan called after finalization",
+      this._sortedExtensionReps === undefined,
+      "LexicalBuilder: addExtension called after finalization",
     );
-    const normalized = normalizePlanArgument(arg);
-    const [plan] = normalized;
+    const normalized = normalizeExtensionArgument(arg);
+    const [extension] = normalized;
     invariant(
-      typeof plan.name === "string",
-      "LexicalBuilder: plan name must be string, not %s",
-      typeof plan.name,
+      typeof extension.name === "string",
+      "LexicalBuilder: extension name must be string, not %s",
+      typeof extension.name,
     );
-    let planRep = this.planNameMap.get(plan.name);
+    let extensionRep = this.extensionNameMap.get(extension.name);
     invariant(
-      planRep === undefined || planRep.plan === plan,
-      "LexicalBuilder: Multiple plans registered with name %s, names must be unique",
-      plan.name,
+      extensionRep === undefined || extensionRep.extension === extension,
+      "LexicalBuilder: Multiple extensions registered with name %s, names must be unique",
+      extension.name,
     );
-    if (!planRep) {
-      planRep = new PlanRep(this, plan);
-      this.planNameMap.set(plan.name, planRep);
-      const hasConflict = this.conflicts.get(plan.name);
+    if (!extensionRep) {
+      extensionRep = new ExtensionRep(this, extension);
+      this.extensionNameMap.set(extension.name, extensionRep);
+      const hasConflict = this.conflicts.get(extension.name);
       if (typeof hasConflict === "string") {
         invariant(
           false,
-          "LexicalBuilder: plan %s conflicts with %s",
-          plan.name,
+          "LexicalBuilder: extension %s conflicts with %s",
+          extension.name,
           hasConflict,
         );
       }
-      for (const name of plan.conflictsWith || []) {
+      for (const name of extension.conflictsWith || []) {
         invariant(
-          !this.planNameMap.has(name),
-          "LexicalBuilder: plan %s conflicts with %s",
-          plan.name,
+          !this.extensionNameMap.has(name),
+          "LexicalBuilder: extension %s conflicts with %s",
+          extension.name,
           name,
         );
-        this.conflicts.set(name, plan.name);
+        this.conflicts.set(name, extension.name);
       }
-      for (const dep of plan.dependencies || []) {
-        const normDep = normalizePlanArgument(dep);
-        this.addEdge(plan.name, normDep[0].name, normDep.slice(1));
-        this.addPlan(normDep);
+      for (const dep of extension.dependencies || []) {
+        const normDep = normalizeExtensionArgument(dep);
+        this.addEdge(extension.name, normDep[0].name, normDep.slice(1));
+        this.addExtension(normDep);
       }
-      for (const [depName, config] of plan.peerDependencies || []) {
-        this.addEdge(plan.name, depName, config ? [config] : []);
+      for (const [depName, config] of extension.peerDependencies || []) {
+        this.addEdge(extension.name, depName, config ? [config] : []);
       }
     }
   }
 
-  sortedPlanReps(): readonly PlanRep<AnyLexicalPlan>[] {
-    if (this._sortedPlanReps) {
-      return this._sortedPlanReps;
+  sortedExtensionReps(): readonly ExtensionRep<AnyLexicalExtension>[] {
+    if (this._sortedExtensionReps) {
+      return this._sortedExtensionReps;
     }
     // depth-first search based topological DAG sort
     // https://en.wikipedia.org/wiki/Topological_sorting
-    const sortedPlanReps: PlanRep<AnyLexicalPlan>[] = [];
-    const visit = (rep: PlanRep<AnyLexicalPlan>, fromPlanName?: string) => {
+    const sortedExtensionReps: ExtensionRep<AnyLexicalExtension>[] = [];
+    const visit = (rep: ExtensionRep<AnyLexicalExtension>, fromExtensionName?: string) => {
       let mark = rep.state;
-      if (isExactlyPermanentPlanRepState(mark)) {
+      if (isExactlyPermanentExtensionRepState(mark)) {
         return;
       }
-      const planName = rep.plan.name;
+      const extensionName = rep.extension.name;
       invariant(
-        isExactlyUnmarkedPlanRepState(mark),
-        "LexicalBuilder: Circular dependency detected for Plan %s from %s",
-        planName,
-        fromPlanName || "[unknown]",
+        isExactlyUnmarkedExtensionRepState(mark),
+        "LexicalBuilder: Circular dependency detected for Extension %s from %s",
+        extensionName,
+        fromExtensionName || "[unknown]",
       );
       mark = applyTemporaryMark(mark);
       rep.state = mark;
-      const outgoingConfigEdges = this.outgoingConfigEdges.get(planName);
+      const outgoingConfigEdges = this.outgoingConfigEdges.get(extensionName);
       if (outgoingConfigEdges) {
-        for (const toPlanName of outgoingConfigEdges.keys()) {
-          const toRep = this.planNameMap.get(toPlanName);
+        for (const toExtensionName of outgoingConfigEdges.keys()) {
+          const toRep = this.extensionNameMap.get(toExtensionName);
           // may be undefined for an optional peer dependency
           if (toRep) {
-            visit(toRep, planName);
+            visit(toRep, extensionName);
           }
         }
       }
       mark = applyPermanentMark(mark);
       rep.state = mark;
-      sortedPlanReps.push(rep);
+      sortedExtensionReps.push(rep);
     };
-    for (const rep of this.planNameMap.values()) {
-      if (isExactlyUnmarkedPlanRepState(rep.state)) {
+    for (const rep of this.extensionNameMap.values()) {
+      if (isExactlyUnmarkedExtensionRepState(rep.state)) {
         visit(rep);
       }
     }
-    for (const rep of sortedPlanReps) {
-      for (const [toPlanName, configs] of this.outgoingConfigEdges.get(
-        rep.plan.name,
+    for (const rep of sortedExtensionReps) {
+      for (const [toExtensionName, configs] of this.outgoingConfigEdges.get(
+        rep.extension.name,
       ) || []) {
         if (configs.length > 0) {
-          const toRep = this.planNameMap.get(toPlanName);
+          const toRep = this.extensionNameMap.get(toExtensionName);
           if (toRep) {
             for (const config of configs) {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- any
@@ -335,21 +335,21 @@ export class LexicalBuilder {
         }
       }
     }
-    for (const [plan, ...configs] of this.roots) {
+    for (const [extension, ...configs] of this.roots) {
       if (configs.length > 0) {
-        const toRep = this.planNameMap.get(plan.name);
+        const toRep = this.extensionNameMap.get(extension.name);
         invariant(
           toRep !== undefined,
-          "LexicalBuilder: Expecting existing PlanRep for %s",
-          plan.name,
+          "LexicalBuilder: Expecting existing ExtensionRep for %s",
+          extension.name,
         );
         for (const config of configs) {
           toRep.configs.add(config);
         }
       }
     }
-    this._sortedPlanReps = sortedPlanReps;
-    return this._sortedPlanReps;
+    this._sortedExtensionReps = sortedExtensionReps;
+    return this._sortedExtensionReps;
   }
 
   registerEditor(
@@ -357,15 +357,15 @@ export class LexicalBuilder {
     controller: AbortController,
   ): () => void {
     const cleanups: (() => void)[] = [];
-    const planReps = this.sortedPlanReps();
-    for (const planRep of planReps) {
-      const cleanup = planRep.register(editor);
+    const extensionReps = this.sortedExtensionReps();
+    for (const extensionRep of extensionReps) {
+      const cleanup = extensionRep.register(editor);
       if (cleanup) {
         cleanups.push(cleanup);
       }
     }
-    for (const planRep of planReps) {
-      const cleanup = planRep.afterInitialization(editor);
+    for (const extensionRep of extensionReps) {
+      const cleanup = extensionRep.afterInitialization(editor);
       if (cleanup) {
         cleanups.push(cleanup);
       }
@@ -390,62 +390,62 @@ export class LexicalBuilder {
     const nodes = new Set<NonNullable<CreateEditorArgs["nodes"]>[number]>();
     const replacedNodes = new Map<
       KlassConstructor<typeof LexicalNode>,
-      PlanRep<AnyLexicalPlan>
+      ExtensionRep<AnyLexicalExtension>
     >();
     const htmlExport: NonNullable<HTMLConfig["export"]> = new Map();
     const htmlImport: NonNullable<HTMLConfig["import"]> = {};
     const theme: EditorThemeClasses = {};
-    const planReps = this.sortedPlanReps();
-    for (const planRep of planReps) {
-      const { plan } = planRep;
-      if (plan.onError !== undefined) {
-        config.onError = plan.onError;
+    const extensionReps = this.sortedExtensionReps();
+    for (const extensionRep of extensionReps) {
+      const { extension } = extensionRep;
+      if (extension.onError !== undefined) {
+        config.onError = extension.onError;
       }
-      if (plan.disableEvents !== undefined) {
-        config.disableEvents = plan.disableEvents;
+      if (extension.disableEvents !== undefined) {
+        config.disableEvents = extension.disableEvents;
       }
-      if (plan.parentEditor !== undefined) {
-        config.parentEditor = plan.parentEditor;
+      if (extension.parentEditor !== undefined) {
+        config.parentEditor = extension.parentEditor;
       }
-      if (plan.editable !== undefined) {
-        config.editable = plan.editable;
+      if (extension.editable !== undefined) {
+        config.editable = extension.editable;
       }
-      if (plan.namespace !== undefined) {
-        config.namespace = plan.namespace;
+      if (extension.namespace !== undefined) {
+        config.namespace = extension.namespace;
       }
-      if (plan.$initialEditorState !== undefined) {
-        config.$initialEditorState = plan.$initialEditorState;
+      if (extension.$initialEditorState !== undefined) {
+        config.$initialEditorState = extension.$initialEditorState;
       }
-      if (plan.nodes) {
-        for (const node of plan.nodes) {
+      if (extension.nodes) {
+        for (const node of extension.nodes) {
           if (typeof node !== "function") {
-            const conflictPlan = replacedNodes.get(node.replace);
-            if (conflictPlan) {
+            const conflictExtension = replacedNodes.get(node.replace);
+            if (conflictExtension) {
               invariant(
                 false,
-                "LexicalBuilder: Plan %s can not register replacement for node %s because %s already did",
-                plan.name,
+                "LexicalBuilder: Extension %s can not register replacement for node %s because %s already did",
+                extension.name,
                 node.replace.name,
-                conflictPlan.plan.name,
+                conflictExtension.extension.name,
               );
             }
-            replacedNodes.set(node.replace, planRep);
+            replacedNodes.set(node.replace, extensionRep);
           }
           nodes.add(node);
         }
       }
-      if (plan.html) {
-        if (plan.html.export) {
-          for (const [k, v] of plan.html.export.entries()) {
+      if (extension.html) {
+        if (extension.html.export) {
+          for (const [k, v] of extension.html.export.entries()) {
             htmlExport.set(k, v);
           }
         }
-        if (plan.html.import) {
-          Object.assign(htmlImport, plan.html.import);
+        if (extension.html.import) {
+          Object.assign(htmlImport, extension.html.import);
         }
       }
-      if (plan.theme) {
-        deepThemeMergeInPlace(theme, plan.theme);
+      if (extension.theme) {
+        deepThemeMergeInPlace(theme, extension.theme);
       }
     }
     if (Object.keys(theme).length > 0) {
@@ -465,8 +465,8 @@ export class LexicalBuilder {
         config.html.export = htmlExport;
       }
     }
-    for (const planRep of planReps) {
-      planRep.init(config, signal);
+    for (const extensionRep of extensionReps) {
+      extensionRep.init(config, signal);
     }
     if (!config.onError) {
       config.onError = defaultOnError;

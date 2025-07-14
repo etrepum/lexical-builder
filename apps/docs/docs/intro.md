@@ -35,15 +35,15 @@ and scaffolding in Lexical:
 
 # Examples
 
-## Vanilla JS Plan
+## Vanilla JS Extension
 
-- [GitHub](https://github.com/etrepum/lexical-builder/blob/main/apps/vanilla-js-plan/src/main.ts)
-- [Stackblitz](https://stackblitz.com/github/etrepum/lexical-builder/tree/main/apps/vanilla-js-plan?file=src%2Fmain.ts)
+- [GitHub](https://github.com/etrepum/lexical-builder/blob/main/apps/vanilla-js-extension/src/main.ts)
+- [Stackblitz](https://stackblitz.com/github/etrepum/lexical-builder/tree/main/apps/vanilla-js-extension?file=src%2Fmain.ts)
 
 This one uses LexicalBuilder in a "Vanilla JS" context
 (really TypeScript + Vite, but that's what it's called in the Lexical monorepo).
 The application does not have any direct React dependencies or JSX
-compilation, but via the `ReactPluginHostPlan` it can mount the `TreeView`
+compilation, but via the `ReactPluginHostExtension` it can mount the `TreeView`
 component from `@lexical/react`!
 
 I think this one is great because it shows us a potential future where people
@@ -51,18 +51,18 @@ can use all of the great React based plug-ins that have been developed, even
 if they don't want to directly use React themselves. This one requires a bit
 more props configuration than most beacuse of the classes
 
-## React Rich Collab Plan
+## React Rich Collab Extension
 
-- [GitHub](https://github.com/etrepum/lexical-builder/blob/main/apps/react-rich-collab-plan/src/App.tsx)
-- [Stackblitz](https://stackblitz.com/github/etrepum/lexical-builder/tree/main/apps/react-rich-collab-plan?file=src%2FApp.tsx)
+- [GitHub](https://github.com/etrepum/lexical-builder/blob/main/apps/react-rich-collab-extension/src/App.tsx)
+- [Stackblitz](https://stackblitz.com/github/etrepum/lexical-builder/tree/main/apps/react-rich-collab-extension?file=src%2FApp.tsx)
 
 This one demonstrates full compatibility with the existing React plug-in
-convention. The transition from using LexicalComposer to LexicalPlanCompser is
+convention. The transition from using LexicalComposer to LexicalExtensionCompser is
 very smooth and straightforward.
 
 ## Svelte
 
-- [GitHub](https://github.com/etrepum/lexical-builder/blob/main/apps/svelte-tailwind-plan/src/buildEditor.ts)
-- [Stackblitz](https://stackblitz.com/github/etrepum/lexical-builder/tree/main/apps/svelte-tailwind-plan?file=src%2Froutes%2F%2Bpage.svelte)
+- [GitHub](https://github.com/etrepum/lexical-builder/blob/main/apps/svelte-tailwind-extension/src/buildEditor.ts)
+- [Stackblitz](https://stackblitz.com/github/etrepum/lexical-builder/tree/main/apps/svelte-tailwind-extension?file=src%2Froutes%2F%2Bpage.svelte)
 
 Styles from a Tailwind theme, MarkdownTransforms, MarkdownShortcuts, Link, AutoLink, ClickableLink, Svelte 5 integration.

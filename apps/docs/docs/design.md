@@ -9,17 +9,17 @@ sidebar_position: 4
 ### Minimize boilerplate
 
 Wherever possible, sensible defaults should be provided and it must be
-possible to override them. This is why a `Plan` has the `config` property
+possible to override them. This is why a `Extension` has the `config` property
 which specifies the initial configuration.
 
 ### Full backwards compatibility
 
 Almost anything that you do with the editor or a legacy React plug-in should
-just work. Upgrading to use a `Plan` should be a simple change.
+just work. Upgrading to use a `Extension` should be a simple change.
 
-### Minimize change required to add a Plan
+### Minimize change required to add an Extension
 
-Ideally, adding a plan should be two or three lines of code:
+Ideally, adding an extension should be two or three lines of code:
 
 - Import it
 - Add it as a dependency (with config if necessary)
@@ -28,7 +28,7 @@ Ideally, adding a plan should be two or three lines of code:
 ### Avoid invalid states
 
 TypeScript goes a long way here, but it's only as good as the API design.
-For example, splitting up the workflow for a Plan to have separate `Config`,
+For example, splitting up the workflow for an Extension to have separate `Config`,
 `Init` and `Output` types was something that evolved over time. In earlier
 prototypes, `Config` was overloaded to maintain all of that state, but it
 required a lot more runtime support and type assertions to check that
@@ -58,7 +58,7 @@ really expose any type-safe configuration.
 Another Lexical based editor framework for use inside the
 [Payload](https://payloadcms.com/) CMS. It also doesn't really expose type-safe
 configuration, but it does seem to have quite a lot of features and seems
-well-designed for laziness and SSR. Features are conceptually similar to Plans.
+well-designed for laziness and SSR. Features are conceptually similar to Extensions.
 
 ### [Effect](https://effect.website/)
 
@@ -78,20 +78,20 @@ depend on it.
 The current theory is that it would require too much TypeScript
 in order to carry around the list of all dependency names that
 exist in the graph, and would likely add another type argument
-to `LexicalPlan`.
+to `LexicalExtension`.
 
 The features that this blocks are:
 
-- Compile-time support for detecting Plan conflicts. Detecting that two
-  plans defined with the same name (but are not identical object
+- Compile-time support for detecting Extension conflicts. Detecting that two
+  extensions defined with the same name (but are not identical object
   references, because a dependency can be shared!) would also be quite the
   undertaking in TypeScript. This is automatically detected at runtime by
   the builder.
 - Compile-time support for required configuration without defaults.
-  A plan can implement this at runtime in `init` or `register`.
+  An extension can implement this at runtime in `init` or `register`.
 - Compile-time support for required peer dependencies. A use case for this
-  would be the requirement of a `RectProviderPlan` provided by either
-  `LexicalPlanComposer` or `ReactPluginHost`. A plan can implement this
+  would be the requirement of a `RectProviderExtension` provided by either
+  `LexicalExtensionComposer` or `ReactPluginHost`. An extension can implement this
   at runtime in `init` or `register`.
 
 Generally speaking, all of these are already surfaced as runtime errors
@@ -106,13 +106,13 @@ This is a TODO, the infrastructure was designed with this in mind.
 
 ### Helpers for working with nested editors
 
-It's not quite clear what all of the use cases for nested Plan editors are,
+It's not quite clear what all of the use cases for nested Extension editors are,
 this is a TODO.
 
 ### Documented patterns for RSC/SSR/Headless
 
 Having a known peer dependency that is used to declare SSR may help
-guide future Plan development. In many cases there are decorator nodes
+guide future Extension development. In many cases there are decorator nodes
 that have React dependencies that you do not want to (or can not) render
 in an SSR context. For example, RSC can not be supported anywhere that
 `React.Context` is used which is everywhere that React is currently used

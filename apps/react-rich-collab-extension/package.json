@@ -1,0 +1,44 @@
+{
+  "name": "@etrepum/react-rich-collab-extension",
+  "private": true,
+  "version": "0.0.35",
+  "type": "module",
+  "scripts": {
+    "server:dev": "vite",
+    "dev": "cross-env NODE_ENV=development concurrently \"npm:server:ws\" \"npm:server:webrtc\" \"npm:server:dev\"",
+    "prebuild": "tsc",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server:ws": "cross-env HOST=localhost PORT=1234 npx y-websocket",
+    "server:webrtc": "cross-env HOST=localhost PORT=1235 npx y-webrtc",
+    "lint": "eslint"
+  },
+  "stackblitz": {
+    "startCommand": "npm run server:dev"
+  },
+  "dependencies": {
+    "@etrepum/lexical-builder": "*",
+    "@etrepum/lexical-builder-devtools-core": "*",
+    "@etrepum/lexical-react-extension": "*",
+    "@lexical/react": "0.33.1",
+    "@lexical/utils": "0.33.1",
+    "@lexical/yjs": "0.33.1",
+    "lexical": "0.33.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "y-webrtc": "^10.3.0",
+    "y-websocket": "^2.0.2",
+    "yjs": "^13.6.15"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@types/react": "^18.2.59",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.57.0",
+    "typescript": "^5.5.2",
+    "vite": "^5.4.0"
+  }
+}

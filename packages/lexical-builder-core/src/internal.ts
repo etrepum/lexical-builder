@@ -17,7 +17,7 @@ export declare const initTypeSymbol: unique symbol;
 export type initTypeSymbol = typeof initTypeSymbol;
 
 /** @internal */
-export interface LexicalPlanInternal<out Config, out Output, out Init> {
+export interface LexicalExtensionInternal<out Config, out Output, out Init> {
   /** @internal */
   readonly [configTypeSymbol]?: Config;
   /** @internal */

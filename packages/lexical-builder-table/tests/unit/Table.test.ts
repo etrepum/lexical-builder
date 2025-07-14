@@ -1,4 +1,4 @@
-import { buildEditorFromPlans } from "@etrepum/lexical-builder";
+import { buildEditorFromExtensions } from "@etrepum/lexical-builder";
 import { describe, it, expect } from "vitest";
 import {
   $isTableCellNode,
@@ -8,11 +8,11 @@ import {
   type TableNode,
 } from "@lexical/table";
 import { $getRoot } from "lexical";
-import { TablePlan } from "@etrepum/lexical-builder-table";
+import { TableExtension } from "@etrepum/lexical-builder-table";
 
 describe("Table", () => {
   it("Creates a table with INSERT_TABLE_COMMAND", () => {
-    const editor = buildEditorFromPlans(TablePlan);
+    const editor = buildEditorFromExtensions(TableExtension);
     editor.update(
       () =>
         editor.dispatchCommand(INSERT_TABLE_COMMAND, {

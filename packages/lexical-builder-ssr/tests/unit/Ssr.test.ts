@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildEditorFromPlans } from "@etrepum/lexical-builder";
+import { buildEditorFromExtensions } from "@etrepum/lexical-builder";
 import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
 import { withDOM, prerenderEditorHtml } from "@etrepum/lexical-builder-ssr";
 
@@ -10,7 +10,7 @@ describe("withDOM", () => {
 });
 describe("prerenderEditorHtml", () => {
   it("renders html", () => {
-    const editor = buildEditorFromPlans({
+    const editor = buildEditorFromExtensions({
       name: "test",
       $initialEditorState() {
         $getRoot().append(

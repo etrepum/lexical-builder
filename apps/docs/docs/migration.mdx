@@ -66,7 +66,7 @@ import { createEmptyHistoryState, registerHistory } from "@lexical/history";
 import { HeadingNode, QuoteNode, registerRichText } from "@lexical/rich-text";
 import { mergeRegister } from "@lexical/utils";
 // highlight-next-line
-import { buildEditorFromPlans } from "@etrepum/lexical-builder";
+import { buildEditorFromExtensions } from "@etrepum/lexical-builder";
 import $prepopulatedRichText from "./$prepopulatedRichText";
 
 const editorRef = document.getElementById("lexical-editor");
@@ -75,8 +75,8 @@ const stateRef = document.getElementById(
 ) as HTMLTextAreaElement;
 
 // highlight-next-line
-const editor = buildEditorFromPlans({
-  // Any string is suitable as long as it uniquely defines the Plan in the editor
+const editor = buildEditorFromExtensions({
+  // Any string is suitable as long as it uniquely defines the Extension in the editor
   name: "[root]",
   namespace: "Vanilla JS Demo (with Lexical Builder)",
   // Register nodes specific for @lexical/rich-text
@@ -102,13 +102,13 @@ editor.update($prepopulatedRichText, { tag: "history-merge" });
 
 ```ts
 import {
-  HistoryPlan,
-  RichTextPlan,
-  buildEditorFromPlans,
+  HistoryExtension,
+  RichTextExtension,
+  buildEditorFromExtensions,
 } from "@etrepum/lexical-builder";
 import prepopulatedRichText from "./prepopulatedRichText";
 
-const editor = buildEditorFromPlans({
+const editor = buildEditorFromExtensions({
   // highlight-start
   // This works similarly to LexicalComposer editorState
   $initialEditorState: $prepopulatedRichText,
@@ -116,10 +116,10 @@ const editor = buildEditorFromPlans({
   name: "[root]",
   namespace: "Vanilla JS Demo (all-in with Lexical Builder)",
   // highlight-start
-  // RichTextPlan has a nodes property to add QuoteNode and HeadingNode
-  // All three plans have register properties to add behavior to the editor,
+  // RichTextExtension has a nodes property to add QuoteNode and HeadingNode
+  // All three extensions have register properties to add behavior to the editor,
   // with defaults for all of the History configuration
-  dependencies: [RichTextPlan, HistoryPlan],
+  dependencies: [RichTextExtension, HistoryExtension],
   // highlight-end
   theme: { quote: "PlaygroundEditorTheme__quote" },
 });
@@ -201,11 +201,11 @@ export default function App() {
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 // highlight-start
 import {
-  AutoFocusPlan,
-  HistoryPlan,
-  RichTextPlan,
+  AutoFocusExtension,
+  HistoryExtension,
+  RichTextExtension,
 } from "@etrepum/lexical-builder";
-import { LexicalPlanComposer } from "@etrepum/lexical-react-plan";
+import { LexicalExtensionComposer } from "@etrepum/lexical-react-extension";
 // highlight-end
 
 import ExampleTheme from "./ExampleTheme";
@@ -222,15 +222,15 @@ const contentEditable = (
 );
 
 // highlight-start
-const editorPlan = definePlan({
+const editorExtension = defineExtension({
   name: "[root]",
-  namespace: "React.js Plan Demo",
+  namespace: "React.js Extension Demo",
   dependencies: [
-    AutoFocusPlan,
-    RichTextPlan,
-    HistoryPlan,
+    AutoFocusExtension,
+    RichTextExtension,
+    HistoryExtension,
     // We specify our own layout for the editor's children
-    configPlan(ReactPlan, { contentEditable: null }),
+    configExtension(ReactExtension, { contentEditable: null }),
   ],
   // The editor theme
   theme: ExampleTheme,
@@ -240,7 +240,7 @@ const editorPlan = definePlan({
 export default function App() {
   return (
     // highlight-next-line
-    <LexicalPlanComposer plan={editorPlan}>
+    <LexicalExtensionComposer extension={editorExtension}>
       <div className="editor-container">
         <ToolbarPlugin />
         <div className="editor-inner">
@@ -250,7 +250,7 @@ export default function App() {
         </div>
       </div>
       {/* highlight-next-line */}
-    </LexicalPlanComposer>
+    </LexicalExtensionComposer>
   );
 }
 ```
@@ -391,7 +391,7 @@ export function KeywordsPlugin(): JSX.Element | null {
 // compatible interface to support editors not using Lexical Builder
 /**
  * USAGE:
- * 1. Add KeywordsPlan as a dependency to your LexicalPlanComposer root plan
+ * 1. Add KeywordsExtension as a dependency to your LexicalExtensionComposer root extension
  * 2. Add CSS somewhere for '.keyword'.
  *    If you don't like that selector, too bad.
  */
@@ -402,8 +402,8 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { useLexicalTextEntity } from "@lexical/react/useLexicalTextEntity";
 import { useCallback, useEffect } from "react";
 // highlight-start
-import { ReactPlan } from "@etrepum/lexical-react-plan";
-import { definePlan, configPlan } from "@etrepum/lexical-builder";
+import { ReactExtension } from "@etrepum/lexical-react-extension";
+import { defineExtension, configExtension } from "@etrepum/lexical-builder";
 // highlight-end
 
 export type SerializedKeywordNode = SerializedTextNode;
@@ -507,11 +507,11 @@ export function KeywordsPlugin(): JSX.Element | null {
 }
 
 // highlight-start
-// We only need to add metadata so that you can easily use this plan!
-export const KeywordsPlan = definePlan({
+// We only need to add metadata so that you can easily use this extension!
+export const KeywordsExtension = defineExtension({
   name: "@etrepum/lexical-builder-keywords",
   nodes: [KeywordNode],
-  dependencies: [configPlan(ReactPlan, { decorators: [<KeywordsPlugin />] })],
+  dependencies: [configExtension(ReactExtension, { decorators: [<KeywordsPlugin />] })],
 });
 // highlight-end
 ```
@@ -524,11 +524,11 @@ export const KeywordsPlan = definePlan({
 // Use this strategy if you are dropping legacy support
 /**
  * USAGE:
- * 1. Add KeywordsPlan as a dependency to your LexicalPlanComposer root plan
+ * 1. Add KeywordsExtension as a dependency to your LexicalExtensionComposer root extension
  *    OR use it in a Vanilla JS project because it never really needed React!
  * 2. Add CSS somewhere for '.keyword', or change it!
  *    If you don't like that selector, use
- *    `configPlan(KeywordsPlan, {className: 'something-else'})`
+ *    `configExtension(KeywordsExtension, {className: 'something-else'})`
  */
 import type {
   EditorConfig,
@@ -541,7 +541,7 @@ import { TextNode } from "lexical";
 import { registerLexicalTextEntity } from "@lexical/text";
 import { useCallback, useEffect } from "react";
 // highlight-next-line
-import { definePlan, configPlan, safeCast } from "@etrepum/lexical-builder";
+import { defineExtension, configExtension, safeCast } from "@etrepum/lexical-builder";
 
 export type SerializedKeywordNode = SerializedTextNode;
 
@@ -585,9 +585,9 @@ export class KeywordNode extends TextNode {
     dom.style.cursor = "default";
     // highlight-start
     // This lets us configure the class name!
-    dom.className = getPlanDependencyFromEditor(
+    dom.className = getExtensionDependencyFromEditor(
       $getEditor(),
-      KeywordsPlan,
+      KeywordsExtension,
     ).config.className;
     // highlight-end
     return dom;
@@ -622,9 +622,9 @@ function $convertToKeywordNode(textNode: TextNode) {
 }
 
 // highlight-start
-// We only need to add metadata so that you can easily use this plan!
+// We only need to add metadata so that you can easily use this extension!
 // Oh wait, we don't even have a React dependency anymore!
-export const KeywordsPlan = definePlan({
+export const KeywordsExtension = defineExtension({
   name: "@etrepum/lexical-builder-keywords",
   nodes: [KeywordNode],
   config: safeCast<KeywordsConfig>({ className: "keyword" }),

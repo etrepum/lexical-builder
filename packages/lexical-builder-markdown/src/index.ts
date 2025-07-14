@@ -15,11 +15,11 @@ export {
 export {
   type MarkdownTransformersConfig,
   type MarkdownTransformersOutput,
-  MarkdownTransformersPlan,
-} from "./MarkdownTransformersPlan";
+  MarkdownTransformersExtension,
+} from "./MarkdownTransformersExtension";
 export {
   type MarkdownShortcutsConfig,
   type MarkdownShortcutsOutput,
-  MarkdownShortcutsPlan,
-} from "./MarkdownShortcutsPlan";
+  MarkdownShortcutsExtension,
+} from "./MarkdownShortcutsExtension";
 export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;

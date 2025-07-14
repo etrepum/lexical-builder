@@ -1,14 +1,14 @@
 import {
-  InitialStatePlan,
-  RichTextPlan,
-  buildEditorFromPlans,
-  configPlan,
-  definePlan,
-  getPlanDependencyFromEditor,
+  InitialStateExtension,
+  RichTextExtension,
+  buildEditorFromExtensions,
+  configExtension,
+  defineExtension,
+  getExtensionDependencyFromEditor,
 } from "@etrepum/lexical-builder";
 import {
   MarkdownTransformersOutput,
-  MarkdownTransformersPlan,
+  MarkdownTransformersExtension,
 } from "@etrepum/lexical-builder-markdown";
 import { $getRoot, LexicalEditor } from "lexical";
 import { $isHeadingNode } from "@lexical/rich-text";
@@ -61,24 +61,24 @@ describe("Markdown", () => {
   ];
   specs.forEach(({ name, markdownDoc, plainText, runTest, $readTest }) => {
     it(name, () => {
-      const plan = definePlan({
+      const extension = defineExtension({
         name: "[root]",
         dependencies: [
-          RichTextPlan,
-          MarkdownTransformersPlan,
-          configPlan(InitialStatePlan, { updateOptions: { discrete: true } }),
+          RichTextExtension,
+          MarkdownTransformersExtension,
+          configExtension(InitialStateExtension, { updateOptions: { discrete: true } }),
         ],
         $initialEditorState(editor) {
           const {
             output: { $markdownImport },
-          } = getPlanDependencyFromEditor(editor, MarkdownTransformersPlan);
+          } = getExtensionDependencyFromEditor(editor, MarkdownTransformersExtension);
           $getRoot().append(...$markdownImport(markdownDoc));
         },
       });
-      const editor = buildEditorFromPlans(plan);
-      const { output } = getPlanDependencyFromEditor(
+      const editor = buildEditorFromExtensions(extension);
+      const { output } = getExtensionDependencyFromEditor(
         editor,
-        MarkdownTransformersPlan,
+        MarkdownTransformersExtension,
       );
       editor.getEditorState().read(() => {
         expect(

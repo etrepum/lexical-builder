@@ -39,7 +39,7 @@ import {
   COMMAND_PRIORITY_EDITOR,
 } from "lexical";
 import {
-  definePlan,
+  defineExtension,
   provideOutput,
   type ReadableStore,
   registerStoreToggle,
@@ -62,7 +62,7 @@ export interface TableOutput {
   hasTabHandler: ReadableStore<boolean>;
 }
 
-export const TablePlan = definePlan({
+export const TableExtension = defineExtension({
   name: "@lexical/table",
   nodes: [TableNode, TableRowNode, TableCellNode],
   config: safeCast<TableConfig>({

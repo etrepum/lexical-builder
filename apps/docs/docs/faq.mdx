@@ -7,13 +7,13 @@ sidebar_position: 3
 
 All Legacy Plugins (React Components) are compatible with Lexical Builder!
 
-Lexical Builder Plans are _only_ compatible with editors created using the
-Lexical Builder API (`buildEditorFromPlans`, or an abstraction that uses
-it internally such as `LexicalPlanComposer`).
+Lexical Builder Extensions are _only_ compatible with editors created using the
+Lexical Builder API (`buildEditorFromExtensions`, or an abstraction that uses
+it internally such as `LexicalExtensionComposer`).
 
 See the [Migration Guide](./migration) for more detailed examples!
 
-## Why is it called a Plan instead of a Plugin?
+## Why is it called an Extension instead of a Plugin?
 
 Legacy reasons. Historically, Lexical has used the term Plugin to refer
 to a React component that adds behavior to the editor. Transitioning
@@ -21,7 +21,7 @@ this word to another meaning would be confusing.
 
 It would also be a tricky transition for public APIs, since the ideal
 names for exports are already taken, so the legacy Plugin and the new
-Plan could not be colocated if they were both called Plugin!
+Extension could not be colocated if they were both called Plugin!
 
 ## What about lazy loading?
 
@@ -29,13 +29,13 @@ Lazy loading does not need any special support!
 
 For an example of how to do lazy loading in Vanilla JS, see the `register`
 property in
-[EmojiPlan.ts](https://github.com/etrepum/lexical-builder/blob/main/packages/lexical-emoji-plan/src/EmojiPlan.ts).
+[EmojiExtension.ts](https://github.com/etrepum/lexical-builder/blob/main/packages/lexical-emoji-extension/src/EmojiExtension.ts).
 
 Lazy loading in React could be as simple as using `React.lazy`, see
 the Component output in
-[BuilderGraphPlan.tsx](https://github.com/etrepum/lexical-builder/blob/main/packages/lexical-builder-devtools-core/src/BuilderGraphPlan.tsx)
+[BuilderGraphExtension.tsx](https://github.com/etrepum/lexical-builder/blob/main/packages/lexical-builder-devtools-core/src/BuilderGraphExtension.tsx)
 
-*Note:* The Plan itself must be synchronously imported before creating the
+*Note:* The Extension itself must be synchronously imported before creating the
 editor. Lexical needs all editor configuration (including nodes) up front.
 This is no different than without Lexical Builder. The Lexical core would
 need significant changes to allow configuration changes to an editor at
@@ -44,13 +44,13 @@ runtime.
 ## How do we prevent all of the frameworks from being loaded?
 
 Vanilla JS and React have first class support in Lexical. Lexical Builder
-provides a path for Plans written for either of these to be loaded into
+provides a path for Extensions written for either of these to be loaded into
 any editor regardless of what framework the page is using.
 
-When you depend on a Plan that depends on `ReactPlan`, you will get a runtime
-error if a React provider is not present (`LexicalPlanComposer` or
-`ReactPluginHostPlan`). Think of it like an unsatisfied but required peer
-dependency. This way you won't get confused if you add a plan that requires
+When you depend on an Extension that depends on `ReactExtension`, you will get a runtime
+error if a React provider is not present (`LexicalExtensionComposer` or
+`ReactPluginHostExtension`). Think of it like an unsatisfied but required peer
+dependency. This way you won't get confused if you add an extension that requires
 React but it never renders correctly because React isn't set up properly.
 
 Other frameworks can use the functionality exposed by Lexical Builder
@@ -67,8 +67,8 @@ on the LexicalEditor instance with a well-known symbol so that the dev tools
 can access it. There are many things that could be done, here are
 a few examples:
 
-* Show a diagram of the Plan tree
-* Track which config came from which Plan (e.g. which node, which theme
+* Show a diagram of the Extension tree
+* Track which config came from which Extension (e.g. which node, which theme
   property, etc.)
-* Track which commands/listeners/etc. were registered by which Plans
+* Track which commands/listeners/etc. were registered by which Extensions
   (would require editor instrumentation)
