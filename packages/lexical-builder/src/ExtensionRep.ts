@@ -181,7 +181,6 @@ export class ExtensionRep<Extension extends AnyLexicalExtension> {
   builder: LexicalBuilder;
   configs: Set<Partial<LexicalExtensionConfig<Extension>>>;
   _dependency?: LexicalExtensionDependency<Extension>;
-  _output?: LexicalExtensionOutput<Extension>;
   _peerNameSet?: Set<string>;
   extension: Extension;
   state: ExtensionRepState<Extension>;
