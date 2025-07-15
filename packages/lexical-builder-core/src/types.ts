@@ -151,10 +151,10 @@ export type RegisterCleanup<Output> = (() => void) &
  * extensions through its config.
  */
 export interface LexicalExtension<
-  in out Config extends ExtensionConfigBase,
-  out Name extends string,
-  in out Output,
-  in out Init,
+  Config extends ExtensionConfigBase,
+  Name extends string,
+  Output,
+  Init,
 > extends InitialEditorConfig,
     LexicalExtensionInternal<Config, Output, Init> {
   /** The name of the Extension, must be unique */
