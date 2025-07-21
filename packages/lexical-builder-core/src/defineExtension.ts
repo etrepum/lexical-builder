@@ -149,17 +149,6 @@ export function provideOutput<Output>(
   );
 }
 
-/** @internal */
-export const PeerDependencyBrand: unique symbol = Symbol.for(
-  "@etrepum/lexical-builder/PeerDependency",
-);
-export const ConfigTypeId: unique symbol = Symbol.for(
-  "@etrepum/lexical-builder/ConfigTypeId",
-);
-export const OutputTypeId: unique symbol = Symbol.for(
-  "@etrepum/lexical-builder/OutputTypeId",
-);
-
 /**
  * Used to declare a peer dependency of an extension in a type-safe way,
  * requires the type parameter. The most common use case for peer dependencies
@@ -181,7 +170,9 @@ export const OutputTypeId: unique symbol = Symbol.for(
  * });
  * ```
  */
-export function declarePeerDependency<Extension extends AnyLexicalExtension = never>(
+export function declarePeerDependency<
+  Extension extends AnyLexicalExtension = never,
+>(
   name: Extension["name"],
   config?: Partial<LexicalExtensionConfig<Extension>>,
 ): NormalizedPeerDependency<Extension> {
