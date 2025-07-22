@@ -71,5 +71,5 @@
     "apps/*",
     "packages/*"
   ],
-  "version": "0.0.36"
+  "version": "0.0.37-nightly.20250722.0"
 }
