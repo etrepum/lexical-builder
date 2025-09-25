@@ -57,12 +57,26 @@ export default function Home(): JSX.Element {
       description="EXPERIMENTAL @etrepum/lexical-builder plugin"
     >
       <HomepageHeader />
+      <section className="container-fluid container pt-4 text-lg font-bold italic">
+        The end product of Lexical Builder is the new{" "}
+        <a href="https://lexical.dev/docs/extensions/intro">
+          Lexical Extension
+        </a>{" "}
+        feature released in{" "}
+        <a href="https://github.com/facebook/lexical/releases/tag/v0.36.1">
+          Lexical v0.36.1
+        </a>
+        . This project will be archived when the remainder of the example code
+        is ported.
+      </section>
+
       <section className="container-fluid container pt-4">
         <h2 className="text-4xl">Solved Problems</h2>
         <dl className="grid gap-x-6 gap-y-2 md:grid-cols-2">
           <Solution title="Modularized editor configuration">
-            Each Extension can specify partial editor configuration (nodes, theme,
-            DOM import/export, etc.) that are all merged to build the editor
+            Each Extension can specify partial editor configuration (nodes,
+            theme, DOM import/export, etc.) that are all merged to build the
+            editor
           </Solution>
           <Solution title="Combined config + registration">
             Generally there are interdependencies between configuration and
@@ -70,18 +84,18 @@ export default function Home(): JSX.Element {
             vice versa.
           </Solution>
           <Solution title="Hassle-free dependencies">
-            An Extension is completely self-contained, and specifies all dependencies
-            to make it work. If you want checklists, add CheckListExtension as a
-            dependency to your editor's extension. No more missing Node errors or
-            silently absent behavior.
+            An Extension is completely self-contained, and specifies all
+            dependencies to make it work. If you want checklists, add
+            CheckListExtension as a dependency to your editor's extension. No
+            more missing Node errors or silently absent behavior.
           </Solution>
           <Solution title="Optional peer dependencies">
             Have an optional dependency? No problem. You can even specify config
             overrides if peer dependencies are present! This is used internally
-            so Extensions can provide an error if a suitable framework host is not
-            available (e.g. <code>ReactExtension</code> is used, but there's no{" "}
-            <code>LexicalExtensionComposer</code> or <code>ReactPluginHostExtension</code>
-            )
+            so Extensions can provide an error if a suitable framework host is
+            not available (e.g. <code>ReactExtension</code> is used, but there's
+            no <code>LexicalExtensionComposer</code> or{" "}
+            <code>ReactPluginHostExtension</code>)
           </Solution>
           <Solution title="Framework independent">
             Many Plugins don't really need React, but the only legacy convention
@@ -89,27 +103,27 @@ export default function Home(): JSX.Element {
             if it just calls some register functions and returns null.
           </Solution>
           <Solution title="React anywhere">
-            Non-React users can use the <code>ReactPluginHostExtension</code> to use
-            React Extensions or legacy Plugins! This of course still uses React at
-            runtime, but does not force the user to learn React, use JSX syntax,
-            or have any direct React dependency in their project.
+            Non-React users can use the <code>ReactPluginHostExtension</code> to
+            use React Extensions or legacy Plugins! This of course still uses
+            React at runtime, but does not force the user to learn React, use
+            JSX syntax, or have any direct React dependency in their project.
           </Solution>
           <Solution title="Extensible config">
-            Each Extension can specify its own optional typed configuration of any
-            kind, that can be specified by any other extension, and is accessible at
-            runtime anywhere you can get an editor reference (even in a Node!).
-            No need to shoehorn properties into the editor-global{" "}
+            Each Extension can specify its own optional typed configuration of
+            any kind, that can be specified by any other extension, and is
+            accessible at runtime anywhere you can get an editor reference (even
+            in a Node!). No need to shoehorn properties into the editor-global{" "}
             <code>EditorTheme &#x7B; [key: string]: any &#x7D;</code> or set up
             a module-global <code>WeakMap&lt;Editor, Config&gt;</code>{" "}
             workaround.
           </Solution>
           <Solution title="Outputs">
-            An Extension can specify type-safe outputs, which are computed when the
-            extension is registered to the editor (so can take configuration, the
-            editor, and dependencies into account). These can be used by
-            dependencies, or anywhere you have an editor reference. Think of it
-            like having a sort of React style context for each Extension in your
-            editor!
+            An Extension can specify type-safe outputs, which are computed when
+            the extension is registered to the editor (so can take
+            configuration, the editor, and dependencies into account). These can
+            be used by dependencies, or anywhere you have an editor reference.
+            Think of it like having a sort of React style context for each
+            Extension in your editor!
           </Solution>
         </dl>
       </section>
