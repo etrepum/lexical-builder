@@ -18,5 +18,3 @@ jobs:
       ref: refs/heads/${{ inputs.channel }}__release
       dry-run: false
       channel: ${{ inputs.channel }}
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

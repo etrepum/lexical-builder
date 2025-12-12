@@ -39,5 +39,3 @@ jobs:
       ref: ${{ needs.increment-version.outputs.tag-ref }}
       dry-run: false
       channel: ${{ needs.get-settings.outputs.channel }}
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
