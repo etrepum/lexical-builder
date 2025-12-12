@@ -1,8 +1,10 @@
-name: Nightly Release Branch
+name: Trusted Release
 on:
   # Run daily at 2:30am UTC
   schedule:
     - cron: "30 2 * * 1-5"
+  release:
+    types: [published]
   workflow_dispatch:
 permissions:
   id-token: write
@@ -11,8 +13,8 @@ jobs:
   get-settings:
     runs-on: ubuntu-latest
     outputs:
-      increment: prerelease
-      channel: nightly
+      increment: ${{ github.event_name == 'schedule' && 'prerelease' || '' }}
+      channel: ${{ github.event_name == 'schedule' && 'nightly' || 'latest' }}
     steps:
       - run: exit 0
   get-versions:
@@ -23,7 +25,7 @@ jobs:
       channel: ${{ needs.get-settings.outputs.channel }}
   increment-version:
     # prevents this action from running on forks
-    if: github.repository_owner == 'etrepum'
+    if: github.repository_owner == 'etrepum' && needs.get-versions.outputs.next-version
     needs: [get-settings, get-versions]
     uses: ./.github/workflows/call-increment-version.yml
     with:
@@ -39,6 +41,6 @@ jobs:
     uses: ./.github/workflows/call-npm-publish.yml
     needs: [get-settings, increment-version]
     with:
-      ref: ${{ needs.increment-version.outputs.tag-ref }}
+      ref: ${{ needs.increment-version.outputs.tag-ref || github.ref }}
       dry-run: false
       channel: ${{ needs.get-settings.outputs.channel }}
