@@ -34,7 +34,7 @@ jobs:
     outputs:
       release-branch: ${{ steps.push-release-branch.outputs.release-branch }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ssh-key: ${{ secrets.SSH_KEY }}
           fetch-depth: 0
@@ -58,7 +58,7 @@ jobs:
       # initiate a test run. We will later update the PR and push to the branch
       # with the SSH_KEY which will create a push action and should run the tests.
       - id: create-pull-request
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { repo, owner } = context.repo;
@@ -119,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Update Pull Request
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { repo, owner } = context.repo;

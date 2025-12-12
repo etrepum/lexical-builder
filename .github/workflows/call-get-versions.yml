@@ -30,8 +30,8 @@ jobs:
       next-version: ${{ steps.get-versions.outputs.next-version }}
       latest-release: ${{ steps.latest.outputs.release }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           cache: npm
       - id: latest
