@@ -54,6 +54,18 @@ Type "publish" to confirm.`,
       stdio: "inherit",
       cwd,
       env: process.env,
+    }).catch((err) => {
+      if (
+        err &&
+        typeof err.stderr === "string" &&
+        /You cannot publish over the previously published version/.test(
+          err.stderr,
+        )
+      ) {
+        console.info(`Ignoring previously published error`);
+        return null;
+      }
+      return err;
     });
     console.info(`Done!`);
   }
