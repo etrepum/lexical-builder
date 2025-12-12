@@ -10,5 +10,3 @@ jobs:
       ref: refs/tags/${{ github.event.release.tag_name }}
       dry-run: false
       channel: latest
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
