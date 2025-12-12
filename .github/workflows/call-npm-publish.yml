@@ -30,6 +30,7 @@ jobs:
         with:
           node-version: 24.x
           registry-url: "https://registry.npmjs.org"
+      - run: npm install -g npm@latest
       - run: npm ci
       - run: npm run prepare-release
       - run: node ./scripts/npm/release.js --non-interactive $DRY_RUN_ARG --channel='${{ inputs.channel }}'
