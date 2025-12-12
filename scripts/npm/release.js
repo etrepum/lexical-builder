@@ -10,7 +10,7 @@
 
 "use strict";
 
-const readline = require("readline");
+const readline = require("node:readline");
 const { spawn } = require("child-process-promise");
 const { packagesManager } = require("../shared/packagesManager");
 const argv = require("minimist")(process.argv.slice(2));
@@ -53,6 +53,7 @@ Type "publish" to confirm.`,
     await spawn(cmd[0], cmd.slice(1), {
       stdio: "inherit",
       cwd,
+      env: process.env,
     });
     console.info(`Done!`);
   }
