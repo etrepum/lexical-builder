@@ -55,4 +55,7 @@ jobs:
               ;;
           esac
           echo "version=$(jq .version -r package.json)" >> $GITHUB_OUTPUT
-          echo "next-version=$(npx semver $VERSION -i ${{ inputs.increment }} $PREID)" >> $GITHUB_OUTPUT
+          if [ -n "${{ inputs.increment}}" ]; then
+          else
+            echo "next-version=$(npx semver $VERSION -i ${{ inputs.increment }} $PREID)" >> $GITHUB_OUTPUT
+          fi
