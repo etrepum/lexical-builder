@@ -25,7 +25,7 @@ jobs:
       channel: ${{ needs.get-settings.outputs.channel }}
   increment-version:
     # prevents this action from running on forks
-    if: github.repository_owner == 'etrepum' && needs.get-versions.outputs.next-version
+    if: github.repository_owner == 'etrepum'
     needs: [get-settings, get-versions]
     uses: ./.github/workflows/call-increment-version.yml
     with:
@@ -33,14 +33,14 @@ jobs:
       channel: ${{ needs.get-settings.outputs.channel }}
       latest-release: ${{ needs.get-versions.outputs.latest-release }}
       next-version: ${{ needs.get-versions.outputs.next-version }}
-      dry-run: false
+      dry-run: ${{ !needs.get-versions.outputs.next-version }}
       git-repo: ${{ needs.get-versions.outputs.ssh-git-origin }}
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
   npm-release:
     uses: ./.github/workflows/call-npm-publish.yml
-    needs: [get-settings, increment-version]
+    needs: [get-settings, get-versions, increment-version]
     with:
-      ref: ${{ needs.increment-version.outputs.tag-ref || github.ref }}
+      ref: ${{ needs.get-versions.outputs.next-version && needs.increment-version.outputs.tag-ref || github.ref }}
       dry-run: false
       channel: ${{ needs.get-settings.outputs.channel }}
