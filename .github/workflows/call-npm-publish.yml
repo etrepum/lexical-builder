@@ -33,3 +33,5 @@ jobs:
       - run: npm ci
       - run: npm run prepare-release
       - run: node ./scripts/npm/release.js --non-interactive $DRY_RUN_ARG --channel='${{ inputs.channel }}'
+        env:
+          NPM_CONFIG_PROVENANCE: true
