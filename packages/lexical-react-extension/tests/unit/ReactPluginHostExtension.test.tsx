@@ -78,7 +78,11 @@ describe("ReactPluginHostExtension", () => {
       editor = buildEditorFromExtensions({
         name: "[root]",
         $initialEditorState: $prepopulatedRichText,
-        dependencies: [RichTextExtension, HistoryExtension, ReactPluginHostExtension],
+        dependencies: [
+          RichTextExtension,
+          HistoryExtension,
+          ReactPluginHostExtension,
+        ],
         namespace: "Vanilla JS Extension Demo",
         register: (editor: LexicalEditor) => {
           mountReactPluginHost(editor, pluginHostDom);
@@ -108,7 +112,7 @@ describe("ReactPluginHostExtension", () => {
     });
   });
   it("creates an editor", async () => {
-    const EXPECT_HTML = `<p dir="ltr"><span data-lexical-text="true">Plain Text!</span><br><strong data-lexical-text="true">Bold Text!</strong></p>`;
+    const EXPECT_HTML = `<p dir="auto"><span data-lexical-text="true">Plain Text!</span><br><strong data-lexical-text="true">Bold Text!</strong></p>`;
     expect(editor.getRootElement()).toBe(rootDom);
     expect(rootDom.__lexicalEditor).toBe(editor);
     expect(rootDom.innerHTML).toEqual(EXPECT_HTML);

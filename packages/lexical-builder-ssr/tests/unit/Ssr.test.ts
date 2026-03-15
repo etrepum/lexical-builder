@@ -19,7 +19,7 @@ describe("prerenderEditorHtml", () => {
       },
     });
     expect(prerenderEditorHtml(editor)).toEqual(
-      `<p dir="ltr"><span data-lexical-text="true">This is only a test</span></p>`,
+      `<p dir="auto"><span data-lexical-text="true">This is only a test</span></p>`,
     );
   });
 });

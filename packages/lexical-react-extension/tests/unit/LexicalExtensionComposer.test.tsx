@@ -12,7 +12,11 @@ describe("LexicalExtensionComposer", () => {
     dependencies: [RichTextExtension],
   });
   function MyEditor({ children }: { children?: React.ReactNode }) {
-    return <LexicalExtensionComposer extension={extension}>{children}</LexicalExtensionComposer>;
+    return (
+      <LexicalExtensionComposer extension={extension}>
+        {children}
+      </LexicalExtensionComposer>
+    );
   }
   let container: HTMLElement;
   let reactRoot: Root;
@@ -36,7 +40,7 @@ describe("LexicalExtensionComposer", () => {
       reactRoot.render(<MyEditor />);
     });
     expect(container.innerHTML).toEqual(
-      `<div contenteditable="true" role="textbox" spellcheck="true" style="user-select: text; white-space: pre-wrap; word-break: break-word;" data-lexical-editor="true"><p><br></p></div>`,
+      `<div contenteditable="true" role="textbox" spellcheck="true" style="user-select: text; white-space: pre-wrap; word-break: break-word;" data-lexical-editor="true"><p dir="auto"><br></p></div>`,
     );
   });
   it("Provides a context", async () => {
@@ -62,7 +66,7 @@ describe("LexicalExtensionComposer", () => {
       await Promise.resolve().then();
     });
     expect(container.innerHTML).toEqual(
-      `<div contenteditable="true" role="textbox" spellcheck="true" style="user-select: text; white-space: pre-wrap; word-break: break-word;" data-lexical-editor="true"><p dir="ltr"><span data-lexical-text="true">Initial text</span></p></div>`,
+      `<div contenteditable="true" role="textbox" spellcheck="true" style="user-select: text; white-space: pre-wrap; word-break: break-word;" data-lexical-editor="true"><p dir="auto"><span data-lexical-text="true">Initial text</span></p></div>`,
     );
   });
 });
