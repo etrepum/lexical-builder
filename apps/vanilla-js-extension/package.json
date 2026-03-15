@@ -15,9 +15,9 @@
     "@etrepum/lexical-builder-devtools-core": "*",
     "@etrepum/lexical-emoji-extension": "*",
     "@etrepum/lexical-react-extension": "*",
-    "@lexical/react": "0.33.1",
-    "@lexical/utils": "0.33.1",
-    "lexical": "0.33.1",
+    "@lexical/react": "0.41.0",
+    "@lexical/utils": "0.41.0",
+    "lexical": "0.41.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

@@ -32,8 +32,8 @@
     "emoji-datasource-facebook": "15.1.2"
   },
   "peerDependencies": {
-    "@lexical/utils": ">=0.33.1 || >=0.33.2-nightly.0",
-    "lexical": ">=0.33.1 || >=0.33.2-nightly.0"
+    "@lexical/utils": ">=0.41.0 || >=0.41.1-nightly.0",
+    "lexical": ">=0.41.0 || >=0.41.1-nightly.0"
   },
   "sideEffects": false,
   "devDependencies": {
