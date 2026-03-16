@@ -27,13 +27,11 @@
     "url": "https://github.com/etrepum/lexical-builder/issues"
   },
   "homepage": "https://github.com/etrepum/lexical-builder",
-  "dependencies": {
-    "@etrepum/lexical-builder": "*",
-    "@etrepum/lexical-builder-list": "*"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "@lexical/code": ">=0.41.0 || >=0.41.1-nightly.0",
     "@lexical/list": ">=0.41.0 || >=0.41.1-nightly.0",
+    "@lexical/extension": ">=0.41.0 || >=0.41.1-nightly.0",
     "@lexical/markdown": ">=0.41.0 || >=0.41.1-nightly.0",
     "@lexical/rich-text": ">=0.41.0 || >=0.41.1-nightly.0",
     "@lexical/utils": ">=0.41.0 || >=0.41.1-nightly.0",
@@ -49,10 +47,10 @@
     "jsdom": "^24.1.0",
     "tslib": "^2.6.2",
     "typescript": "^5.5.2",
-    "vite": "^5.4.0",
-    "vite-plugin-dts": "^4.0.2",
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^5.0.0-beta.6",
     "vite-plugin-package-version": "^1.1.0",
-    "vitest": "^2.0.5"
+    "vitest": "^4.1.0"
   },
   "exports": {
     ".": {

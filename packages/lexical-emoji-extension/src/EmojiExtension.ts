@@ -6,13 +6,16 @@
  *
  */
 
-import { defineExtension, safeCast } from "@etrepum/lexical-builder";
 import {
+  type LexicalEditor,
+  type NodeKey,
+  TextNode,
   addClassNamesToElement,
   mergeRegister,
   removeClassNamesFromElement,
-} from "@lexical/utils";
-import { type LexicalEditor, type NodeKey, TextNode } from "lexical";
+  defineExtension,
+  safeCast,
+} from "lexical";
 import { loadTextNodeTransform } from "@etrepum/lexical-emoji-extension/loadTextNodeTransform";
 import { EmojiNode } from "./EmojiNode";
 import { unifiedIDFromText } from "./unifiedID";
@@ -145,7 +148,7 @@ export const EmojiExtension = defineExtension({
     );
     // Defer loading of the transform which needs to load the emoji JSON
     resolve(loadTextNodeTransform(), ($textNodeTransform) => {
-      if (!state.signal.aborted) {
+      if (!state.getSignal().aborted) {
         cleanupTransform = editor.registerNodeTransform(
           TextNode,
           $textNodeTransform,

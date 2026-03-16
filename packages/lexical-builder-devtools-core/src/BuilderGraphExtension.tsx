@@ -1,18 +1,18 @@
-import { defineExtension, provideOutput } from "@etrepum/lexical-builder";
-import { ReactExtension } from "@etrepum/lexical-react-extension";
+import { defineExtension } from "lexical";
 import { Suspense } from "react";
+import { ReactExtension } from "@lexical/react/ReactExtension";
 import { BuilderGraphComponent } from "./BuilderGraphComponent";
 
 export const BuilderGraphExtension = defineExtension({
   name: "@etrepum/lexical-builder-devtools-core/BuilderGraph",
   dependencies: [ReactExtension],
-  register(editor) {
-    return provideOutput({
+  build(editor) {
+    return {
       Component: () => (
         <Suspense>
           <BuilderGraphComponent editor={editor} />
         </Suspense>
       ),
-    });
+    };
   },
 });

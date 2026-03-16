@@ -1,12 +1,9 @@
+import { declarePeerDependency, defineExtension, safeCast } from "lexical";
+import { RichTextExtension } from "@lexical/rich-text";
 import {
-  RichTextExtension,
-  declarePeerDependency,
-  defineExtension,
   getKnownTypesAndNodes,
-  provideOutput,
-  safeCast,
   type KnownTypesAndNodes,
-} from "@etrepum/lexical-builder";
+} from "@lexical/extension";
 import {
   ELEMENT_TRANSFORMERS,
   type ElementTransformer,
@@ -18,7 +15,7 @@ import {
   UNORDERED_LIST,
   type MultilineElementTransformer,
 } from "@lexical/markdown";
-import { type CheckListExtension } from "@etrepum/lexical-builder-list";
+import { type CheckListExtension } from "@lexical/list";
 import { createMarkdownImport } from "./MarkdownImport";
 import type { MarkdownTransformerOptions, TransformersByType } from "./types";
 import { createMarkdownExport } from "./MarkdownExport";
@@ -39,7 +36,7 @@ function filterDependencies<
 }
 
 const CHECK_LIST_PLAN_NAME: (typeof CheckListExtension)["name"] =
-  "@etrepum/lexical-builder-list/CheckList";
+  "@lexical/list/CheckList";
 
 export interface MarkdownTransformersOutput {
   readonly transformerOptions: MarkdownTransformerOptions;
@@ -104,7 +101,7 @@ export const MarkdownTransformersExtension = defineExtension({
       $markdownImport,
     };
   },
-  register: (_editor, _config, state) => {
-    return provideOutput(state.getInitResult());
+  build: (_editor, _config, state) => {
+    return state.getInitResult();
   },
 });

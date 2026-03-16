@@ -29,7 +29,10 @@ module.exports = {
   env: {
     node: true,
   },
-  parserOptions: { project, extraFileExtensions: [".svelte"] },
+  parserOptions: {
+    project,
+    extraFileExtensions: [".svelte"],
+  },
   settings: {
     "import/resolver": {
       typescript: {
@@ -57,6 +60,7 @@ module.exports = {
           js: "espree",
           typescript: "@typescript-eslint/parser",
         },
+        project: null,
       },
     },
   ],

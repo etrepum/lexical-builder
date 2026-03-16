@@ -2,10 +2,9 @@
 export default {
   content: [
     "./src/**/*.{html,js,svelte,ts}",
-    require.resolve("@etrepum/lexical-tailwind"),
+    require.resolve("@lexical/tailwind"),
   ],
   theme: {
     extend: {},
   },
-  plugins: [require("@etrepum/lexical-tailwind-plugin")],
 };

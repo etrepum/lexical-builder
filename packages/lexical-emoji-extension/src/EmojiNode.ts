@@ -6,7 +6,7 @@
  *
  */
 
-import { getPeerDependencyFromEditorOrThrow } from "@etrepum/lexical-builder";
+import { getPeerDependencyFromEditorOrThrow } from "@lexical/extension";
 import { addClassNamesToElement } from "@lexical/utils";
 import type {
   DOMConversionMap,

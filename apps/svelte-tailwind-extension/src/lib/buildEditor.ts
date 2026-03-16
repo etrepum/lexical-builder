@@ -1,4 +1,11 @@
 /**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+/**
  * We set up the editor (mostly) outside of .svelte files to avoid the
  * svelte/dollar_prefix_invalid compiler error because svelte
  * assigns special meaning that prefix and Lexical also has its
@@ -7,55 +14,99 @@
 
 import {
   buildEditorFromExtensions,
-  RichTextExtension,
-  HistoryExtension,
-  type LexicalEditorWithDispose,
+  EditorStateExtension,
+  effect,
+  watchedSignal,
+} from "@lexical/extension";
+import { RichTextExtension } from "@lexical/rich-text";
+import { TailwindExtension } from "@lexical/tailwind";
+import { HistoryExtension } from "@lexical/history";
+import { $generateNodesFromDOM } from "@lexical/html";
+import { $insertGeneratedNodes } from "@lexical/clipboard";
+import { AutoLinkExtension, ClickableLinkExtension } from "@lexical/link";
+import {
+  $addUpdateTag,
+  $getEditor,
   configExtension,
-} from "@etrepum/lexical-builder";
-import { AutoLinkExtension, ClickableLinkExtension } from "@etrepum/lexical-builder-link";
-import { CheckListExtension } from "@etrepum/lexical-builder-list";
-import {
-  MarkdownTransformersExtension,
-  MarkdownShortcutsExtension,
-} from "@etrepum/lexical-builder-markdown";
-import { TailwindExtension } from "@etrepum/lexical-tailwind";
-import {
-  $isEmojiNode,
-  EmojiNode,
-  EmojiExtension,
-} from "@etrepum/lexical-emoji-extension";
+  defineExtension,
+  HISTORY_MERGE_TAG,
+  safeCast,
+  type EditorState,
+  $selectAll,
+  type InitialEditorStateType,
+  type LexicalEditor,
+} from "lexical";
+import { CheckListExtension } from "@lexical/list";
+import { withDOM } from "@lexical/headless/dom";
+import type { ViteHotContext } from "vite/types/hot.js";
 import type { TextMatchTransformer } from "@lexical/markdown";
-import { TableExtension } from "@etrepum/lexical-builder-table";
+import { $isEmojiNode, EmojiNode } from "@etrepum/lexical-emoji-extension";
+import {
+  MarkdownShortcutsExtension,
+  MarkdownTransformersExtension,
+} from "@etrepum/lexical-builder-markdown";
 import { SlackPasteExtension } from "./SlackPasteExtension";
-import { StickyExtension } from "./sticky/StickyExtension";
 
 export const INITIAL_CONTENT = `
-# Welcome to the Svelte 5 Tailwind example!
+<h1>Welcome to the Svelte 5 Tailwind example!</h1>
+<p></p>
+<p>This example uses history, lists and the link extension! SSR is used for the editor.</p>
+<p></p>
+<blockquote>
+	Quotes are supported.<br>
+	Note that this initial state is hydrated from the content rendered by the server!<br>
+	You won't find this string in the client-side javascript bundle: <code>SERVER_AND_HTML_ONLY</code>!<br>
+	You should only find it in <code>.svelte-kit/output/server/</code>
+</blockquote>
 
-This example uses *markdown*, **markdown shortcuts**, _history_, emoji and
-the link extension! SSR is used for the editor.
+<p>See more:</p>
 
-It also has a basic sticky note implementation that demonstrates the use of
-nested editors.
-
-> Quotes are supported
-
-CSS is provided by the Tailwind extension which has default styles for most built-in
-nodes.
-
-:bear:
-
-See more:
-
-- [lexical.dev](https://lexical.dev/)
-- [lexical-builder.pages.dev](https://lexical-builder.pages.dev/)
-- [svelte.dev](https://svelte.dev/)
-
-Checklist:
-
-- [ ] Read the docs
-- [ ] Build an app
+<ul>
+<li><a href="https://lexical.dev/">lexical.dev</a></li>
+<li><a href="https://svelte.dev/">svelte.dev</a></li>
+</ul>
 `.trim();
+
+function $parseInitialDOM(dom: Document | ParentNode) {
+  const editor = $getEditor();
+  const nodes = $generateNodesFromDOM(editor, dom);
+  $insertGeneratedNodes(editor, nodes, $selectAll());
+  $addUpdateTag(HISTORY_MERGE_TAG);
+}
+
+export function $initialEditorStateServer() {
+  withDOM(() => {
+    const parser = new window.DOMParser();
+    $parseInitialDOM(parser.parseFromString(INITIAL_CONTENT, "text/html"));
+  });
+}
+
+export function prerenderHtml(editor: LexicalEditor) {
+  return withDOM(({ document }: typeof globalThis.window) => {
+    const el = document.createElement("div");
+    editor.setRootElement(el);
+    const html = el.innerHTML;
+    editor.setRootElement(null);
+    return html;
+  });
+}
+
+export function hydrate(editor: LexicalEditor, dom: HTMLElement) {
+  if (editor.getEditorState().isEmpty()) {
+    editor.update(
+      () => {
+        $parseInitialDOM(dom);
+      },
+      { tag: HISTORY_MERGE_TAG },
+    );
+  }
+}
+
+interface LexicalHMRState {
+  editable: boolean;
+  editorState: EditorState;
+}
+const HMR_KEY = "lexicalHMR";
 
 // TODO - The markdown transformers are not a very good abstraction for this
 const NO_MATCH_REGEX = /^(?!)/;
@@ -71,29 +122,86 @@ const EmojiShortcodeTransformer: TextMatchTransformer = {
   type: "text-match",
 };
 
-export function buildEditor(): LexicalEditorWithDispose {
+export const WatchEditableExtension = defineExtension({
+  name: "@lexical/extension/WatchEditable",
+  build(editor) {
+    return watchedSignal(
+      () => editor.isEditable(),
+      (signal) =>
+        editor.registerEditableListener((editable) => {
+          signal.value = editable;
+        }),
+    );
+  },
+});
+
+const HMRExtension = defineExtension({
+  name: "@lexical/examples/hmr",
+  config: safeCast<{ hot: null | ViteHotContext }>({ hot: null }),
+  dependencies: [EditorStateExtension, WatchEditableExtension],
+  afterRegistration(editor, { hot }, state) {
+    if (hot) {
+      const lexicalHMR: undefined | LexicalHMRState = hot.data[HMR_KEY];
+      if (lexicalHMR) {
+        editor.setEditable(lexicalHMR.editable);
+        editor.setEditorState(lexicalHMR.editorState, {
+          tag: HISTORY_MERGE_TAG,
+        });
+      }
+      const editorStateSignal =
+        state.getDependency(EditorStateExtension).output;
+      const editableSignal = state.getDependency(WatchEditableExtension).output;
+      return effect(() => {
+        hot.data[HMR_KEY] = safeCast<LexicalHMRState>({
+          editable: editableSignal.value,
+          editorState: editorStateSignal.value,
+        });
+      });
+    }
+    return () => {};
+  },
+});
+
+const ClickableWhenReadonlyExtension = defineExtension({
+  name: "@lexical/extension/ClickableOnlyWhenEditable",
+  dependencies: [WatchEditableExtension, ClickableLinkExtension],
+  register: (editor, config, state) => {
+    const editableSignal = state.getDependency(WatchEditableExtension).output;
+    const disabledSignal = state.getDependency(ClickableLinkExtension).output
+      .disabled;
+    return effect(() => {
+      disabledSignal.value = editableSignal.value;
+    });
+  },
+});
+
+export function buildEditor(
+  $initialEditorState: InitialEditorStateType = null,
+  hot: null | ViteHotContext = null,
+) {
   return buildEditorFromExtensions({
     name: "[root]",
-    // We are doing this elsewhere for SSR reasons
-    $initialEditorState: null,
+    $initialEditorState,
+    editable: false,
     dependencies: [
       RichTextExtension,
+      TailwindExtension,
       configExtension(MarkdownTransformersExtension, {
         textMatchTransformers: [
-          ...(MarkdownTransformersExtension.config?.textMatchTransformers ?? []),
+          ...(MarkdownTransformersExtension.config?.textMatchTransformers ??
+            []),
           EmojiShortcodeTransformer,
         ],
       }),
       MarkdownShortcutsExtension,
-      TailwindExtension,
       HistoryExtension,
       AutoLinkExtension,
-      ClickableLinkExtension,
+      ClickableWhenReadonlyExtension,
+      configExtension(ClickableLinkExtension, { newTab: true }),
       CheckListExtension,
-      SlackPasteExtension,
-      EmojiExtension,
-      StickyExtension,
-      TableExtension,
+      EditorStateExtension,
+      WatchEditableExtension,
+      configExtension(HMRExtension, { hot }),
     ],
   });
 }
