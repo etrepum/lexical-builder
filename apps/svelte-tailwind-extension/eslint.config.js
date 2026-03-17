@@ -31,11 +31,24 @@ export default [
 
   // TypeScript files - enable type checking
   {
-    files: ["**/*.ts", "**/*.tsx", "**/*.svelte.ts"],
+    files: ["**/*.ts", "**/*.tsx"],
     languageOptions: {
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+
+  // Svelte TypeScript files
+  {
+    files: ["**/*.svelte.ts"],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        extraFileExtensions: [".svelte"],
       },
     },
   },

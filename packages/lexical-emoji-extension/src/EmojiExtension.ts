@@ -48,7 +48,6 @@ function noop() {
   /*noop*/
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types -- transform is a function
 function resolve<T extends Function>(arg: Promise<T> | T, fn: (v: T) => void) {
   typeof arg === "function"
     ? fn(arg)

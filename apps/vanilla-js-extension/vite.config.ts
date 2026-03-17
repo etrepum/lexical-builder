@@ -12,6 +12,9 @@ import { resolve } from "import-meta-resolve";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
   plugins: [
     viteStaticCopy({
       targets: [
