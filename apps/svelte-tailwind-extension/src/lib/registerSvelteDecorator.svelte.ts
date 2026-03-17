@@ -51,7 +51,7 @@ export function registerSvelteDecorator<T extends DecoratorNode<null>>(
             }
             // We don't need to worry about $state.frozen or whatever because these
             // are both class instances which is a 'barrier'
-            // eslint-disable-next-line no-undef -- false positive
+
             const props = $state({ node: initialNode, editor });
             const component = mount(Component, {
               target: el,
@@ -62,7 +62,6 @@ export function registerSvelteDecorator<T extends DecoratorNode<null>>(
                 props.node = nextNode;
               } else {
                 unmount(component).catch((err: unknown) => {
-                  // eslint-disable-next-line no-console -- report error
                   console.error(err);
                 });
               }

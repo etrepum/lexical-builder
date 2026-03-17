@@ -11,7 +11,6 @@
  * assigns special meaning that prefix and Lexical also has its
  * conventions around it.
  */
-/* eslint-disable @typescript-eslint/explicit-function-return-type -- don't need this */
 
 import {
   buildEditorFromExtensions,
@@ -142,7 +141,6 @@ const HMRExtension = defineExtension({
   dependencies: [EditorStateExtension, WatchEditableExtension],
   afterRegistration(editor, { hot }, state) {
     if (hot) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- hmr
       const lexicalHMR: undefined | LexicalHMRState = hot.data[HMR_KEY];
       if (lexicalHMR) {
         editor.setEditable(lexicalHMR.editable);
@@ -154,7 +152,6 @@ const HMRExtension = defineExtension({
         state.getDependency(EditorStateExtension).output;
       const editableSignal = state.getDependency(WatchEditableExtension).output;
       return effect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- hmr
         hot.data[HMR_KEY] = safeCast<LexicalHMRState>({
           editable: editableSignal.value,
           editorState: editorStateSignal.value,
