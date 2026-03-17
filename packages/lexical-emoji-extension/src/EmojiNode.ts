@@ -13,20 +13,24 @@ import type {
   EditorConfig,
   LexicalEditor,
   LexicalNode,
-  NodeKey,
   SerializedTextNode,
   Spread,
+  StateValueOrUpdater,
 } from "lexical";
-import { TextNode, $applyNodeReplacement, $getEditor } from "lexical";
+import {
+  TextNode,
+  $getEditor,
+  createState,
+  $getStateChange,
+  $getState,
+  $setState,
+  $create,
+} from "lexical";
 import type { EmojiExtension } from "./EmojiExtension";
 
-export type SerializedEmojiNode = Spread<
-  {
-    type: ReturnType<typeof EmojiNode.getType>;
-    shortcode?: string;
-  },
-  SerializedTextNode
->;
+const shortcodeState = createState("shortcode", {
+  parse: (v) => (typeof v === "string" ? v : undefined),
+});
 
 /**
  * EmojiNode doesn't really need to override any of TextNode's functionality,
@@ -41,23 +45,11 @@ export type SerializedEmojiNode = Spread<
  * done properly.
  */
 export class EmojiNode extends TextNode {
-  __shortcode?: string | undefined;
-
-  constructor(text: string, shortcode?: string | undefined, key?: NodeKey) {
-    super(text, key);
-    this.__shortcode = shortcode;
-  }
-
-  static getType(): "emoji" {
-    return "emoji";
-  }
-
-  static clone(node: EmojiNode): EmojiNode {
-    return new EmojiNode(node.__text, node.__shortcode, node.__key);
-  }
-
-  static importJSON(serializedNode: SerializedEmojiNode): EmojiNode {
-    return $createEmojiNode(serializedNode.text, serializedNode.shortcode);
+  $config() {
+    return this.config("emoji", {
+      extends: TextNode,
+      stateConfigs: [{ stateConfig: shortcodeState, flat: true }],
+    });
   }
 
   static override importDOM(): DOMConversionMap | null {
@@ -83,15 +75,19 @@ export class EmojiNode extends TextNode {
   }
 
   updateDOM(prevNode: this, dom: HTMLElement, config: EditorConfig): boolean {
-    const res = super.updateDOM(prevNode, dom, config);
-    if (!res && prevNode.__shortcode !== this.__shortcode) {
-      if (this.__shortcode) {
-        dom.dataset.emojiShortcode = this.__shortcode;
+    if (super.updateDOM(prevNode, dom, config)) {
+      return true;
+    }
+    const change = $getStateChange(this, prevNode, shortcodeState);
+    if (change) {
+      const [shortcode] = change;
+      if (shortcode) {
+        dom.dataset.emojiShortcode = shortcode;
       } else {
         delete dom.dataset.emojiShortcode;
       }
     }
-    return res;
+    return false;
   }
 
   createDOM(
@@ -111,28 +107,19 @@ export class EmojiNode extends TextNode {
         "@etrepum/lexical-emoji-extension/Emoji",
       ).config.emojiClass,
     );
-    if (this.__shortcode) {
-      dom.dataset.emojiShortcode = this.__shortcode;
+    const shortcode = $getState(this, shortcodeState);
+    if (shortcode) {
+      dom.dataset.emojiShortcode = shortcode;
     }
     return dom;
   }
 
   getShortcode(): string | undefined {
-    return this.getLatest().__shortcode;
+    return $getState(this, shortcodeState);
   }
 
-  setShortcode(shortcode?: string | undefined): this {
-    const node = this.getWritable();
-    node.__shortcode = shortcode;
-    return node;
-  }
-
-  exportJSON(): SerializedEmojiNode {
-    return {
-      ...super.exportJSON(),
-      shortcode: this.__shortcode,
-      type: "emoji",
-    };
+  setShortcode(shortcode?: StateValueOrUpdater<typeof shortcodeState>): this {
+    return $setState(this, shortcodeState, shortcode);
   }
 }
 
@@ -148,7 +135,10 @@ export function $createEmojiNode(
   // but are deleted as a single entity (not individually by character).
   // This also forces Lexical to create adjacent TextNode on user input instead of
   // modifying Emoji node as it now acts as immutable node.
-  return $applyNodeReplacement(new EmojiNode(text, shortcode).setMode("token"));
+  return $create(EmojiNode)
+    .setTextContent(text)
+    .setShortcode(shortcode)
+    .setMode("token");
 }
 
 export function $isEmojiNode(
