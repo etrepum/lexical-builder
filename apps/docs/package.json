@@ -1,6 +1,6 @@
 {
   "name": "docs",
-  "version": "0.0.36",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
@@ -39,7 +39,7 @@
     "@etrepum/lexical-builder": "*",
     "@etrepum/lexical-builder-devtools-core": "*",
     "@etrepum/lexical-emoji-extension": "*",
-    "@lexical/code": "^0.41.1-nightly.20260317.0",
+    "@lexical/code": "0.41.1-nightly.20260317.0",
     "@repo/eslint-config": "*",
     "ajv": "^8.18.0",
     "docusaurus-plugin-typedoc": "^1.0.1",

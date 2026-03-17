@@ -1,3 +1,22 @@
+## v0.1.0 (2026-03-17)
+- still publish when increment-version is skipped (#77) Bob Ippolito
+- dry-run (#76) Bob Ippolito
+- fix syntax (#75) Bob Ippolito
+- dispatch for trusted release (#74) Bob Ippolito
+- ignore previously published error (#73) Bob Ippolito
+- rename nightly-release to trusted-release for next refactor (#72) Bob Ippolito
+- inherit env explicitly (#71) Bob Ippolito
+- update actions (#70) Bob Ippolito
+- permissions (#69) Bob Ippolito
+- attempt oidc (#68) Bob Ippolito
+- EOL note (#67) Bob Ippolito
+- remove unused exported symbols (#66) Bob Ippolito
+- Remove unused ExtensionRepoutput type (#65) Bob Ippolito
+- remove variance annotations from core (#64) Bob Ippolito
+- Remove variance annotations (#63) Bob Ippolito
+- v0.0.36 (#62) github-actionsbot
+- v0.0.36 Lexical Builder GitHub Actions Bot
+
 ## v0.0.36 (2025-07-13
 
 2025-07-13
