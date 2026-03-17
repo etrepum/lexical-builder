@@ -1,36 +1,38 @@
-const { resolve } = require("node:path");
+import js from "@eslint/js";
+import lexicalPlugin from "@lexical/eslint-plugin";
+import onlyWarn from "eslint-plugin-only-warn";
+import globals from "globals";
 
-const project = resolve(process.cwd(), "tsconfig.json");
+/**
+ * ESLint flat config for Next.js applications
+ * @type {import("eslint").Linter.Config[]}
+ */
+export default [
+  // Base configs
+  js.configs.recommended,
 
-/** @type {import("eslint").Linter.Config} */
-module.exports = {
-  extends: [
-    "eslint:recommended",
-    "prettier",
-    require.resolve("@vercel/style-guide/eslint/next"),
-    "eslint-config-turbo",
-    "plugin:@lexical/recommended",
-  ],
-  globals: {
-    React: true,
-    JSX: true,
-  },
-  env: {
-    node: true,
-    browser: true,
-  },
-  plugins: ["only-warn"],
-  settings: {
-    "import/resolver": {
-      typescript: {
-        project,
+  // Lexical plugin flat config
+  lexicalPlugin.configs["flat/recommended"],
+
+  // Global configuration
+  {
+    plugins: {
+      "only-warn": onlyWarn,
+    },
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        React: true,
+        JSX: true,
       },
     },
   },
-  ignorePatterns: [
-    // Ignore dotfiles
-    ".*.js",
-    "node_modules/",
-  ],
-  overrides: [{ files: ["*.jsx?", "*.tsx?"] }],
-};
+
+  // Ignore patterns
+  {
+    ignores: [".*.js", "node_modules/"],
+  },
+];
