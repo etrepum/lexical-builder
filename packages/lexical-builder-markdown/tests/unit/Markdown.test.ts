@@ -1,11 +1,10 @@
+import { configExtension, defineExtension } from "lexical";
 import {
-  InitialStateExtension,
-  RichTextExtension,
   buildEditorFromExtensions,
-  configExtension,
-  defineExtension,
   getExtensionDependencyFromEditor,
-} from "@etrepum/lexical-builder";
+  InitialStateExtension,
+} from "@lexical/extension";
+import { RichTextExtension } from "@lexical/rich-text";
 import {
   MarkdownTransformersOutput,
   MarkdownTransformersExtension,
@@ -66,12 +65,17 @@ describe("Markdown", () => {
         dependencies: [
           RichTextExtension,
           MarkdownTransformersExtension,
-          configExtension(InitialStateExtension, { updateOptions: { discrete: true } }),
+          configExtension(InitialStateExtension, {
+            updateOptions: { discrete: true },
+          }),
         ],
         $initialEditorState(editor) {
           const {
             output: { $markdownImport },
-          } = getExtensionDependencyFromEditor(editor, MarkdownTransformersExtension);
+          } = getExtensionDependencyFromEditor(
+            editor,
+            MarkdownTransformersExtension,
+          );
           $getRoot().append(...$markdownImport(markdownDoc));
         },
       });

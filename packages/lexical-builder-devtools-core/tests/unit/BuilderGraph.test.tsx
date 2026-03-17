@@ -1,6 +1,7 @@
-import { RichTextExtension, buildEditorFromExtensions } from "@etrepum/lexical-builder";
 import { describe, it, expect } from "vitest";
 import { buildGraph } from "@etrepum/lexical-builder-devtools-core";
+import { buildEditorFromExtensions } from "@lexical/extension";
+import { RichTextExtension } from "@lexical/rich-text";
 
 describe("BuilderGraph", () => {
   it("can build a graph", () => {

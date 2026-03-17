@@ -13,8 +13,6 @@ import type {
   EditorConfig,
   LexicalEditor,
   LexicalNode,
-  SerializedTextNode,
-  Spread,
   StateValueOrUpdater,
 } from "lexical";
 import {

@@ -48,12 +48,17 @@ function noop() {
   /*noop*/
 }
 
-function resolve<T extends Function>(arg: Promise<T> | T, fn: (v: T) => void) {
-  typeof arg === "function"
-    ? fn(arg)
-    : void arg.then((v) => {
-        fn(v);
-      });
+function resolve<T extends (...args: never[]) => unknown>(
+  arg: Promise<T> | T,
+  fn: (v: T) => void,
+) {
+  if (typeof arg === "function") {
+    fn(arg);
+  } else {
+    void arg.then((v) => {
+      fn(v);
+    });
+  }
 }
 
 const ssr = typeof window === "undefined";

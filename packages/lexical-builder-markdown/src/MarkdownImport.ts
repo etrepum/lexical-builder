@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-/* eslint-disable prefer-named-capture-group -- meta style */
-/* eslint-disable no-labels -- meta style */
 
 import type { CodeNode } from "@lexical/code";
 import type {

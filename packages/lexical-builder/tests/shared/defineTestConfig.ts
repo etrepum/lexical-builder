@@ -25,7 +25,6 @@ function buildResolveAlias(base: string | URL): AliasOptions {
     const pkgDir = path.resolve(indexFn, "..", "..");
     const json = readPackageJson(new URL(`../${path.basename(pkgDir)}/`, base));
     for (const [k, v] of Object.entries(json.exports || {})) {
-      // eslint-disable-next-line prefer-named-capture-group -- index is fine
       const sub = /^\.(\/.+)/.exec(k)?.[1];
       const subPath = typeof v == "string" ? v : v.default;
       if (sub && subPath) {

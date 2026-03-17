@@ -15,7 +15,6 @@ export function BuilderGraphComponent({
   ...rest
 }: BuilderGraphComponentProps & ComponentProps<"div">) {
   const { text, href } = useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow -- memo
     const text = buildGraph(editor);
     return {
       text,

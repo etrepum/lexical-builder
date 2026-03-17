@@ -51,6 +51,9 @@ export default [
         extraFileExtensions: [".svelte"],
       },
     },
+    rules: {
+      "svelte/prefer-svelte-reactivity": "off",
+    },
   },
 
   // Svelte-specific overrides

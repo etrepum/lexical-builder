@@ -14,8 +14,6 @@
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "dev": "vite build -w",
-    "test": "vitest run",
-    "test:watch": "vitest",
     "lint": "eslint"
   },
   "version": "0.0.36",

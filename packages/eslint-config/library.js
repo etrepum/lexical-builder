@@ -38,6 +38,7 @@ export default [
       "@typescript-eslint/prefer-nullish-coalescing": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/triple-slash-reference": "off",
       eqeqeq: "off",
     },
   },
