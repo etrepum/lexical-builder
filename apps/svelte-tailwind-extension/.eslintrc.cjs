@@ -37,8 +37,22 @@ module.exports = {
     "import/resolver": {
       typescript: {
         project,
+        // Allow imports from SvelteKit virtual modules
+        alwaysTryTypes: true,
       },
+      node: true,
     },
+    // Tell import plugin to also check .svelte files
+    "import/parsers": {
+      "svelte-eslint-parser": [".svelte"],
+    },
+    "import/core-modules": [
+      "$app/environment",
+      "$app/navigation",
+      "$app/stores",
+      "$app/paths",
+      "$app/forms",
+    ],
   },
   ignorePatterns: [
     // Ignore dotfiles

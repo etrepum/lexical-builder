@@ -61,7 +61,10 @@ export function registerSvelteDecorator<T extends DecoratorNode<null>>(
               if (nextNode) {
                 props.node = nextNode;
               } else {
-                unmount(component);
+                unmount(component).catch((err: unknown) => {
+                  // eslint-disable-next-line no-console -- report error
+                  console.error(err);
+                });
               }
             });
           } else if (setNode && mutation === "destroyed") {
