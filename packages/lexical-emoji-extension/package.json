@@ -31,9 +31,9 @@
     "emoji-datasource-facebook": "15.1.2"
   },
   "peerDependencies": {
-    "@lexical/extension": ">=0.41.0 || >=0.41.1-nightly.0",
-    "@lexical/utils": ">=0.41.0 || >=0.41.1-nightly.0",
-    "lexical": ">=0.41.0 || >=0.41.1-nightly.0"
+    "@lexical/extension": ">=0.41.1-nightly.20260317.0",
+    "@lexical/utils": ">=0.41.1-nightly.20260317.0",
+    "lexical": ">=0.41.1-nightly.20260317.0"
   },
   "sideEffects": false,
   "devDependencies": {
