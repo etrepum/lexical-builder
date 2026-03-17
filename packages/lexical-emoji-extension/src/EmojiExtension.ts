@@ -6,13 +6,16 @@
  *
  */
 
-import { defineExtension, safeCast } from "@etrepum/lexical-builder";
 import {
+  type LexicalEditor,
+  type NodeKey,
+  TextNode,
   addClassNamesToElement,
   mergeRegister,
   removeClassNamesFromElement,
-} from "@lexical/utils";
-import { type LexicalEditor, type NodeKey, TextNode } from "lexical";
+  defineExtension,
+  safeCast,
+} from "lexical";
 import { loadTextNodeTransform } from "@etrepum/lexical-emoji-extension/loadTextNodeTransform";
 import { EmojiNode } from "./EmojiNode";
 import { unifiedIDFromText } from "./unifiedID";
@@ -45,13 +48,17 @@ function noop() {
   /*noop*/
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types -- transform is a function
-function resolve<T extends Function>(arg: Promise<T> | T, fn: (v: T) => void) {
-  typeof arg === "function"
-    ? fn(arg)
-    : void arg.then((v) => {
-        fn(v);
-      });
+function resolve<T extends (...args: never[]) => unknown>(
+  arg: Promise<T> | T,
+  fn: (v: T) => void,
+) {
+  if (typeof arg === "function") {
+    fn(arg);
+  } else {
+    void arg.then((v) => {
+      fn(v);
+    });
+  }
 }
 
 const ssr = typeof window === "undefined";
@@ -145,7 +152,7 @@ export const EmojiExtension = defineExtension({
     );
     // Defer loading of the transform which needs to load the emoji JSON
     resolve(loadTextNodeTransform(), ($textNodeTransform) => {
-      if (!state.signal.aborted) {
+      if (!state.getSignal().aborted) {
         cleanupTransform = editor.registerNodeTransform(
           TextNode,
           $textNodeTransform,

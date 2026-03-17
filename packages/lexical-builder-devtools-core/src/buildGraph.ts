@@ -1,5 +1,5 @@
-import { type AnyLexicalExtension, LexicalBuilder } from "@etrepum/lexical-builder";
-import { type LexicalEditor } from "lexical";
+import { LexicalBuilder } from "@lexical/extension";
+import { type AnyLexicalExtension, type LexicalEditor } from "lexical";
 import { displayName } from "./displayName";
 
 export function buildGraph(editor: LexicalEditor): string {

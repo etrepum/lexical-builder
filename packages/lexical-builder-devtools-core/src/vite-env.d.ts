@@ -1,4 +1,6 @@
 /// <reference types="vite/client" />
-interface ImportMetaEnv extends import("vite/client").ImportMetaEnv {
+import type { ImportMetaEnv as ViteImportMetaEnv } from "vite/client";
+
+interface ImportMetaEnv extends ViteImportMetaEnv {
   PACKAGE_VERSION: string;
 }

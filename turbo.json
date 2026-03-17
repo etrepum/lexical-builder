@@ -1,10 +1,17 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://v2-8-17.turborepo.dev/schema.json",
   "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "docs/api/**",
+        "build/**",
+        ".svelte-kit/**",
+        "dist/**"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]

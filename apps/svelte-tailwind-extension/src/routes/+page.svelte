@@ -1,128 +1,66 @@
-<svelte:options runes={true} />
-
 <script lang="ts">
-  import { mergeRegister } from "@lexical/utils";
-  import {
-    getExtensionDependencyFromEditor,
-    type LexicalEditorWithDispose,
-  } from "@etrepum/lexical-builder";
-  import { MarkdownTransformersExtension } from "@etrepum/lexical-builder-markdown";
-  import { $getRoot as L$getRoot } from "lexical";
-  import { prerenderEditorHtml } from "@etrepum/lexical-builder-ssr";
-  import { $generateNodesFromDOM as L$generateNodesFromDOM } from "@lexical/html";
-  import { INSERT_TABLE_COMMAND } from "@lexical/table";
-  import { buildEditor, INITIAL_CONTENT } from "$lib/buildEditor";
-  import { $createStickyNode as L$createStickyNode } from "$lib/sticky/StickyNode";
+  // Use * imports to reference lexical $functions from a .svelte
+  // file without renaming
+  import * as extension from "@lexical/extension";
+  import * as buildEditor from "$lib/buildEditor";
   import { browser } from "$app/environment";
 
   let editorRef: HTMLElement;
-  const editor: LexicalEditorWithDispose = buildEditor();
-  const transformers = getExtensionDependencyFromEditor(
-    editor,
-    MarkdownTransformersExtension,
-  ).output;
-
-  function fromInitialContent() {
-    editor.update(
-      () => {
-        const { output } = getExtensionDependencyFromEditor(
-          editor,
-          MarkdownTransformersExtension,
-        );
-        L$getRoot().splice(0, 0, output.$markdownImport(INITIAL_CONTENT));
-      },
-      { discrete: true, tag: "history-merge" },
-    );
-  }
-
-  if (!browser) {
-    fromInitialContent();
-  }
-
-  let currentEditorState = $state(editor.getEditorState());
-  const currentMarkdown = $derived.by(() =>
-    currentEditorState.read(() => transformers.$markdownExport(), { editor }),
+  const initialState = browser ? null : buildEditor.$initialEditorStateServer;
+  const editor = buildEditor.buildEditor(
+    initialState,
+    browser ? import.meta.hot : undefined,
   );
+  // preact signals comply with the svelte store API so we can use these reactively with $ prefixes
+  // from a .svelte file
+  const stateSignal = extension.getExtensionDependencyFromEditor(
+    editor,
+    extension.EditorStateExtension,
+  ).output;
+  const editableSignal = extension.getExtensionDependencyFromEditor(
+    editor,
+    buildEditor.WatchEditableExtension,
+  ).output;
   $effect(() => {
-    if (!editor.getRootElement()) {
-      if (editorRef.firstElementChild !== null) {
-        editor.update(
-          () => {
-            // Hydrate from HTML
-            const dom = new DOMParser().parseFromString(
-              editorRef.innerHTML,
-              "text/html",
-            );
-            const nodes = L$generateNodesFromDOM(editor, dom);
-            return L$getRoot()
-              .clear()
-              .append(...nodes);
-          },
-          { discrete: true, tag: "history-merge" },
-        );
-      } else {
-        // This can happen on HMR
-        fromInitialContent();
-      }
-      currentEditorState = editor.getEditorState();
+    if (browser && editorRef) {
+      buildEditor.hydrate(editor, editorRef);
+      editor.setRootElement(editorRef);
     }
-    editor.setRootElement(editorRef);
-    const cleanup = mergeRegister(
-      () => editor.dispose(),
-      editor.registerUpdateListener(({ editorState }) => {
-        currentEditorState = editorState;
-      }),
-    );
-    return cleanup;
   });
-
-  function handleAddSticky() {
-    editor.update(() => {
-      L$getRoot().append(L$createStickyNode());
-    });
-  }
-
-  function handleAddTable() {
-    editor.dispatchCommand(INSERT_TABLE_COMMAND, {
-      columns: String(3),
-      includeHeaders: true,
-      rows: String(3),
-    });
-  }
+  // Only compute this on the client
+  const exportJson = $derived(
+    browser ? JSON.stringify($stateSignal, null, 2) : "",
+  );
 </script>
 
 <svelte:head>
-  <title>Lexical Builder + Svelte + Tailwind</title>
+  <title>Lexical Extension + Svelte + Tailwind</title>
 </svelte:head>
 
 <header class="m-4">
-  <h1 class="my-4 text-xl font-bold">Lexical Builder + Svelte + Tailwind</h1>
+  <h1 class="my-4 text-xl font-bold">Lexical Extension + Svelte + Tailwind</h1>
 </header>
 <main class="m-4">
-  <div
-    class="border p-4 border-solid container mx-auto relative"
-    bind:this={editorRef}
-    contenteditable
-  >
-    <!-- svelte-ignore hydration_html_changed -->
-    {@html browser ? "<!-- server hydrated -->" : prerenderEditorHtml(editor)}
-  </div>
-  <div class="mt-4 mx-auto container">
+  <div class="relative container mx-auto">
     <button
-      type="button"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-      onclick={handleAddSticky}>Add sticky</button
+      class="mb-2 cursor-pointer border-0 bg-indigo-700 px-6 py-2.5 text-sm font-medium tracking-wider text-white outline-0 hover:bg-indigo-800"
+      onclick={() => {
+        editor.setEditable(!$editableSignal);
+      }}>Toggle Editable {$editableSignal ? "OFF" : "ON"}</button
     >
-    <button
-      type="button"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-      onclick={handleAddTable}>Add table</button
+    <div
+      class="relative container mx-auto border border-solid p-4"
+      role="textbox"
+      data-lexical-editor="true"
+      bind:this={editorRef}
+      contenteditable={$editableSignal}
     >
+      <!-- eslint-disable-next-line svelte/no-unused-svelte-ignore -->
+      <!-- eslint-disable-next-line svelte/no-at-html-tags --><!-- svelte-ignore hydration_html_changed -->
+      {@html browser
+        ? "<!-- server hydrated -->"
+        : buildEditor.prerenderHtml(editor)}
+    </div>
   </div>
+  <pre class="max-w-xl">{exportJson}</pre>
 </main>
-<footer class="my-4">
-  <h2 class="m-4 text-lg font-bold">Markdown Export:</h2>
-  <div class="w-full whitespace-pre-wrap font-mono container mx-auto">
-    {currentMarkdown}
-  </div>
-</footer>

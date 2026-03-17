@@ -24,14 +24,10 @@ import {
   $isTextNode,
   $setSelection,
   type LexicalNode,
-} from "lexical";
-import {
   defineExtension,
-  disabledToggle,
-  type DisabledToggleOutput,
-  provideOutput,
   safeCast,
-} from "@etrepum/lexical-builder";
+} from "lexical";
+import { effect, namedSignals } from "@lexical/extension";
 import { MarkdownTransformersExtension } from "./MarkdownTransformersExtension";
 import { indexBy, PUNCTUATION_OR_SPACE } from "./utils";
 import type { TransformersByType } from "./types";
@@ -438,7 +434,6 @@ export function registerMarkdownShortcuts(
 export interface MarkdownShortcutsConfig {
   disabled: boolean;
 }
-export type MarkdownShortcutsOutput = DisabledToggleOutput;
 
 export const MarkdownShortcutsExtension = defineExtension({
   name: "@etrepum/lexical-builder-markdown/MarkdownShortcuts",
@@ -446,17 +441,15 @@ export const MarkdownShortcutsExtension = defineExtension({
   config: safeCast<MarkdownShortcutsConfig>({
     disabled: false,
   }),
-  register(editor, config, state) {
-    return provideOutput<MarkdownShortcutsOutput>(
-      ...disabledToggle({
-        disabled: config.disabled,
-        register: () =>
-          registerMarkdownShortcuts(
-            editor,
-            state.getDependency(MarkdownTransformersExtension).output
-              .transformersByType,
-          ),
-      }),
-    );
-  },
+  build: (editor, config) => namedSignals(config),
+  register: (editor, config, state) =>
+    effect(() => {
+      if (!state.getOutput().disabled.value) {
+        return registerMarkdownShortcuts(
+          editor,
+          state.getDependency(MarkdownTransformersExtension).output
+            .transformersByType,
+        );
+      }
+    }),
 });

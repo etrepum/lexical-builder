@@ -1,17 +1,15 @@
 import js from "@eslint/js";
 import lexicalPlugin from "@lexical/eslint-plugin";
 import tseslint from "typescript-eslint";
+import sveltePlugin from "eslint-plugin-svelte";
 import onlyWarn from "eslint-plugin-only-warn";
 import globals from "globals";
 
-/**
- * Shared ESLint flat config for library packages
- * @type {import("eslint").Linter.Config[]}
- */
 export default [
   // Base configs
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  ...sveltePlugin.configs["flat/recommended"],
 
   // Lexical plugin flat config
   lexicalPlugin.configs["flat/recommended"],
@@ -27,19 +25,7 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
-        React: true,
-        JSX: true,
       },
-    },
-    rules: {
-      "no-nested-ternary": "off",
-      "unicorn/filename-case": "off",
-      "import/no-default-export": "off",
-      "@typescript-eslint/prefer-nullish-coalescing": "off",
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/triple-slash-reference": "off",
-      eqeqeq: "off",
     },
   },
 
@@ -52,22 +38,37 @@ export default [
         tsconfigRootDir: import.meta.dirname,
       },
     },
+  },
+
+  // Svelte TypeScript files
+  {
+    files: ["**/*.svelte.ts"],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        extraFileExtensions: [".svelte"],
+      },
+    },
     rules: {
-      "no-undef": "off",
-      "no-unused-vars": "off",
+      "svelte/prefer-svelte-reactivity": "off",
     },
   },
 
-  // Vitest config files
+  // Svelte-specific overrides
   {
-    files: ["vitest.config.ts"],
-    rules: {
-      "import/no-relative-packages": "off",
+    files: ["**/*.svelte"],
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+        projectService: false,
+      },
     },
   },
 
   // Ignore patterns
   {
-    ignores: [".*.js", "node_modules/", "dist/"],
+    ignores: [".*.js", "node_modules/", "dist/", ".svelte-kit/", "build/"],
   },
 ];

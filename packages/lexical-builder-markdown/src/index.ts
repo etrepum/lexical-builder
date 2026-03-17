@@ -19,7 +19,6 @@ export {
 } from "./MarkdownTransformersExtension";
 export {
   type MarkdownShortcutsConfig,
-  type MarkdownShortcutsOutput,
   MarkdownShortcutsExtension,
 } from "./MarkdownShortcutsExtension";
 export const PACKAGE_VERSION: string = import.meta.env.PACKAGE_VERSION;

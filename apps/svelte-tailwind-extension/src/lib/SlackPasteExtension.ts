@@ -1,5 +1,8 @@
-import { defineExtension } from "@etrepum/lexical-builder";
-import { $createLineBreakNode, $createTextNode } from "lexical";
+import {
+  defineExtension,
+  $createLineBreakNode,
+  $createTextNode,
+} from "lexical";
 
 export const SlackPasteExtension = defineExtension({
   name: "SlackPasteExtension",

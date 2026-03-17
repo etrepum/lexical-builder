@@ -1,44 +1,39 @@
-const { resolve } = require("node:path");
+import js from "@eslint/js";
+import lexicalPlugin from "@lexical/eslint-plugin";
+import onlyWarn from "eslint-plugin-only-warn";
+import globals from "globals";
 
-const project = resolve(process.cwd(), "tsconfig.json");
-
-/*
+/**
  * This is a custom ESLint configuration for use with
  * internal (bundled by their consumer) libraries
  * that utilize React.
+ * @type {import("eslint").Linter.Config[]}
  */
+export default [
+  // Base configs
+  js.configs.recommended,
 
-/** @type {import("eslint").Linter.Config} */
-module.exports = {
-  extends: [
-    "eslint:recommended",
-    "prettier",
-    "eslint-config-turbo",
-    "plugin:@lexical/recommended",
-  ],
-  plugins: ["only-warn"],
-  globals: {
-    React: true,
-    JSX: true,
-  },
-  env: {
-    browser: true,
-  },
-  settings: {
-    "import/resolver": {
-      typescript: {
-        project,
+  // Lexical plugin flat config
+  lexicalPlugin.configs["flat/recommended"],
+
+  // Global configuration
+  {
+    plugins: {
+      "only-warn": onlyWarn,
+    },
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.browser,
+        React: true,
+        JSX: true,
       },
     },
   },
-  ignorePatterns: [
-    // Ignore dotfiles
-    ".*.js",
-    "node_modules/",
-    "dist/",
-  ],
-  overrides: [
-    // Force ESLint to detect .tsx files
-    { files: ["*.jsx?", "*.tsx?"] },
-  ],
-};
+
+  // Ignore patterns
+  {
+    ignores: [".*.js", "node_modules/", "dist/"],
+  },
+];

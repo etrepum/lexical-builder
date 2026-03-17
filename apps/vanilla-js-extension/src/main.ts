@@ -7,18 +7,15 @@
  */
 import "./styles.css";
 
-import {
-  buildEditorFromExtensions,
-  configExtension,
-  HistoryExtension,
-  RichTextExtension,
-} from "@etrepum/lexical-builder";
+import { buildEditorFromExtensions, configExtension } from "@lexical/extension";
+import { HistoryExtension } from "@lexical/history";
+import { RichTextExtension } from "@lexical/rich-text";
 import {
   mountReactExtensionComponent,
   mountReactPluginComponent,
   mountReactPluginHost,
   ReactPluginHostExtension,
-} from "@etrepum/lexical-react-extension";
+} from "@lexical/react/ReactPluginHostExtension";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { type LexicalEditor } from "lexical";
 import { EmojiExtension } from "@etrepum/lexical-emoji-extension";
