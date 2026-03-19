@@ -1,3 +1,7 @@
+## v0.2.0 (2026-03-19)
+- v0.1.0 (#79) github-actionsbot
+- v0.1.0 Lexical Builder GitHub Actions Bot
+
 ## v0.1.0 (2026-03-17)
 - still publish when increment-version is skipped (#77) Bob Ippolito
 - dry-run (#76) Bob Ippolito
