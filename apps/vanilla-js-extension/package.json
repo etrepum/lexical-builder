@@ -13,12 +13,12 @@
   "dependencies": {
     "@etrepum/lexical-builder-devtools-core": "*",
     "@etrepum/lexical-emoji-extension": "*",
-    "@lexical/extension": "0.41.1-nightly.20260317.0",
-    "@lexical/history": "0.41.1-nightly.20260317.0",
-    "@lexical/react": "0.41.1-nightly.20260317.0",
-    "@lexical/rich-text": "0.41.1-nightly.20260317.0",
-    "@lexical/utils": "0.41.1-nightly.20260317.0",
-    "lexical": "0.41.1-nightly.20260317.0",
+    "@lexical/extension": "0.42.0",
+    "@lexical/history": "0.42.0",
+    "@lexical/react": "0.42.0",
+    "@lexical/rich-text": "0.42.0",
+    "@lexical/utils": "0.42.0",
+    "lexical": "0.42.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
