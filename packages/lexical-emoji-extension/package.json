@@ -31,21 +31,21 @@
     "emoji-datasource-facebook": "15.1.2"
   },
   "peerDependencies": {
-    "@lexical/extension": ">=0.41.1-nightly.20260317.0",
-    "@lexical/utils": ">=0.41.1-nightly.20260317.0",
-    "lexical": ">=0.41.1-nightly.20260317.0"
+    "@lexical/extension": ">=0.42.0 || >=0.42.1-nightly.0",
+    "@lexical/utils": ">=0.42.0 || >=0.42.1-nightly.0",
+    "lexical": ">=0.42.0 || >=0.42.1-nightly.0"
   },
   "sideEffects": false,
   "devDependencies": {
-    "@lexical/extension": "0.41.1-nightly.20260317.0",
-    "@lexical/utils": "0.41.1-nightly.20260317.0",
+    "@lexical/extension": "0.42.0",
+    "@lexical/utils": "0.42.0",
     "@repo/eslint-config": "*",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/user-event": "^14.5.2",
     "eslint": "^10.0.3",
     "jsdom": "^24.1.0",
-    "lexical": "0.41.1-nightly.20260317.0",
+    "lexical": "0.42.0",
     "tslib": "^2.6.2",
     "typescript": "^5.5.2",
     "vite": "^7.3.1",
