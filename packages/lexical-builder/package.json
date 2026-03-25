@@ -16,7 +16,7 @@
     "dev": "vite build -w",
     "lint": "eslint"
   },
-  "version": "0.2.0",
+  "version": "0.2.1-nightly.20260325.0",
   "license": "MIT",
   "repository": {
     "type": "git",
