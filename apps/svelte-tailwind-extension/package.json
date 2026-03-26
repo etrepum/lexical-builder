@@ -1,6 +1,6 @@
 {
   "name": "svelte-tailwind-extension",
-  "version": "0.2.0",
+  "version": "0.2.1-nightly.20260326.0",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
