@@ -1,7 +1,7 @@
 {
   "name": "@etrepum/vanilla-js-extension-example",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1-nightly.20260327.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
