@@ -9,15 +9,23 @@ import { textFromUnifiedID } from "./unifiedID";
  * evaluation of modules with .data in their name.
  */
 export const supportedEmojis = emojis
-  .flatMap(({ has_img_facebook, short_name, text, texts, unified }) =>
-    has_img_facebook
-      ? [
-          [
-            textFromUnifiedID(unified),
-            short_name,
-            ...new Set([...(text ? [text] : []), ...(texts ?? [])]),
-          ].join(" "),
-        ]
-      : [],
+  .flatMap(
+    ({ has_img_facebook, short_name, short_names, text, texts, unified }) =>
+      has_img_facebook
+        ? [
+            [
+              textFromUnifiedID(unified),
+              [
+                ...new Set([
+                  ...(short_name ? [short_name] : []),
+                  ...(short_names ?? []),
+                ]),
+              ].join(" "),
+              [...new Set([...(text ? [text] : []), ...(texts ?? [])])].join(
+                " ",
+              ),
+            ].join("\t"),
+          ]
+        : [],
   )
   .join("\n");

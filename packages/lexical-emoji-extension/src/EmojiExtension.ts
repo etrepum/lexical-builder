@@ -42,11 +42,36 @@ export interface EmojiExtensionConfig {
    * The class to use for emoji nodes after the image is loaded and set as a background-image
    */
   emojiLoadedClass: string;
+  /**
+   * The function to use to parse the emoji database and build the text -> emoji mapping
+   */
+  parseEmojiReplacementEntry: EmojiEntryParser;
 }
 
-function noop() {
-  /*noop*/
-}
+export type EmojiEntry = [
+  emoji: string,
+  shortNames: readonly string[],
+  texts: readonly string[],
+];
+
+export type MatchEmojiPair = readonly [match: string, emoji: string];
+
+export type EmojiEntryParser = (entry: EmojiEntry) => readonly MatchEmojiPair[];
+
+export const parseEmojiShortNames: EmojiEntryParser = ([emoji, shortNames]) =>
+  shortNames.map((shortName) => [`:${shortName}:`, emoji]);
+
+export const parseEmojiTexts: EmojiEntryParser = ([
+  emoji,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _shortNames,
+  texts,
+]) => texts.map((text) => [text, emoji]);
+
+export const parseEmojiShortNamesAndTexts: EmojiEntryParser = (entry) => [
+  ...parseEmojiShortNames(entry),
+  ...parseEmojiTexts(entry),
+];
 
 function resolve<T extends (...args: never[]) => unknown>(
   arg: Promise<T> | T,
@@ -80,15 +105,16 @@ const ssr = typeof window === "undefined";
 export const EmojiExtension = defineExtension({
   config: safeCast<EmojiExtensionConfig>({
     emojiBaseUrl: `https://cdn.jsdelivr.net/npm/@etrepum/lexical-emoji-extension@${PACKAGE_VERSION}/dist/emoji`,
-    emojiClass: "emoji-node",
-    emojiLoadingClass: "emoji-node-loading",
-    emojiLoadedClass: "emoji-node-loaded",
+    emojiClass:
+      "caret-[#050505] bg-[length:1em_1em] inline-block align-top w-[1em] h-[1em]",
+    emojiLoadingClass: "",
+    emojiLoadedClass: "text-transparent",
+    parseEmojiReplacementEntry: parseEmojiShortNamesAndTexts,
   }),
   name: "@etrepum/lexical-emoji-extension/Emoji",
   nodes: [EmojiNode],
   register(editor: LexicalEditor, config, state) {
     const nodeCleanup = new Map<NodeKey, () => void>();
-    let cleanupTransform = noop;
     const cleanup = mergeRegister(
       // no need for init since we are synchronously registering at editor creation
       editor.registerMutationListener(EmojiNode, (nodes) => {
@@ -146,16 +172,15 @@ export const EmojiExtension = defineExtension({
         }
         nodeCleanup.clear();
       },
-      () => {
-        cleanupTransform();
-      },
     );
     // Defer loading of the transform which needs to load the emoji JSON
     resolve(loadTextNodeTransform(), ($textNodeTransform) => {
-      if (!state.getSignal().aborted) {
-        cleanupTransform = editor.registerNodeTransform(
-          TextNode,
-          $textNodeTransform,
+      const abortSignal = state.getSignal();
+      if (!abortSignal.aborted) {
+        abortSignal.addEventListener(
+          "abort",
+          editor.registerNodeTransform(TextNode, $textNodeTransform),
+          { once: true },
         );
       }
     });

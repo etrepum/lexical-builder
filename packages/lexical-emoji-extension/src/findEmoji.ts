@@ -27,10 +27,18 @@ export type EmojiMatch = Readonly<{
 const emojiReplacementMap = supportedEmojis
   .split("\n")
   .reduce<Map<string, string>>((acc, line) => {
-    const [emoji, shortName, ...texts] = line.split(" ");
-    acc.set(`:${shortName!}:`, emoji!);
-    for (const text of texts) {
-      acc.set(text, emoji!);
+    const [emoji, shortNames, texts] = line.split("\t");
+    if (emoji) {
+      for (const shortName of (shortNames ?? "").split(" ")) {
+        if (shortName) {
+          acc.set(`:${shortName}:`, emoji);
+        }
+      }
+      for (const text of (texts ?? "").split(" ")) {
+        if (text) {
+          acc.set(text, emoji);
+        }
+      }
     }
     return acc;
   }, new Map());
