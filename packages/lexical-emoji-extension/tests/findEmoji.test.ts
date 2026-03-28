@@ -33,6 +33,8 @@ describe("findEmoji", () => {
       shortcode: ":man-facepalming:",
       emoji: "🤦‍♂️",
     },
+    ":it:": { position: 0, shortcode: ":it:", emoji: "🇮🇹" },
+    ":flag-it:": { position: 0, shortcode: ":flag-it:", emoji: "🇮🇹" },
   }).forEach(([k, v]) => {
     it(`${k} -> ${v ? v.shortcode : "not found"}`, () =>
       expect(findEmoji(k)).toEqual(v));
