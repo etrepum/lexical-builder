@@ -43,11 +43,13 @@ const emojiReplacementMap = supportedEmojis
     return acc;
   }, new Map());
 
+const EMOJI_DELIMITER = /[ \xa0:]/g;
+
 /**
- * Finds emoji shortcodes in text, tokenized by spaces. The canonical short
- * names such as ":smiley:" are matched even if they are at the end of the
- * text, but a text such as ":)" is only matched if it is followed by a
- * space.
+ * Finds emoji shortcodes in text by scanning for potential start positions. The
+ * canonical short names such as ":smiley:" are matched even if they are at
+ * the end of the text, but a text such as ":)" is only matched if it is
+ * followed by a space or non-letter character.
  *
  * @example Matching canonical short names
  * ```js
@@ -74,24 +76,32 @@ const emojiReplacementMap = supportedEmojis
  * ```
  */
 export function findEmoji(text: string): EmojiMatch | null {
-  const words = text.split(/[ \xa0]/g);
-  for (let i = 0, position = 0; i < words.length; i++) {
-    const word = words[i]!;
-    const emoji = emojiReplacementMap.get(word);
-    if (
-      emoji &&
-      // only consider matches for the unique :shortname: unless it's not at the
-      // end of the text. This avoids having smileys taking precedence over
-      // emoji with longer names (e.g. :b vs. :bear: or :p vs. :pig:)
-      (text.length > position + word.length || word.endsWith(":"))
-    ) {
-      return {
-        position,
-        shortcode: word,
-        emoji,
-      };
+  let lastWordBreak = 0;
+  let lastColon: number | null = text[0] === ":" ? 0 : null;
+  // eslint-disable-next-line no-useless-assignment -- false positive
+  let match: RegExpExecArray | null = null;
+  EMOJI_DELIMITER.lastIndex = 1;
+  while ((match = EMOJI_DELIMITER.exec(text))) {
+    if (match[0] === ":") {
+      if (lastColon !== null) {
+        const shortcode = text.slice(lastColon, match.index + 1);
+        const emoji = emojiReplacementMap.get(shortcode);
+        if (emoji) {
+          return { position: lastColon, emoji, shortcode };
+        }
+      }
+      lastColon = match.index;
+    } else {
+      const shortcode = text.slice(lastWordBreak, match.index);
+      if (shortcode) {
+        const emoji = emojiReplacementMap.get(shortcode);
+        if (emoji) {
+          return { position: lastWordBreak, emoji, shortcode };
+        }
+      }
+      lastColon = null;
+      lastWordBreak = match.index + 1;
     }
-    position += word.length + 1;
   }
   return null;
 }
