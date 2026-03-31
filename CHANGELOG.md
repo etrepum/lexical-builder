@@ -1,3 +1,7 @@
+## v0.4.0 (2026-03-31)
+- v0.3.0 (#83) github-actionsbot
+- v0.3.0 Lexical Builder GitHub Actions Bot
+
 ## v0.3.0 (2026-03-28)
 - v0.2.0 (#81) github-actionsbot
 - v0.2.0 Lexical Builder GitHub Actions Bot
