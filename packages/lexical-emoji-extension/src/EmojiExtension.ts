@@ -106,7 +106,7 @@ export const EmojiExtension = defineExtension({
   config: safeCast<EmojiExtensionConfig>({
     emojiBaseUrl: `https://cdn.jsdelivr.net/npm/@etrepum/lexical-emoji-extension@${PACKAGE_VERSION}/dist/emoji`,
     emojiClass:
-      "caret-[#050505] bg-[length:1em_1em] inline-block align-top w-[1em] h-[1em]",
+      "caret-[#050505] bg-[length:1em_1em] bg-center bg-no-repeat align-top inline-block w-[1em] h-[1em]",
     emojiLoadingClass: "",
     emojiLoadedClass: "text-transparent",
     parseEmojiReplacementEntry: parseEmojiShortNamesAndTexts,

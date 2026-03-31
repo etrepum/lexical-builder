@@ -35,6 +35,12 @@ describe("findEmoji", () => {
     },
     ":it:": { position: 0, shortcode: ":it:", emoji: "🇮🇹" },
     ":flag-it:": { position: 0, shortcode: ":flag-it:", emoji: "🇮🇹" },
+    "adjacent:it:": {
+      position: "adjacent".length,
+      shortcode: ":it:",
+      emoji: "🇮🇹",
+    },
+    ":it:adjacent": { position: 0, shortcode: ":it:", emoji: "🇮🇹" },
   }).forEach(([k, v]) => {
     it(`${k} -> ${v ? v.shortcode : "not found"}`, () =>
       expect(findEmoji(k)).toEqual(v));
